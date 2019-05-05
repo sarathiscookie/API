@@ -14,7 +14,33 @@ const mix = require('laravel-mix');
 mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');
 
-/*css for each page*/
+
+/*
+ |--------------------------------------------------------------------------
+ | CSS Styles
+ |--------------------------------------------------------------------------
+ |
+ | Css for all pages
+ */
+
+/* css for signin page */
 mix.styles([
 	'resources/css/signin.css'
+], 'public/css/signin.css').version();
+
+/* css for all pages */
+mix.styles([
+	'resources/css/dashboard.css'
 ], 'public/css/all.css').version();
+
+/*
+ |--------------------------------------------------------------------------
+ | JS Scripts
+ |--------------------------------------------------------------------------
+ |
+ | JS for all pages
+ */
+
+mix.scripts([
+    'resources/js/dashboard.js'
+], 'public/js/all.js').version();

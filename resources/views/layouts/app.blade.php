@@ -19,11 +19,11 @@
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-    <!-- All css styles -->
-    <link href="{{ asset('css/all.css') }}" rel="stylesheet">
+    <!-- Sign in css styles -->
+    <link href="{{ asset('css/signin.css') }}" rel="stylesheet">
 </head>
 <body>
-    <div id="app" class="col-sm-6 col-md-4 col-xl-3 mb-3 text-center">
+    <div id="app" class="col-sm-12 col-md-12 col-xl-12 mb-12 text-center">
         @yield('content')
     </div>
 </body>
