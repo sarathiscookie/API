@@ -36,4 +36,32 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Setting user type is admin
+     * @return string
+     */
+    public function isAdmin() 
+    {
+        dd($this->user_type);
+        return $this->user_type = 'admin';
+    }
+
+    /**
+     * Setting user type is manager
+     * @return string
+     */
+    public function isManager()
+    {
+        return $this->user_type = 'manager';
+    }
+
+    /**
+     * Setting user type is employee
+     * @return string
+     */
+    public function isEmployee()
+    {
+        return $this->user_type = 'employee';
+    }
 }
