@@ -43,8 +43,7 @@ class User extends Authenticatable
      */
     public function isAdmin() 
     {
-        dd($this->user_type);
-        return $this->user_type = 'admin';
+        return $this->role = 'admin';
     }
 
     /**
@@ -53,7 +52,7 @@ class User extends Authenticatable
      */
     public function isManager()
     {
-        return $this->user_type = 'manager';
+        return $this->role = 'manager';
     }
 
     /**
@@ -62,6 +61,6 @@ class User extends Authenticatable
      */
     public function isEmployee()
     {
-        return $this->user_type = 'employee';
+        return $this->role = 'employee';
     }
 }

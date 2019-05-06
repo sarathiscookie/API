@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class Admin
 {
@@ -15,10 +16,14 @@ class Admin
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->user()->user_type == 'admin') {
-            return $next($request);
+        if (Auth::check() && Auth::user()->role == 'admin') {
+            return redirect('/admin/dashboard');
         }
-
-        return redirect('/')->with('error', 'You have not admin access.');
+        elseif (Auth::check() && Auth::user()->role == 'manager') {
+            return redirect('/manager/dashboard');
+        }
+        else {
+            return redirect('/employee/dashboard');
+        }
     }
 }

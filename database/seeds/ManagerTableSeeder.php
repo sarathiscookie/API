@@ -5,7 +5,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class UsersTableSeeder extends Seeder
+class ManagerTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,12 +15,12 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         $data = [
-        	'name' => 'Admin',
-        	'email' => 'admin@gmail.com',
-        	'password' => Hash::make('11111111'),
-        	'created_at' => Carbon::now(),
-        	'role' => 'admin',
-        	'active' => 'yes',
+            'name' => 'Manager',
+            'email' => 'manager@gmail.com',
+            'password' => Hash::make('11111111'),
+            'created_at' => Carbon::now(),
+            'role' => 'manager',
+            'active' => 'yes',
         ];
 
         User::insert($data);

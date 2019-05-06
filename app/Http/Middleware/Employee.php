@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Support\Facades\Auth;
 
 class Employee
 {
@@ -15,10 +16,14 @@ class Employee
      */
     public function handle($request, Closure $next)
     {
-        if(auth()->user()->user_type == 'employee') {
-            return $next($request);
+        if (Auth::check() && Auth::user()->role == 'employee') {
+            return redirect('/employee/dashboard');
         }
-
-        return redirect('/')->with('error', 'You have not employee access.');
+        elseif (Auth::check() && Auth::user()->role == 'manager') {
+            return redirect('/manager/dashboard');
+        }
+        else {
+            return redirect('/admin/dashboard');
+        }
     }
 }

@@ -25,7 +25,7 @@ class CreateUsersTable extends Migration
             $table->string('city', 150)->nullable();
             $table->string('country', 150)->nullable();
             $table->enum('active', ['yes', 'no', 'onhold'])->default('no');
-            $table->enum('user_type', ['admin', 'manager', 'employee']);
+            $table->enum('role', ['admin', 'manager', 'employee']);
             $table->rememberToken();
             $table->timestamps();
         });

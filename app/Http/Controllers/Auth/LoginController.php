@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Auth;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
+use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
@@ -38,37 +38,35 @@ class LoginController extends Controller
         $this->middleware('guest')->except('logout');
     }
 
-    public function authenticated()
+    public function redirectTo() 
     {
-        if(auth()->user()->user_type == 'admin')
-        {
-            return redirect('/admin/dashboard');
-        } 
-        elseif(auth()->user()->user_type == 'employee')
-        {
+        if (Auth::check() && Auth::user()->role == 'employee') {
             return redirect('/employee/dashboard');
-        } 
-        elseif(auth()->user()->user_type == 'manager')
-        {
-            return redirect('/manager/dashboard');
-        } 
-        else {
-            return redirect('/')->with('error', 'You have not permission to access.');
         }
-    }
+        elseif (Auth::check() && Auth::user()->role == 'manager') {
+            return redirect('/manager/dashboard');
+        }
+        else {
+            return redirect('/admin/dashboard');
+        }
+        /*$user = Auth::user()->user_type;
 
-
-    /*public function redirectTo() {
-        $user = Auth::user()->user_type;
         switch(true) {
             case 'admin':
             return '/admin/dashboard';
+            break;
+
             case 'manager':
             return '/manager/dashboard';
+            break;
+
             case 'employee':
             return '/employee/dashboard';
+            break;
+
             default:
             return '/';
-        }
-    }*/
+            break;
+        }*/
+    }
 }

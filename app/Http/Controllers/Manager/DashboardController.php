@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers\Manager;
 
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\User;
+use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -15,7 +16,7 @@ class DashboardController extends Controller
     public function index()
     {
         dd(User::all());
-        return view('admin.manager');
+        return view('manger.dashboard');
     }
 
     /**
