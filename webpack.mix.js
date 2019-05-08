@@ -55,6 +55,10 @@ mix.scripts(
 
 /* js for all pages */
 mix.scripts(
-	["resources/js/dashboard.js", "resources/js/adminManagerList.js"],
+	[
+		"resources/js/dashboard.js",
+		"resources/js/datatablelist.js",
+		"resources/js/adminManagerList.js"
+	],
 	"public/js/all.js"
 ).version();

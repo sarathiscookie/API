@@ -12,6 +12,7 @@
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
 
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
@@ -64,13 +65,13 @@
                     <ul class="nav flex-column">
                         <li class="nav-item">
                             <a class="nav-link active" href="/admin/dashboard">
-                                <span data-feather="home"></span>
+                                <i class="fas fa-home"></i>
                                 Dashboard <span class="sr-only">(current)</span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="/admin/dashboard/manager/list">
-                                <span data-feather="file"></span>
+                                <i class="fas fa-list"></i>
                                 Manager List
                             </a>
                         </li>
@@ -143,9 +144,6 @@
 
 <!-- Default laravel Scripts -->
 <script src="{{ asset('js/app.js') }}"></script>
-
-<!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
 
 <!-- Plugins Scripts -->
 <script src="{{ asset('js/plugins.js') }}"></script>

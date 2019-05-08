@@ -32,9 +32,12 @@ Auth::routes([
 */
 Route::prefix('admin')->group(function(){
 	Route::group(['middleware' => ['auth', 'admin']], function () {
-		//Admin dashboard
+		/* Admin dashboard */
 		Route::get('dashboard', 'Admin\DashboardController@index')->name('admin.dashboard');
+		/* Show managers listing page */
 		Route::get('dashboard/manager/list', 'Admin\ManagerController@index')->name('admin.dashboard.manager.list');
+		/* Listing managers on datatable */
+		Route::post('dashboard/manager/list/datatables', 'Admin\ManagerController@dataTable')->name('admin.dashboard.manager.list.datatable');
 	});
 });
 

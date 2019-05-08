@@ -16,7 +16,7 @@
         </div>
         <div class="card-body">
           <div class="table-responsive">
-            <table id="example" class="table table-bordered table-hover display" style="width:100%">
+            <table id="manager_list" class="table table-bordered table-hover display" style="width:100%">
               <thead class="thead-light">
                 <tr>
                   <th>#</th>
@@ -28,27 +28,7 @@
                 </tr>
               </thead>
 
-              <tbody>
-                @isset($users)
-                @foreach ($users as $user)
-                <tr>
-                  <td>{{ $loop->iteration }}</td>
-                  <td>{{ $user->name }}</td>
-                  <td>{{ $user->email }}</td>
-                  <td>{{ date('d.m.y', strtotime($user->created_at)) }}</td>
-                  <td>{{ $user->active }}</td>
-                  <td><span data-feather="edit"></span>  <span data-feather="trash-2"></span></td>
-                  {{-- https://codepen.io/nikhil8krishnan/pen/eNVZgB --}}
-                </tr>
-                @endforeach
-                @endisset
               <tbody></tbody>
-
-                @empty($users)
-                <p>No users</p>
-                @endempty
-                
-              </tbody>
 
               <tfoot>
                 <td></td>
@@ -66,6 +46,10 @@
               </tfoot>
 
             </table>
+
+            <!-- Export buttons are append here -->
+            <div id="buttons"></div>
+
           </div>
         </div>
       </div>
