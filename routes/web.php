@@ -33,13 +33,15 @@ Auth::routes([
 Route::prefix('admin')->group(function(){
 	Route::group(['middleware' => ['auth', 'admin']], function () {
 		/* Admin dashboard */
-		Route::get('dashboard', 'Admin\DashboardController@index')->name('admin.dashboard');
+		Route::get('/dashboard', 'Admin\DashboardController@index')->name('admin.dashboard');
 		/* Show managers listing page */
-		Route::get('dashboard/manager/list', 'Admin\ManagerController@index')->name('admin.dashboard.manager.list');
+		Route::get('/dashboard/manager/list', 'Admin\ManagerController@index')->name('admin.dashboard.manager.list');
 		/* Listing managers on datatable */
-		Route::post('dashboard/manager/list/datatables', 'Admin\ManagerController@dataTable')->name('admin.dashboard.manager.list.datatable');
+		Route::post('/dashboard/manager/list/datatables', 'Admin\ManagerController@dataTable')->name('admin.dashboard.manager.list.datatable');
 		/* Delete bookings */
 		Route::delete('/dashboard/manager/delete/{id}', 'Admin\ManagerController@destroy')->name('admin.dashboard.manager.delete');
+		/* Update manager status */
+		Route::post('/dashboard/manager/status/update', 'Admin\ManagerController@updateStatus')->name('admin.dashboard.manager.status.update');
 	});
 });
 

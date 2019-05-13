@@ -72,11 +72,26 @@ class ManagerController extends Controller
 
         if(!empty($managerLists)) {
             foreach ($managerLists as $key=> $managerList) {
+                if($managerList->active === 'yes') {
+                    $yesStatus    = 'btn-success';
+                    $noStatus     = 'btn-secondary';
+                    $freezeStatus = 'btn-secondary';
+                }
+                elseif($managerList->active === 'no') {
+                    $yesStatus    = 'btn-secondary';
+                    $noStatus     = 'btn-danger';
+                    $freezeStatus = 'btn-secondary';
+                }
+                else {
+                    $yesStatus    = 'btn-secondary';
+                    $noStatus     = 'btn-secondary';
+                    $freezeStatus = 'btn-warning';
+                }
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$managerList->id.'" />';
                 $nestedData['name']       = $managerList->name;
                 $nestedData['email']      = $this->bootstrapModal($managerList->id, $managerList->email, $managerList->phone, $managerList->street, $managerList->postal, $managerList->city, $managerList->country);
                 $nestedData['created_at'] = date('d.m.y', strtotime($managerList->created_at));
-                $nestedData['active']     = $managerList->active;
+                $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active, $yesStatus, $freezeStatus, $noStatus);//$managerList->active;
                 $nestedData['actions']    = '<a type="button" class="btn btn-secondary btn-sm"><i class="fas fa-user-edit"></i></a> <a type="button" class="btn btn-secondary btn-sm deleteEvent" data-id="'.$managerList->id.'"><i class="fas fa-trash-alt"></i></a>';
                 $data[]                   = $nestedData;
             }
@@ -216,6 +231,49 @@ class ManagerController extends Controller
     }
 
     /**
+     * html group button to change manager status 
+     * @param  int $id
+     * @param  string $oldStatus 
+     * @param  string $yesStatus    
+     * @param  string $freezeStatus
+     * @param  string $noStatus  
+     * @return \Illuminate\Http\Response
+     */
+    public function userStatusHtml($id, $oldStatus, $yesStatus, $freezeStatus, $noStatus)
+    {
+        $html = '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example" data-userstatus="'.$oldStatus.'" data-userid="'.$id.'">
+        <button type="button" class="btn '.$yesStatus.' buttonStatus" data-status="yes">Yes</button>
+        <button type="button" class="btn '.$freezeStatus.' buttonStatus" data-status="freeze">Freeze</button>
+        <button type="button" class="btn '.$noStatus.' buttonStatus" data-status="no">No</button>
+        </div>';
+
+        return $html;
+    }
+
+    /**
+     * Update manager status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Request $request)
+    {
+        try {
+
+            $user         = User::findOrFail($request->userId);
+
+            $user->active = $request->newStatus;
+
+            $user->save();
+
+            return response()->json(['status' => 'success', 'message' => 'User status updated successfully'], 201);
+        } 
+        catch(\Exception $e){
+            abort(404);
+        }
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
@@ -267,7 +325,7 @@ class ManagerController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        dd($request->all());
     }
 
     /**

@@ -202,4 +202,46 @@ $(function() {
 			.search(v)
 			.draw();
 	});
+
+	/* Updating user status */
+	$("#datatable_list tbody").on("click", "button.buttonStatus", function(e) {
+		e.preventDefault();
+		var userId = $(this)
+			.parent()
+			.data("userid");
+		var newStatus = $(this).data("status");
+		var oldStatus = $(this)
+			.parent()
+			.data("userstatus");
+
+		if (newStatus === oldStatus) {
+			datatableList.ajax.reload(null, false);
+		} else {
+			$.ajax({
+				url: "/admin/dashboard/manager/status/update",
+				dataType: "JSON",
+				type: "POST",
+				data: { newStatus: newStatus, userId: userId }
+			})
+				.done(function(result) {
+					if (result.status === "success") {
+						$(".responseMessage").html(
+							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
+								result.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+
+						$(".responseMessage")
+							.show()
+							.delay(5000)
+							.fadeOut();
+					}
+
+					datatableList.ajax.reload(null, false);
+				})
+				.fail(function() {
+					datatableList.ajax.reload(null, false);
+				});
+		}
+	});
 });
