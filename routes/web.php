@@ -42,6 +42,10 @@ Route::prefix('admin')->group(function(){
 		Route::delete('/dashboard/manager/delete/{id}', 'Admin\ManagerController@destroy')->name('admin.dashboard.manager.delete');
 		/* Update manager status */
 		Route::post('/dashboard/manager/status/update', 'Admin\ManagerController@updateStatus')->name('admin.dashboard.manager.status.update');
+		/* Create manager */
+		Route::get('/dashboard/manager/create', 'Admin\ManagerController@create')->name('admin.dashboard.manager.create');
+		/* Store manager */
+		Route::post('/dashboard/manager/store', 'Admin\ManagerController@store')->name('admin.dashboard.manager.store');
 	});
 });
 

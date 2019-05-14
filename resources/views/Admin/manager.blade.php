@@ -5,8 +5,8 @@
 
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
-          <li class="breadcrumb-item active" aria-current="page">Manager List</li>
+          <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+          <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-list"></i> Manager List</li>
         </ol>
       </nav>
 
@@ -15,6 +15,11 @@
           Manager List
         </div>
         <div class="card-body">
+          <div class="text-right">
+            <a href="/admin/dashboard/manager/create" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Manager</a>
+            <hr>
+          </div>
+          
           <div class="table-responsive">
             
             <div class="responseMessage"></div>
@@ -56,6 +61,7 @@
 
           </div>
         </div>
+
       </div>
 
     </main>
