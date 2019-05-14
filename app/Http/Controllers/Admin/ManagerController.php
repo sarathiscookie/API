@@ -308,7 +308,6 @@ class ManagerController extends Controller
             $user->role     = 'manager';
             $user->save();
             
-
             return redirect('/admin/dashboard/manager/list')->with('successStoreManager', 'Well done! User created successfully');
         } 
         catch(\Exception $e){

@@ -63,7 +63,7 @@ let datatableList;
 function fetchData(url) {
 	datatableList = $("#datatable_list").DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],
-		order: [[1, "desc"]],
+		order: [[3, "desc"]],
 		processing: true,
 		serverSide: true,
 		ajax: {
