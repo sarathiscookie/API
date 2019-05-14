@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Admin;
 
-use Illuminate\Http\Request;
-use App\User;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\ManagerRequest;
+use App\User;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class ManagerController extends Controller
 {
@@ -286,12 +288,32 @@ class ManagerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\ManagerRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ManagerRequest $request)
     {
-        //
+        try {
+            $user           = new User;
+            $user->name     = $request->name;
+            $user->password = Hash::make($request->password);
+            $user->email    = $request->email;
+            $user->phone    = $request->phone;
+            $user->street   = $request->street;
+            $user->city     = $request->city;
+            $user->country  = $request->country;
+            $user->postal   = $request->zip;
+            $user->company  = $request->company;
+            $user->active   = 'no';
+            $user->role     = 'manager';
+            $user->save();
+            
+
+            return redirect('/admin/dashboard/manager/list')->with('successStoreManager', 'Well done! User created successfully');
+        } 
+        catch(\Exception $e){
+            return redirect()->back()->with('failureStoreManager', 'Whoops! Something went wrong');
+        }
     }
 
     /**

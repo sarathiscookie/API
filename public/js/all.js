@@ -241,7 +241,7 @@ $(function() {
 				})
 				.fail(function() {
 					$(".responseMessage").html(
-						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> Something went wrong! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> Something went wrong! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 					);
 
 					$(".responseMessage")

@@ -14,6 +14,7 @@
         <div class="card-header bg-primary">
           Manager List
         </div>
+
         <div class="card-body">
           <div class="text-right">
             <a href="/admin/dashboard/manager/create" class="btn btn-primary"><i class="fas fa-user-plus"></i> Add Manager</a>
@@ -21,7 +22,13 @@
           </div>
           
           <div class="table-responsive">
-            
+            @if (session()->has('successStoreManager'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> 
+              {{ session()->get('successStoreManager') }}
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            </div>  
+            @endif
+
             <div class="responseMessage"></div>
 
             <table id="datatable_list" class="table table-bordered table-hover display" style="width:100%">
