@@ -75,17 +75,15 @@ class ManagerController extends Controller
                 if($managerList->active === 'yes') {
                     $yesStatus    = 'btn-success';
                     $noStatus     = 'btn-secondary';
-                    $freezeStatus = 'btn-secondary';
                 }
                 else {
                     $yesStatus    = 'btn-secondary';
                     $noStatus     = 'btn-danger';
-                    $freezeStatus = 'btn-secondary';
                 }
 
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$managerList->id.'" />';
                 $nestedData['name']       = $this->bootstrapModal($managerList->id, $managerList->name, $managerList->email, $managerList->phone, $managerList->street, $managerList->postal, $managerList->city, $managerList->country, $managerList->created_at);
-                $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active, $yesStatus, $freezeStatus, $noStatus);
+                $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active, $yesStatus, $noStatus);
                 $nestedData['actions']    = '<a href="/admin/dashboard/manager/edit/'.$managerList->id.'" type="button" class="btn btn-secondary btn-sm"><i class="fas fa-cog"></i></a>';
                 $data[]                   = $nestedData;
             }
@@ -240,17 +238,17 @@ class ManagerController extends Controller
      * html group button to change manager status 
      * @param  int $id
      * @param  string $oldStatus 
-     * @param  string $yesStatus    
-     * @param  string $freezeStatus
+     * @param  string $yesStatus
      * @param  string $noStatus  
      * @return \Illuminate\Http\Response
      */
-    public function userStatusHtml($id, $oldStatus, $yesStatus, $freezeStatus, $noStatus)
+    public function userStatusHtml($id, $oldStatus, $yesStatus, $noStatus)
     {
-        $html = '<div class="btn-group btn-group-sm" role="group" aria-label="Basic example" data-userstatus="'.$oldStatus.'" data-userid="'.$id.'">
-        <button type="button" class="btn '.$yesStatus.' buttonStatus" data-status="yes">Yes</button>
-        <button type="button" class="btn '.$noStatus.' buttonStatus" data-status="no">No</button>
-        </div>';
+        $checked = ($oldStatus === 'yes') ? 'checked' : "";
+        $html    = '<label class="switch" data-userid="'.$id.'">
+        <input type="checkbox" class="buttonStatus" '.$checked.'>
+        <span class="slider round"></span>
+        </label>';
 
         return $html;
     }

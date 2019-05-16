@@ -60,53 +60,41 @@ $(function() {
 	});
 
 	/* Updating user status */
-	$("#datatable_list tbody").on("click", "button.buttonStatus", function(e) {
+	$("#datatable_list tbody").on("change", "input.buttonStatus", function(e) {
 		e.preventDefault();
+
+		var newStatus = "";
+
 		var userId = $(this)
 			.parent()
 			.data("userid");
-		var newStatus = $(this).data("status");
-		var oldStatus = $(this)
-			.parent()
-			.data("userstatus");
 
-		if (newStatus === oldStatus) {
-			datatableList.ajax.reload(null, false);
+		if ($(this).is(":checked") === true) {
+			newStatus = "yes";
 		} else {
-			$.ajax({
-				url: "/admin/dashboard/manager/status/update",
-				dataType: "JSON",
-				type: "POST",
-				data: { newStatus: newStatus, userId: userId }
-			})
-				.done(function(result) {
-					if (result.status === "success") {
-						$(".responseMessage").html(
-							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
-								result.message +
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						);
-
-						$(".responseMessage")
-							.show()
-							.delay(5000)
-							.fadeOut();
-					}
-
-					datatableList.ajax.reload(null, false);
-				})
-				.fail(function() {
-					$(".responseMessage").html(
-						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> Something went wrong! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-					);
-
-					$(".responseMessage")
-						.show()
-						.delay(5000)
-						.fadeOut();
-
-					datatableList.ajax.reload(null, false);
-				});
+			newStatus = "no";
 		}
+
+		$.ajax({
+			url: "/admin/dashboard/manager/status/update",
+			dataType: "JSON",
+			type: "POST",
+			data: { newStatus: newStatus, userId: userId }
+		})
+			.done(function(result) {
+				datatableList.ajax.reload(null, false);
+			})
+			.fail(function() {
+				$(".responseMessage").html(
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> Something went wrong! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+				);
+
+				$(".responseMessage")
+					.show()
+					.delay(5000)
+					.fadeOut();
+
+				datatableList.ajax.reload(null, false);
+			});
 	});
 });
