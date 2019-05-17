@@ -97,4 +97,70 @@ $(function() {
 				datatableList.ajax.reload(null, false);
 			});
 	});
+
+	/* Create manager */
+	$("button.createManager").on("click", function(e) {
+		e.preventDefault();
+
+		var name = $("#name").val();
+		var email = $("#email").val();
+		var phone = $("#phone").val();
+		var street = $("#street").val();
+		var city = $("#city").val();
+		var country = $("#country").val();
+		var company = $("#company").val();
+		var zip = $("#zip").val();
+		var password = $("#password").val();
+		var passwordConfirm = $("#password_confirmation").val();
+
+		$.ajax({
+			url: "/admin/dashboard/manager/store",
+			dataType: "JSON",
+			type: "POST",
+			data: {
+				name: name,
+				email: email,
+				phone: phone,
+				street: street,
+				city: city,
+				country: country,
+				company: company,
+				zip: zip,
+				password: password,
+				password_confirmation: passwordConfirm
+			}
+		})
+			.done(function(result) {
+				if (result.successStatusManager === "success") {
+					$("#createManagerModal").modal("hide"); // It hides the modal
+					$(".responseMessage").html(
+						'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i>' +
+							result.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+
+					datatableList.ajax.reload(null, false);
+				}
+			})
+			.fail(function(data) {
+				if (data.status === 422) {
+					$.each(data.responseJSON.errors, function(key, val) {
+						$(".validationAlert").html(
+							"<p class='alert alert-danger'>" + val + "</p>"
+						);
+					});
+				}
+			});
+	});
+
+	/* Clearing data from modal fields */
+	$("#createManagerModal").on("hidden.bs.modal", function(e) {
+		$(this)
+			.find("input,textarea,select")
+			.val("")
+			.end()
+			.find("input[type=checkbox], input[type=radio]")
+			.prop("checked", "")
+			.end();
+	});
 });

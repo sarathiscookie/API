@@ -277,13 +277,13 @@ class ManagerController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Show the form to create a new resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        return view('admin.managerCreate');
+        //
     }
 
     /**
@@ -309,10 +309,10 @@ class ManagerController extends Controller
             $user->role     = 'manager';
             $user->save();
 
-            return redirect('/admin/dashboard/manager/list')->with('successStoreManager', 'Well done! User created successfully');
+            return response()->json(['successStatusManager' => 'success', 'message' => 'Well done! User created successfully'], 201);
         } 
         catch(\Exception $e){
-            return redirect()->back()->with('failureStoreManager', 'Whoops! Something went wrong');
+            return response()->json(['failedStatusManager' => 'success', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
 
