@@ -76,121 +76,68 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="name">Name <span class="required">*</span></label>
+                  <input id="name" type="text" class="form-control" name="name" autocomplete="name" maxlength="255" autofocus>
 
-                  <input id="name" type="text" class="form-control @error('name') is-invalid @enderror" name="name" autocomplete="name" maxlength="255" autofocus>
-
-                  @error('name')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
                 <div class="form-group col-md-6">
                   <label for="email">Email <span class="required">*</span></label>
+                  <input id="email" type="email" class="form-control" name="email" maxlength="255" autocomplete="email">
 
-                  <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" maxlength="255" autocomplete="email">
-
-                  @error('email')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="phone">Phone <span class="required">*</span></label>
+                  <input id="phone" type="text" class="form-control" name="phone" maxlength="20" autocomplete="phone">
 
-                  <input id="phone" type="text" class="form-control @error('phone') is-invalid @enderror" name="phone" maxlength="20" autocomplete="phone">
-
-                  @error('phone')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
                 <div class="form-group col-md-6">
                   <label for="street">Street <span class="required">*</span></label>
+                  <input id="street" type="text" class="form-control" name="street" maxlength="255" autocomplete="street">
 
-                  <input id="street" type="text" class="form-control @error('street') is-invalid @enderror" name="street" maxlength="255" autocomplete="street">
-
-                  @error('street')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="city">City <span class="required">*</span></label>
+                  <input id="city" type="text" class="form-control" name="city" maxlength="255" autocomplete="city">
 
-                  <input id="city" type="text" class="form-control @error('city') is-invalid @enderror" name="city" maxlength="255" autocomplete="city">
-
-                  @error('city')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
                 <div class="form-group col-md-4">
                   <label for="country">Country <span class="required">*</span></label>
-
-                  <select id="country" class="form-control @error('country') is-invalid @enderror" name="country">
+                  <select id="country" class="form-control" name="country">
                     <option value="">Choose...</option>
                     <option value="de">Germany</option>
                   </select>
 
-                  @error('country')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
                 <div class="form-group col-md-2">
                   <label for="zip">Zip <span class="required">*</span></label>
+                  <input id="zip" type="text" class="form-control" name="zip" maxlength="20" autocomplete="zip">
 
-                  <input id="zip" type="text" class="form-control @error('zip') is-invalid @enderror" name="zip" maxlength="20" autocomplete="zip">
-
-                  @error('zip')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group col-md-4">
                   <label for="password">Password <span class="required">*</span></label>
+                  <input id="password" type="password" class="form-control" name="password" maxlength="255">
 
-                  <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" maxlength="255">
-
-                  @error('password')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
                 <div class="form-group col-md-4">
                   <label for="password_confirmation">Confirm Password <span class="required">*</span></label>
-
                   <input id="password_confirmation" type="password" class="form-control" name="password_confirmation">
+
                 </div>
                 <div class="form-group col-md-4">
                   <label for="company">Company <span class="required">*</span></label>
-                  <select id="company" class="form-control @error('company') is-invalid @enderror" name="company">
+                  <select id="company" class="form-control" name="company">
                     <option value="">Choose...</option>
                     <option value="tcs">TCS</option>
                   </select>
 
-                  @error('company')
-                  <span class="invalid-feedback" role="alert">
-                    <strong>{{ $message }}</strong>
-                  </span>
-                  @enderror
                 </div>
               </div>
 
