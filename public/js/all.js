@@ -295,7 +295,7 @@ $(function() {
 			});
 	});
 
-	/* Clearing data from modal fields */
+	/* Clearing data of create manager modal fields */
 	$("#createManagerModal").on("hidden.bs.modal", function(e) {
 		$(this)
 			.find("input,textarea,select")
@@ -304,5 +304,12 @@ $(function() {
 			.find("input[type=checkbox], input[type=radio]")
 			.prop("checked", "")
 			.end();
+	});
+
+	/* Edit manager */
+	$("#datatable_list tbody").on("click", "button.editManager", function(e) {
+		e.preventDefault();
+		console.log("clicked");
+		console.log($("#name").val());
 	});
 });

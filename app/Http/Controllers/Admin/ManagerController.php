@@ -229,7 +229,6 @@ class ManagerController extends Controller
             <hr>
             </div>
 
-            <form method="POST" action="">
             <div class="form-row">
             <div class="form-group col-md-6">
 
@@ -308,8 +307,7 @@ class ManagerController extends Controller
             </div>
             </div>
 
-            <button type="submit" class="btn btn-primary btn-lg btn-block"><i class="fas fa-user-edit"></i> Update Manager</button>
-            </form>
+            <button type="button" class="btn btn-primary btn-lg btn-block editManager" data-editmanager="'.$user->id.'"><i class="fas fa-user-edit"></i> Update Manager</button>
 
             </div>
 
