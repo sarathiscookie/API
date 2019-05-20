@@ -2,9 +2,10 @@
 
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
@@ -58,4 +59,38 @@ class User extends Authenticatable
     {
         return ucfirst($value);
     }
+
+    /**
+    * Scope for manager role.
+    *
+    * @param  string  $query
+    * @return string
+    */
+    public function scopeManager($query)
+    {
+        return $query->where('role', 'manager');
+    }
+
+    /**
+    * Scope for admin role.
+    *
+    * @param  string  $query
+    * @return string
+    */
+    public function scopeAdmin($query)
+    {
+        return $query->where('role', 'admin');
+    }
+
+    /**
+    * Scope for employee role.
+    *
+    * @param  string  $query
+    * @return string
+    */
+    public function scopeEmployee($query)
+    {
+        return $query->where('role', 'employee');
+    }
+
 }

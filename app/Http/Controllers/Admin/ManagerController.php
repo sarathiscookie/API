@@ -36,11 +36,11 @@ class ManagerController extends Controller
         );
 
         $totalData = User::select('name', 'email', 'phone', 'street', 'postal', 'city', 'country', 'active', 'role', 'created_at')
-        ->where('role', 'manager')
+        ->manager()
         ->count();
 
         $q         = User::select('id', 'name', 'email', 'phone', 'street', 'postal', 'city', 'country', 'active', 'role', 'created_at')
-        ->where('role', 'manager');
+        ->manager();
 
         $totalFiltered = $totalData;
         $limit         = (int)$request->input('length');
@@ -82,7 +82,7 @@ class ManagerController extends Controller
                 }
 
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$managerList->id.'" />';
-                $nestedData['name']       = $this->bootstrapModal($managerList->id, $managerList->name, $managerList->email, $managerList->phone, $managerList->street, $managerList->postal, $managerList->city, $managerList->country, $managerList->created_at);
+                $nestedData['name']       = $managerList->name;
                 $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active, $yesStatus, $noStatus);
                 $nestedData['actions']    = $this->editMangerModel($managerList->id);
                 $data[]                   = $nestedData;
@@ -160,81 +160,6 @@ class ManagerController extends Controller
     }
 
     /**
-     * Bootstrap model for datatable
-     * @param  string $userId
-     * @return \Illuminate\Http\Response
-     */
-    public function bootstrapModal($userId, $name, $email, $phone, $street, $postal, $city, $country, $created_at)
-    {
-        $html = '<a href="" data-toggle="modal" data-target="#userModal_'.$userId.'">
-        '.$name.'
-        </a>
-        <div class="modal fade" id="userModal_'.$userId.'" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-        <h5 class="modal-title" id="modalLabel">Manager Details</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-        <div class="modal-body">
-        <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Phone</h5>
-        </div>
-        <p class="mb-1">'.$phone.'</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Street</h5>
-        </div>
-        <p class="mb-1">'.$street.'</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Postal</h5>
-        </div>
-        <p class="mb-1">'.$postal.'</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">City</h5>
-        </div>
-        <p class="mb-1">'.$city.'</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Country</h5>
-        </div>
-        <p class="mb-1">'.$country.'</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Created On</h5>
-        </div>
-        <p class="mb-1">'.date('d.m.y', strtotime($created_at)).'</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action">
-        <div class="d-flex w-100 justify-content-between">
-        <h5 class="mb-1">Email</h5>
-        </div>
-        <p class="mb-1">'.$email.'</p>
-        </a>
-        </div>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
-        </div>
-        </div>
-        </div>';
-
-        return $html;
-    }
-
-    /**
      * html group button to change manager status 
      * @param  int $id
      * @param  string $oldStatus 
@@ -305,6 +230,27 @@ class ManagerController extends Controller
             </div>
 
             <form method="POST" action="">
+            <div class="form-row">
+            <div class="form-group col-md-6">
+
+            <label for="email">Email:</label>
+            <div class="badge badge-secondary text-wrap" style="width: 6rem;">
+            '.$user->email.'
+            </div>
+            
+
+            </div>
+            <div class="form-group col-md-6">
+
+            <label for="phone">Created On:</label>
+            <div class="badge badge-secondary" style="width: 6rem;">
+            '.date('d.m.y', strtotime($user->created_at)).'
+            </div>
+            
+
+            </div>
+            </div>
+
             <div class="form-row">
             <div class="form-group col-md-6">
 
@@ -437,7 +383,7 @@ class ManagerController extends Controller
      */
     public function edit($id)
     {
-        $user = User::where('role', 'manager')->findOrFail($id);
+        $user = User::manager()->findOrFail($id);
         return $user;
     }
 
@@ -452,7 +398,7 @@ class ManagerController extends Controller
     {
         try {
             User::where('id', session()->get('manager'))
-            ->where('role', 'manager')
+            ->manager()
             ->update([
                 'name'      => $request->name,  
                 'phone'     => $request->phone, 
