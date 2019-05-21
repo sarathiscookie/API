@@ -332,7 +332,7 @@ $(function() {
 			$.ajax({
 				url: "/admin/dashboard/manager/update",
 				dataType: "JSON",
-				type: "PUT",
+				type: "POST",
 				data: {
 					name: name,
 					phone: phone,

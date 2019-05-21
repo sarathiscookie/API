@@ -392,7 +392,7 @@ class ManagerController extends Controller
      * @param  \App\Http\Requests\Admin\ManagerRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function update(ManagerRequest $request)
+    public function update(Request $request)
     {
         try {
             User::where('id', $request->managerid)
