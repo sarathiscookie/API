@@ -190,7 +190,7 @@ $(function() {
 			$.ajax({
 				url: "/admin/dashboard/manager/update",
 				dataType: "JSON",
-				type: "POST",
+				type: "PUT",
 				data: {
 					name: name,
 					phone: phone,
