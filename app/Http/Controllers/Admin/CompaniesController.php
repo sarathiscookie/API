@@ -167,12 +167,35 @@ class CompaniesController extends Controller
     public function companyStatusHtml($id, $oldStatus, $yesStatus, $noStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
-        $html    = '<label class="switch" data-companyid="'.$id.'">
+        $html    = '<label class="switch" data-companystatusid="'.$id.'">
         <input type="checkbox" class="buttonStatus" '.$checked.'>
         <span class="slider round"></span>
         </label>';
 
         return $html;
+    }
+
+    /**
+     * Update manager status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Request $request)
+    {
+        try {
+
+            $company         = Company::findOrFail($request->companyStatusId);
+
+            $company->active = $request->newStatus;
+
+            $company->save();
+
+            return response()->json(['companyStatusChange' => 'success', 'message' => 'Company status updated successfully'], 201);
+        } 
+        catch(\Exception $e){
+            return response()->json(['companyStatusChange' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 
     /**
@@ -199,7 +222,7 @@ class CompaniesController extends Controller
             <div class="modal-body">
             <div class="companyUpdateValidationAlert"></div>
             <div class="text-right">
-            <a href="" type="button" class="btn btn-danger btn-sm deleteEvent" data-id="'.$company->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
+            <a href="" type="button" class="btn btn-danger btn-sm deleteCompany" data-deletecompanyid="'.$company->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
             <hr>
             </div>
 
@@ -309,10 +332,10 @@ class CompaniesController extends Controller
             $user->active       = 'no';
             $user->save();
 
-            return response()->json(['successStatusCompany' => 'success', 'message' => 'Well done! Company created successfully'], 201);
+            return response()->json(['companyStatus' => 'success', 'message' => 'Well done! Company created successfully'], 201);
         } 
         catch(\Exception $e){
-            return response()->json(['failedStatusCompany' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+            return response()->json(['companyStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
 
@@ -347,7 +370,6 @@ class CompaniesController extends Controller
      */
     public function update(CompanyRequest $request)
     {
-        dd($request->all());
         try {
             Company::where('id', $request->companyid)
             ->update([
@@ -359,10 +381,10 @@ class CompaniesController extends Controller
                 'postal'    => $request->zip
             ]);
 
-            return response()->json(['successUpdateCompany' => 'success', 'message' => 'Well done! Company details updated successfully'], 201);
+            return response()->json(['companyStatusUpdate' => 'success', 'message' => 'Well done! Company details updated successfully'], 201);
         } 
         catch(\Exception $e){
-            return response()->json(['failureUpdateCompany' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+            return response()->json(['companyStatusUpdate' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         } 
     }
 
@@ -374,6 +396,13 @@ class CompaniesController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Company::destroy($id);
+
+            return response()->json(['deletedCompanyStatus' => 'success', 'message' => 'Company details deleted successfully'], 201);
+        }
+        catch(\Exception $e) {
+            return response()->json(['deletedCompanyStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 }

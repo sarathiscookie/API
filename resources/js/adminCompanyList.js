@@ -134,19 +134,25 @@ $(function() {
 			}
 		})
 			.done(function(result) {
-				if (result.successStatusCompany === "success") {
+				if (result.companyStatus === "success") {
 					$("#createCompanyModal").modal("hide"); // It hides the modal
+
+					companyList.ajax.reload(null, false); //Reload data on table
+
 					$(".responseCompanyMessage").html(
 						'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
 							result.message +
 							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 					);
 
-					companyList.ajax.reload(null, false);
+					$(".responseCompanyMessage")
+						.show()
+						.delay(5000)
+						.fadeOut();
 				}
 			})
 			.fail(function(data) {
-				if (data.responseJSON.failedStatusCompany === "failure") {
+				if (data.responseJSON.companyStatus === "failure") {
 					$(".companyValidationAlert").html(
 						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 							data.responseJSON.message +
@@ -175,8 +181,10 @@ $(function() {
 			.end();
 	});
 
+	/* Edit company details */
 	$("#company_list tbody").on("click", "a.editCompany", function(e) {
 		var companyid = $(this).data("companyid");
+
 		$(".updateCompany_" + companyid).on("click", function(e) {
 			e.preventDefault();
 
@@ -202,19 +210,25 @@ $(function() {
 				}
 			})
 				.done(function(result) {
-					if (result.successUpdateCompany === "success") {
+					if (result.companyStatusUpdate === "success") {
 						$("#editCompanyModal_" + companyid).modal("hide"); // It hides the modal
+
+						companyList.ajax.reload(null, false); //Reload data on table
+
 						$(".responseCompanyMessage").html(
 							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
 								result.message +
 								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 						);
 
-						companyList.ajax.reload(null, false);
+						$(".responseCompanyMessage")
+							.show()
+							.delay(5000)
+							.fadeOut();
 					}
 				})
 				.fail(function(data) {
-					if (data.responseJSON.failureUpdateCompany === "failure") {
+					if (data.responseJSON.companyStatusUpdate === "failure") {
 						$(".companyUpdateValidationAlert").html(
 							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 								data.responseJSON.message +
@@ -231,5 +245,92 @@ $(function() {
 					}
 				});
 		});
+	});
+
+	/* Delete company functionality */
+	$("#company_list tbody").on("click", "a.deleteCompany", function(e) {
+		e.preventDefault();
+		var deletecompanyid = $(this).data("deletecompanyid");
+		var r = confirm("Are you sure you want to remove the company?");
+		if (r == true) {
+			$.ajax({
+				url: "/admin/dashboard/company/delete/" + deletecompanyid,
+				dataType: "JSON",
+				type: "DELETE"
+			})
+				.done(function(result) {
+					if (result.deletedCompanyStatus === "success") {
+						$("#editCompanyModal_" + deletecompanyid).modal("hide"); // It hides the modal
+
+						companyList
+							.row($(this).parents("tr"))
+							.remove()
+							.draw();
+
+						$(".responseCompanyMessage").html(
+							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
+								result.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+
+						$(".responseCompanyMessage")
+							.show()
+							.delay(5000)
+							.fadeOut();
+					}
+				})
+				.fail(function(data) {
+					if (data.responseJSON.deletedCompanyStatus === "failure") {
+						$(".companyUpdateValidationAlert").html(
+							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+								data.responseJSON.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+					}
+				});
+		}
+	});
+
+	/* Company status changing functionality */
+	$("#company_list tbody").on("change", "input.buttonStatus", function(e) {
+		e.preventDefault();
+
+		var newStatus = "";
+
+		var companyStatusId = $(this)
+			.parent()
+			.data("companystatusid");
+
+		if ($(this).is(":checked") === true) {
+			newStatus = "yes";
+		} else {
+			newStatus = "no";
+		}
+
+		$.ajax({
+			url: "/admin/dashboard/company/status/update",
+			dataType: "JSON",
+			type: "POST",
+			data: { newStatus: newStatus, companyStatusId: companyStatusId }
+		})
+			.done(function(result) {
+				companyList.ajax.reload(null, false);
+			})
+			.fail(function(data) {
+				if (data.responseJSON.companyStatusChange === "failure") {
+					companyList.ajax.reload(null, false);
+
+					$(".responseCompanyMessage").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+							data.responseJSON.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+				}
+
+				$(".responseCompanyMessage")
+					.show()
+					.delay(5000)
+					.fadeOut();
+			});
 	});
 });
