@@ -108,25 +108,38 @@ $(function() {
 			$.ajax({
 				url: "/admin/dashboard/manager/delete/" + userId,
 				dataType: "JSON",
-				type: "DELETE",
-				success: function(result) {
-					if (result) {
+				type: "DELETE"
+			})
+				.done(function(result) {
+					if (result.deletedManagerStatus === "success") {
+						$("#editManagerModal_" + userId).modal("hide"); // It hides the modal
+
 						datatableList
 							.row($(this).parents("tr"))
 							.remove()
 							.draw();
+
 						$(".responseMessage").html(
-							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> <strong> Well Done! </strong>' +
+							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
 								result.message +
 								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 						);
+
 						$(".responseMessage")
 							.show()
 							.delay(5000)
 							.fadeOut();
 					}
-				}
-			});
+				})
+				.fail(function(data) {
+					if (data.responseJSON.deletedManagerStatus === "failure") {
+						$(".managerUpdateValidationAlert").html(
+							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+								data.responseJSON.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+					}
+				});
 		}
 	});
 
@@ -165,17 +178,21 @@ $(function() {
 			.done(function(result) {
 				datatableList.ajax.reload(null, false);
 			})
-			.fail(function() {
-				$(".responseMessage").html(
-					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> Something went wrong! <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-				);
+			.fail(function(data) {
+				datatableList.ajax.reload(null, false);
+
+				if (data.responseJSON.managerStatusChange === "failure") {
+					$(".responseMessage").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+							data.responseJSON.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+				}
 
 				$(".responseMessage")
 					.show()
 					.delay(5000)
 					.fadeOut();
-
-				datatableList.ajax.reload(null, false);
 			});
 	});
 
@@ -231,7 +248,7 @@ $(function() {
 			})
 			.fail(function(data) {
 				if (data.responseJSON.managerStatus === "failure") {
-					$(".validationAlert").html(
+					$(".managerValidationAlert").html(
 						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 							data.responseJSON.message +
 							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
@@ -240,7 +257,7 @@ $(function() {
 
 				if (data.status === 422) {
 					$.each(data.responseJSON.errors, function(key, val) {
-						$(".validationAlert").html(
+						$(".managerValidationAlert").html(
 							"<p class='alert alert-danger'>" + val + "</p>"
 						);
 					});
@@ -290,20 +307,26 @@ $(function() {
 				}
 			})
 				.done(function(result) {
-					if (result.successUpdateManager === "success") {
+					if (result.managerStatusUpdate === "success") {
 						$("#editManagerModal_" + managerid).modal("hide"); // It hides the modal
+
+						datatableList.ajax.reload(null, false); //Reload data on table
+
 						$(".responseMessage").html(
 							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
 								result.message +
 								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 						);
 
-						datatableList.ajax.reload(null, false);
+						$(".responseMessage")
+							.show()
+							.delay(5000)
+							.fadeOut();
 					}
 				})
 				.fail(function(data) {
-					if (data.responseJSON.failureUpdateManager === "failure") {
-						$(".updateValidationAlert").html(
+					if (data.responseJSON.managerStatusUpdate === "failure") {
+						$(".managerUpdateValidationAlert").html(
 							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 								data.responseJSON.message +
 								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
@@ -312,7 +335,7 @@ $(function() {
 
 					if (data.status === 422) {
 						$.each(data.responseJSON.errors, function(key, val) {
-							$(".updateValidationAlert").html(
+							$(".managerUpdateValidationAlert").html(
 								"<p class='alert alert-danger'>" + val + "</p>"
 							);
 						});

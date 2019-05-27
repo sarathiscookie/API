@@ -197,10 +197,10 @@ class ManagerController extends Controller
 
             $user->save();
 
-            return response()->json(['status' => 'success', 'message' => 'User status updated successfully'], 201);
+            return response()->json(['managerStatusChange' => 'success', 'message' => 'User status updated successfully'], 201);
         } 
         catch(\Exception $e){
-            abort(404);
+            return response()->json(['managerStatusChange' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
 
@@ -220,7 +220,7 @@ class ManagerController extends Controller
                 $companyOptions .= '<option value="'.$company->id.'" '.$companySelected.'>'.$company->company.'</option>';
             }
 
-            $country  = 'de'; //($user->country === 'de') ? 'selected' : '';
+            $country  = ($user->country === 'de') ? 'selected' : '';
             $html     = '<a class="btn btn-secondary btn-sm editManager" data-managerid="'.$user->id.'" data-toggle="modal" data-target="#editManagerModal_'.$user->id.'"><i class="fas fa-cog"></i></a>
             <div class="modal fade" id="editManagerModal_'.$user->id.'" tabindex="-1" role="dialog" aria-labelledby="editManagerModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -233,7 +233,7 @@ class ManagerController extends Controller
             </div>
 
             <div class="modal-body">
-            <div class="updateValidationAlert"></div>
+            <div class="managerUpdateValidationAlert"></div>
             <div class="text-right">
             <a href="" class="btn btn-danger btn-sm deleteEvent" data-id="'.$user->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
             <hr>
@@ -414,13 +414,13 @@ class ManagerController extends Controller
                 'city'      => $request->city, 
                 'country'   => $request->country,
                 'postal'    => $request->zip,
-                'company'   => $request->company,
+                'company_id'=> $request->company,
             ]);
 
-            return response()->json(['successUpdateManager' => 'success', 'message' => 'Well done! User details updated successfully'], 201);
+            return response()->json(['managerStatusUpdate' => 'success', 'message' => 'Well done! User details updated successfully'], 201);
         } 
         catch(\Exception $e){
-            return response()->json(['failureUpdateManager' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+            return response()->json(['managerStatusUpdate' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         } 
     }
 
@@ -432,8 +432,14 @@ class ManagerController extends Controller
      */
     public function destroy($id)
     {
-        $user            = User::destroy($id);
-        return response()->json(['message' => 'User deleted successfully!'], 201);
+        try {
+            $user            = User::destroy($id);
+
+            return response()->json(['deletedManagerStatus' => 'success', 'message' => 'Manager details deleted successfully'], 201);
+        }   
+        catch(\Exception $e) {
+            return response()->json(['deletedManagerStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 
     /**
@@ -443,10 +449,15 @@ class ManagerController extends Controller
      */
     public function company()
     {
-        $company = Company::select('id', 'company')
+        try {
+            $company = Company::select('id', 'company')
             ->active()
             ->get();
 
-        return $company;    
+            return $company;
+        }
+        catch(\Exception $e) {
+            abort(404);
+        }    
     }
 }

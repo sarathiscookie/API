@@ -71,7 +71,7 @@
             </div>
             <div class="modal-body">
 
-              <div class="validationAlert"></div>
+              <div class="managerValidationAlert"></div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">

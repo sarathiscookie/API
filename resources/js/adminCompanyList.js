@@ -317,9 +317,9 @@ $(function() {
 				companyList.ajax.reload(null, false);
 			})
 			.fail(function(data) {
-				if (data.responseJSON.companyStatusChange === "failure") {
-					companyList.ajax.reload(null, false);
+				companyList.ajax.reload(null, false);
 
+				if (data.responseJSON.companyStatusChange === "failure") {
 					$(".responseCompanyMessage").html(
 						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 							data.responseJSON.message +

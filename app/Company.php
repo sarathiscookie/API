@@ -80,7 +80,7 @@ class Company extends Model
     }
 
     /**
-    * Scope for manager role.
+    * Scope for company status.
     *
     * @param  string  $query
     * @return string
