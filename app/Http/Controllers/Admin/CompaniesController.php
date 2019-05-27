@@ -222,7 +222,7 @@ class CompaniesController extends Controller
             <div class="modal-body">
             <div class="companyUpdateValidationAlert"></div>
             <div class="text-right">
-            <a href="" type="button" class="btn btn-danger btn-sm deleteCompany" data-deletecompanyid="'.$company->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
+            <a href="" class="btn btn-danger btn-sm deleteCompany" data-deletecompanyid="'.$company->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
             <hr>
             </div>
 
