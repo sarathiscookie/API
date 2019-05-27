@@ -61,6 +61,50 @@ class User extends Authenticatable
     }
 
     /**
+     * Set the user's street.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setStreetAttribute($value)
+    {
+        $this->attributes['street'] = strtolower($value);
+    }
+
+    /**
+    * Get the user's street.
+    *
+    * @param  string  $value
+    * @return string
+    */
+    public function getStreetAttribute($value)
+    {
+        return ucwords($value);
+    }
+
+    /**
+     * Set the user's city.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setCityAttribute($value)
+    {
+        $this->attributes['city'] = strtolower($value);
+    }
+
+    /**
+    * Get the user's city.
+    *
+    * @param  string  $value
+    * @return string
+    */
+    public function getCityAttribute($value)
+    {
+        return ucwords($value);
+    }
+
+    /**
     * Scope for manager role.
     *
     * @param  string  $query

@@ -14,7 +14,7 @@ class Company extends Model
     protected $guarded = ['id'];
 
     /**
-     * Set the user's name.
+     * Set the company name.
      *
      * @param  string  $value
      * @return void
@@ -25,12 +25,56 @@ class Company extends Model
     }
 
     /**
-    * Get the user's first name.
+    * Get the company name.
     *
     * @param  string  $value
     * @return string
     */
     public function getCompanyAttribute($value)
+    {
+        return ucwords($value);
+    }
+
+    /**
+     * Set the company street.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setStreetAttribute($value)
+    {
+        $this->attributes['street'] = strtolower($value);
+    }
+
+    /**
+    * Get the company street.
+    *
+    * @param  string  $value
+    * @return string
+    */
+    public function getStreetAttribute($value)
+    {
+        return ucwords($value);
+    }
+
+    /**
+     * Set the company city.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setCityAttribute($value)
+    {
+        $this->attributes['city'] = strtolower($value);
+    }
+
+    /**
+    * Get the company city.
+    *
+    * @param  string  $value
+    * @return string
+    */
+    public function getCityAttribute($value)
     {
         return ucwords($value);
     }
