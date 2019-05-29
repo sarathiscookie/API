@@ -5,12 +5,14 @@ namespace App\Http\Controllers\Admin;
 use App\Company;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ManagerRequest;
+use App\Http\Traits\CompanyTrait;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class ManagerController extends Controller
 {
+    use CompanyTrait;
     /**
      * Display a listing of the resource.
      *
@@ -442,22 +444,4 @@ class ManagerController extends Controller
         }
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function company()
-    {
-        try {
-            $company = Company::select('id', 'company')
-            ->active()
-            ->get();
-
-            return $company;
-        }
-        catch(\Exception $e) {
-            abort(404);
-        }    
-    }
 }
