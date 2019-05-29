@@ -23,13 +23,30 @@ class CompanyRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'zip'       => ['required', 'string', 'max:20'],
-            'city'      => ['required', 'string', 'max:255'],
-            'street'    => ['required', 'string', 'max:255'],
-            'phone'     => ['required', 'string', 'max:20'],
-            'country'   => ['required', 'not_in:0'],
-            'company'   => ['required', 'string', 'max:255']
-        ];
+        switch($this->method()) {
+            case 'POST':
+            {
+                return [
+                    'zip'       => ['required', 'string', 'max:20'],
+                    'city'      => ['required', 'string', 'max:255'],
+                    'street'    => ['required', 'string', 'max:255'],
+                    'phone'     => ['required', 'string', 'max:20'],
+                    'country'   => ['required', 'not_in:0'],
+                    'company'   => ['required', 'string', 'max:255']
+                ];
+            }
+            case 'PUT':
+            {
+                return [
+                    'zip'       => ['required', 'string', 'max:20'],
+                    'city'      => ['required', 'string', 'max:255'],
+                    'street'    => ['required', 'string', 'max:255'],
+                    'phone'     => ['required', 'string', 'max:20'],
+                    'country'   => ['required', 'not_in:0'],
+                    'company'   => ['required', 'string', 'max:255']
+                ];
+            }
+            default:break;
+        } 
     }
 }
