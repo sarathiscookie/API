@@ -77,18 +77,9 @@ class ManagerController extends Controller
 
         if(!empty($managerLists)) {
             foreach ($managerLists as $key=> $managerList) {
-                if($managerList->active === 'yes') {
-                    $yesStatus    = 'btn-success';
-                    $noStatus     = 'btn-secondary';
-                }
-                else {
-                    $yesStatus    = 'btn-secondary';
-                    $noStatus     = 'btn-danger';
-                }
-
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$managerList->id.'" />';
                 $nestedData['name']       = $managerList->name;
-                $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active, $yesStatus, $noStatus);
+                $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active);
                 $nestedData['actions']    = $this->editMangerModel($managerList->id);
                 $data[]                   = $nestedData;
             }
@@ -167,12 +158,10 @@ class ManagerController extends Controller
     /**
      * html group button to change manager status 
      * @param  int $id
-     * @param  string $oldStatus 
-     * @param  string $yesStatus
-     * @param  string $noStatus  
+     * @param  string $oldStatus  
      * @return \Illuminate\Http\Response
      */
-    public function userStatusHtml($id, $oldStatus, $yesStatus, $noStatus)
+    public function userStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
         $html    = '<label class="switch" data-userid="'.$id.'">
@@ -253,7 +242,7 @@ class ManagerController extends Controller
             </div>
             <div class="form-group col-md-6">
 
-            <label for="phone">Created On:</label>
+            <label for="createdon">Created On:</label>
             <div class="badge badge-secondary" style="width: 6rem;">
             '.date('d.m.y', strtotime($user->created_at)).'
             </div>

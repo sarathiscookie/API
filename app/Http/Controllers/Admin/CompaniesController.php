@@ -69,18 +69,9 @@ class CompaniesController extends Controller
 
         if(!empty($companiesLists)) {
             foreach ($companiesLists as $key=> $companiesList) {
-                if($companiesList->active === 'yes') {
-                    $yesStatus    = 'btn-success';
-                    $noStatus     = 'btn-secondary';
-                }
-                else {
-                    $yesStatus    = 'btn-secondary';
-                    $noStatus     = 'btn-danger';
-                }
-
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$companiesList->id.'" />';
                 $nestedData['company']    = $companiesList->company;
-                $nestedData['active']     = $this->companyStatusHtml($companiesList->id, $companiesList->active, $yesStatus, $noStatus);
+                $nestedData['active']     = $this->companyStatusHtml($companiesList->id, $companiesList->active);
                 $nestedData['actions']    = $this->editCompanyModel($companiesList->id);
                 $data[]                   = $nestedData;
             }
@@ -159,12 +150,10 @@ class CompaniesController extends Controller
     /**
      * html group button to change company status 
      * @param  int $id
-     * @param  string $oldStatus 
-     * @param  string $yesStatus
-     * @param  string $noStatus  
+     * @param  string $oldStatus
      * @return \Illuminate\Http\Response
      */
-    public function companyStatusHtml($id, $oldStatus, $yesStatus, $noStatus)
+    public function companyStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
         $html    = '<label class="switch" data-companystatusid="'.$id.'">
@@ -229,7 +218,7 @@ class CompaniesController extends Controller
             <div class="form-row">
             <div class="form-group col-md-6">
 
-            <label for="phone">Created On:</label>
+            <label for="createdon">Created On:</label>
             <div class="badge badge-secondary" style="width: 6rem;">
             '.date('d.m.y', strtotime($company->created_at)).'
             </div>
