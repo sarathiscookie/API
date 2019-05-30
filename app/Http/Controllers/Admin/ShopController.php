@@ -69,6 +69,8 @@ class ShopController extends Controller
         ->orderBy($order, $dir)
         ->get();
 
+        $data = [];
+
         if(!empty($shopLists)) {
             foreach ($shopLists as $key=> $shopList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$shopList->id.'" />';
