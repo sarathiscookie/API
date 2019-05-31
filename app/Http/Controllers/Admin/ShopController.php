@@ -446,6 +446,13 @@ class ShopController extends Controller
      */
     public function destroy($id)
     {
-        //
+        try {
+            Shop::destroy($id);
+
+            return response()->json(['deletedShopStatus' => 'success', 'message' => 'Shop details deleted successfully'], 201);
+        }
+        catch(\Exception $e) {
+            return response()->json(['deletedShopStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 }

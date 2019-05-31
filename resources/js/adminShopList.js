@@ -306,6 +306,50 @@ $(function() {
 			});
 	});
 
+	/* Delete shop functionality */
+	$("#shop_list tbody").on("click", "a.deleteShop", function(e) {
+		e.preventDefault();
+		var deleteshopid = $(this).data("deleteshopid");
+		var r = confirm("Are you sure you want to remove the shop?");
+		if (r == true) {
+			$.ajax({
+				url: "/admin/dashboard/shop/delete/" + deleteshopid,
+				dataType: "JSON",
+				type: "DELETE"
+			})
+				.done(function(result) {
+					if (result.deletedShopStatus === "success") {
+						$("#editShopModal_" + deleteshopid).modal("hide"); // It hides the modal
+
+						shopList
+							.row($(this).parents("tr"))
+							.remove()
+							.draw();
+
+						$(".responseShopMessage").html(
+							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
+								result.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+
+						$(".responseShopMessage")
+							.show()
+							.delay(5000)
+							.fadeOut();
+					}
+				})
+				.fail(function(data) {
+					if (data.responseJSON.deletedShopStatus === "failure") {
+						$(".shopUpdateValidationAlert").html(
+							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+								data.responseJSON.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+					}
+				});
+		}
+	});
+
 	/* Clearing data of create shop modal fields */
 	$("#createShopModal").on("hidden.bs.modal", function(e) {
 		$(this)
