@@ -1000,6 +1000,49 @@ $(function() {
 		});
 	});
 
+	/* Updating shop status */
+	$("#shop_list tbody").on("change", "input.buttonStatus", function(e) {
+		e.preventDefault();
+
+		var newStatus = "";
+
+		var shopStatusId = $(this)
+			.parent()
+			.data("shopstatusid");
+
+		if ($(this).is(":checked") === true) {
+			newStatus = "yes";
+		} else {
+			newStatus = "no";
+		}
+
+		$.ajax({
+			url: "/admin/dashboard/shop/status/update",
+			dataType: "JSON",
+			type: "POST",
+			data: { newStatus: newStatus, shopStatusId: shopStatusId }
+		})
+			.done(function(result) {
+				shopList.ajax.reload(null, false);
+			})
+			.fail(function(data) {
+				shopList.ajax.reload(null, false);
+
+				if (data.responseJSON.shopStatusChange === "failure") {
+					$(".responseShopMessage").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+							data.responseJSON.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+				}
+
+				$(".responseShopMessage")
+					.show()
+					.delay(5000)
+					.fadeOut();
+			});
+	});
+
 	/* Clearing data of create shop modal fields */
 	$("#createShopModal").on("hidden.bs.modal", function(e) {
 		$(this)

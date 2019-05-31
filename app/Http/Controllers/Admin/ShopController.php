@@ -169,6 +169,29 @@ class ShopController extends Controller
     }
 
     /**
+    * Update shop status.
+    *
+    * @param  \Illuminate\Http\Request  $request
+    * @return \Illuminate\Http\Response
+    */
+    public function updateStatus(Request $request)
+    {
+        try {
+
+            $shop         = Shop::findOrFail($request->shopStatusId);
+
+            $shop->active = $request->newStatus;
+
+            $shop->save();
+
+            return response()->json(['shopStatusChange' => 'success', 'message' => 'Shop status updated successfully'], 201);
+        } 
+        catch(\Exception $e){
+            return response()->json(['shopStatusChange' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
+    }
+
+    /**
      * Model to edit shop data
      * @param  integer $shopId
      * @return \Illuminate\Http\Response
