@@ -347,6 +347,7 @@ class ManagerController extends Controller
             $user->name         = $request->name;
             $user->password     = Hash::make($request->password);
             $user->email        = $request->email;
+            $user->username     = $request->username;
             $user->phone        = $request->phone;
             $user->street       = $request->street;
             $user->city         = $request->city;

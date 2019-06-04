@@ -202,6 +202,7 @@ $(function() {
 
 		var name = $("#name").val();
 		var email = $("#email").val();
+		var username = $("#username").val();
 		var phone = $("#phone").val();
 		var street = $("#street").val();
 		var city = $("#city").val();
@@ -218,6 +219,7 @@ $(function() {
 			data: {
 				name: name,
 				email: email,
+				username: username,
 				phone: phone,
 				street: street,
 				city: city,

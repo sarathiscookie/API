@@ -88,12 +88,17 @@
               </div>
 
               <div class="form-row">
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
+                  <label for="username">Username <span class="required">*</span></label>
+                  <input id="username" type="text" class="form-control" name="username" maxlength="255">
+                </div>
+
+                <div class="form-group col-md-4">
                   <label for="password">Password <span class="required">*</span></label>
                   <input id="password" type="password" class="form-control" name="password" maxlength="255">
                 </div>
 
-                <div class="form-group col-md-6">
+                <div class="form-group col-md-4">
                   <label for="password_confirmation">Confirm Password <span class="required">*</span></label>
                   <input id="password_confirmation" type="password" class="form-control" name="password_confirmation">
                 </div>

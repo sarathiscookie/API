@@ -34,6 +34,7 @@ class ManagerRequest extends FormRequest
                     'phone'     => ['required', 'string', 'max:20'],
                     'company'   => ['required', 'not_in:0'],
                     'password'  => ['required', 'string', 'min:8', 'confirmed'],
+                    'username'  => ['required', 'alpha_dash', 'string', 'max:255', 'unique:users'],
                     'email'     => ['required', 'string', 'email', 'max:255', 'unique:users'],
                     'name'      => ['required', 'string', 'max:255']
                 ]; 
