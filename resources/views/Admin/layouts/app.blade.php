@@ -42,6 +42,7 @@
                         <a class="dropdown-item" href="/admin/dashboard/company/list"><i class="fas fa-list-alt"></i> Company List</a>
                         <a class="dropdown-item" href="/admin/dashboard/manager/list"><i class="far fa-address-book"></i> Manager List</a>
                         <a class="dropdown-item" href="/admin/dashboard/manager/list"><i class="fas fa-store"></i> Shop List</a>
+                        
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             {{ __('Logout') }}
