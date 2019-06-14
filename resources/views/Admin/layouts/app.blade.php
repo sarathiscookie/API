@@ -43,6 +43,7 @@
                         <a class="dropdown-item" href="/admin/dashboard/manager/list"><i class="far fa-address-book"></i> Manager List</a>
                         <a class="dropdown-item" href="/admin/dashboard/manager/list"><i class="fas fa-store"></i> Shop List</a>
                         <a class="dropdown-item" href="/admin/dashboard/user/list"><i class="fas fa-users"></i> User List</a>
+                        <a class="dropdown-item" href="/admin/dashboard/key/list"><i class="fas fa-key"></i> User List</a>
                         
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
@@ -99,6 +100,13 @@
                             <a class="nav-link" href="/admin/dashboard/user/list">
                                 <i class="fas fa-users"></i> 
                                 User List
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/dashboard/key/list">
+                                <i class="fas fa-key"></i>
+                                Key List
                             </a>
                         </li>
 

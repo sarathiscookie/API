@@ -68,7 +68,7 @@ Route::prefix('admin')->group(function(){
 		/* Delete shops */
 		Route::delete('/dashboard/shop/delete/{id}', 'Admin\ShopController@destroy')->name('admin.dashboard.shop.delete');
 		/* Update shop status */
-		Route::post('/dashboard/shop/status/update', 'Admin\ShopController@updateStatus')->name('admin.dashboard.status.update');
+		Route::post('/dashboard/shop/status/update', 'Admin\ShopController@updateStatus')->name('admin.dashboard.shop.status.update');
 		/* Store shop */
 		Route::post('/dashboard/shop/store', 'Admin\ShopController@store')->name('admin.dashboard.shop.store');
 		/* Update shop */
@@ -81,11 +81,24 @@ Route::prefix('admin')->group(function(){
 		/* Delete users */
 		Route::delete('/dashboard/user/delete/{id}', 'Admin\UserController@destroy')->name('admin.dashboard.user.delete');
 		/* Update user status */
-		Route::post('/dashboard/user/status/update', 'Admin\UserController@updateStatus')->name('admin.dashboard.status.update');
+		Route::post('/dashboard/user/status/update', 'Admin\UserController@updateStatus')->name('admin.dashboard.user.status.update');
 		/* Store user */
 		Route::post('/dashboard/user/store', 'Admin\UserController@store')->name('admin.dashboard.user.store');
 		/* Update user */
 		Route::put('/dashboard/user/update', 'Admin\UserController@update')->name('admin.dashboard.user.update');
+
+		/* Show key listing page */
+		Route::get('/dashboard/key/list', 'Admin\KeyController@index')->name('admin.dashboard.key.list');
+		/* Listing key on datatable */
+		Route::post('/dashboard/key/list/datatables', 'Admin\KeyController@datatable')->name('admin.dashboard.key.list.datatable');
+		/* Delete key */
+		Route::delete('/dashboard/key/delete/{id}', 'Admin\KeyController@destroy')->name('admin.dashboard.key.delete');
+		/* Update key status */
+		Route::post('/dashboard/key/status/update', 'Admin\KeyController@updateStatus')->name('admin.dashboard.key.status.update');
+		/* Store key */
+		Route::post('/dashboard/key/store', 'Admin\KeyController@store')->name('admin.dashboard.key.store');
+		/* Update key */
+		Route::put('/dashboard/key/update', 'Admin\KeyController@update')->name('admin.dashboard.key.update');
 	});
 });
 
