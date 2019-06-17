@@ -27,19 +27,23 @@ class KeyRequest extends FormRequest
             case 'POST':
             {
                 return [
-                    'shop'      => ['required', 'not_in:0'],
-                    'category'  => ['required', 'string', 'max:150'],
-                    'key_type'  => ['required', 'not_in:0'],
-                    'key'       => ['required', 'string', 'max:255'],
+                    'shop'          => ['required', 'not_in:0'],
+                    'category'      => ['required', 'string', 'max:150'],
+                    'key_type'      => ['required', 'not_in:0'],
+                    'key'           => ['required', 'string', 'max:255'],
+                    'language'      => ['required', 'not_in:0'],
+                    'instruction'   => ['required', 'string'],
                 ]; 
             }
             case 'PUT':
             {
                 return [
-                    'shop'      => ['required', 'not_in:0'],
-                    'category'  => ['required', 'string', 'max:150'],
-                    'key_type'  => ['required', 'not_in:0'],
-                    'key'       => ['required', 'string', 'max:255'],
+                    'shop'          => ['required', 'not_in:0'],
+                    'category'      => ['required', 'string', 'max:150'],
+                    'key_type'      => ['required', 'not_in:0'],
+                    'key'           => ['required', 'string', 'max:255'],
+                    'language'      => ['required', 'not_in:0'],
+                    'instruction'   => ['required', 'string'],
                 ]; 
             }
             default:break;

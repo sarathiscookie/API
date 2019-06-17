@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers\admin;
 
-use Illuminate\Http\Request;
-use App\Key;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\admin\KeyRequest;
+use App\Http\Traits\CountryTrait;
+use App\Http\Traits\KeyTypeTrait;
+use App\Key;
+use App\KeyInstruction;
+use App\Shop;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class KeyController extends Controller
 {
+    use CountryTrait, KeyTypeTrait;
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +22,12 @@ class KeyController extends Controller
      */
     public function index()
     {
-        return view('admin.key');
+        $languages   = $this->country();
+        $keyTypes    = $this->keytype(); // Getting key types
+        $shops       = Shop::select('id', 'shop')->active()->get();
+        $shopDetails = (!empty($shops)) ? $shops : '';
+
+        return view('admin.key', ['languages' => $languages, 'shopDetails' => $shopDetails, 'keyTypes' => $keyTypes]);
     }
 
     /**
@@ -176,12 +188,35 @@ class KeyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\KeyRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(KeyRequest $request)
     {
-        //
+        dd($request->all());
+        try {
+            DB::transaction(function () {
+                $key            = new Key;
+                $key->shop_id   = $request->shop;
+                $key->category  = $request->category;
+                $key->key       = $request->key;
+                $key->key_type  = $request->key_type;
+                $key->allot     = 'no';
+                $key->active    = 'no';
+                $key->save();
+
+                $instruction                = new KeyInstruction;
+                $instruction->key_id        = $key->id;
+                $instruction->country_id    = $request->language;
+                $instruction->instuctions   = $request->instruction;
+                $instruction->save();
+            });
+
+            return response()->json(['keyStatus' => 'success', 'message' => 'Well done! Key created successfully'], 201);
+        } 
+        catch(\Exception $e) {
+            return response()->json(['keyStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 
     /**

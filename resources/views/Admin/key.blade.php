@@ -8,7 +8,7 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><i class="far fa-address-book"></i> Key List</li>
+          <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-key"></i> Key List</li>
         </ol>
       </nav>
 
@@ -19,7 +19,7 @@
 
         <div class="card-body">
           <div class="text-right">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createKeyModal"><i class="fas fa-user-plus"></i> Create Key</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createKeyModal"><i class="fas fa-key"></i> Create Key</button>
             <hr>
           </div>
           
@@ -79,36 +79,62 @@
                 <div class="form-group col-md-6">
                   <label for="shop">Shop <span class="required">*</span></label>
                   <select id="shop" class="form-control" name="shop">
-                    <option value="">Choose...</option>
-                    <option value="">Rakuten</option>
-                    <option value="">Ebay</option>
+                    <option value="">Choose Shop</option>
+                    @isset($shopDetails)
+                    @foreach ($shopDetails as $shopDetail)
+                      <option value="{{$shopDetail->id}}">{{$shopDetail->shop}}</option>
+                    @endforeach
+                    @endisset
                   </select>
                 </div>
 
                 <div class="form-group col-md-6">
-                  <label for="category">Category <span class="required">*</span></label>
-                  <input id="category" type="category" class="form-control" name="category" maxlength="150" autocomplete="category">
+                  <label for="key_type">Key Type <span class="required">*</span></label>
+                  <select id="key_type" class="form-control" name="key_type">
+                    <option value="">Choose Type</option>
+                    @isset($keyTypes)
+                    @foreach ($keyTypes as $keyValue => $keyType)
+                      <option value="{{$keyValue}}">{{$keyType}}</option>
+                    @endforeach
+                    @endisset
+                  </select>
                 </div>
               </div>
 
               <div class="form-row">
-                <div class="form-group col-md-2">
-                  <label for="key_type">Key Type <span class="required">*</span></label>
-                  <select id="key_type" class="form-control" name="key_type">
-                    <option value="">Choose...</option>
-                    <option value="">Single</option>
-                    <option value="">Multiple</option>
-                  </select>
-                </div>
-
-                <div class="form-group col-md-10">
+                <div class="form-group col-md-12">
                   <label for="key">Key <span class="required">*</span></label>
                   <input id="key" type="text" class="form-control" name="key" maxlength="255">
                 </div>
-
               </div>
 
-              <button type="button" class="btn btn-primary btn-lg btn-block createKey"><i class="fas fa-user-plus"></i> Create Key</button>
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="category">Category <span class="required">*</span></label>
+                  <input id="category" type="category" class="form-control" name="category" maxlength="150" autocomplete="category">
+                </div>
+
+                <div class="form-group col-md-6">
+                  <label for="language">Key Instruction Language <span class="required">*</span></label>
+                  <select id="language" class="form-control" name="language">
+                    <option value="">Choose Language</option>
+                    @isset($languages)
+                    @foreach ($languages as $language)
+                      <option value="{{$language->id}}">{{$language->code}}</option>
+                    @endforeach
+                    @endisset
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row ">
+                <div class="form-group col-md-12">
+                  <label for="instuction">Key Instructions</label>
+                  <textarea class="form-control" name="instuction" id="instuction" rows="3"></textarea>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-primary btn-lg btn-block createKey"><i class="fas fa-key"></i> Create Key</button>
             </div>
 
           </div>

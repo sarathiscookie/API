@@ -13,7 +13,7 @@ trait CountryTrait {
 	public function country()
 	{
 		try {
-            $country = Country::select('id', 'name')
+            $country = Country::select('id', 'name', 'code')
             ->active()
             ->orderBy('name')
             ->get();

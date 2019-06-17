@@ -1650,20 +1650,24 @@ $(function() {
 	$("button.createKey").on("click", function(e) {
 		e.preventDefault();
 
-		var shop = $("#shop").val();
-		var category = $("#category").val();
-		var key = $("#key").val();
+		var shop     = $("#shop").val();
 		var key_type = $("#key_type").val();
+		var category = $("#category").val();
+		var language = $("#language").val();
+		var key      = $("#key").val();
+		var instruction = $("#instruction").text();
 
 		$.ajax({
-			url: "/admin/dashboard/manager/store",
+			url: "/admin/dashboard/key/store",
 			dataType: "JSON",
 			type: "POST",
 			data: {
 				shop: shop,
-				category: category,
-				key: key,
 				key_type: key_type,
+				category: category,
+				language: language,
+				key: key,
+				instruction: instruction
 			}
 		})
 			.done(function(result) {
