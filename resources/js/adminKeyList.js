@@ -99,41 +99,41 @@ $(function() {
 		buttons = null;
 	}
 
-	/* Delete manager functionality */
+	/* Delete key functionality */
 	$("#key_list tbody").on("click", "a.deleteEvent", function(e) {
 		e.preventDefault();
-		var userId = $(this).data("id");
-		var r = confirm("Are you sure you want to remove the user?");
+		var keyId = $(this).data("id");
+		var r = confirm("Are you sure you want to remove the key?");
 		if (r == true) {
 			$.ajax({
-				url: "/admin/dashboard/manager/delete/" + userId,
+				url: "/admin/dashboard/key/delete/" + keyId,
 				dataType: "JSON",
 				type: "DELETE"
 			})
 				.done(function(result) {
-					if (result.deletedManagerStatus === "success") {
-						$("#editManagerModal_" + userId).modal("hide"); // It hides the modal
+					if (result.deletedKeyStatus === "success") {
+						$("#editKeyModal_" + keyId).modal("hide"); // It hides the modal
 
-						datatableList
+						keyList
 							.row($(this).parents("tr"))
 							.remove()
 							.draw();
 
-						$(".responseMessage").html(
+						$(".responseKeyMessage").html(
 							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
 								result.message +
 								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 						);
 
-						$(".responseMessage")
+						$(".responseKeyMessage")
 							.show()
 							.delay(5000)
 							.fadeOut();
 					}
 				})
 				.fail(function(data) {
-					if (data.responseJSON.deletedManagerStatus === "failure") {
-						$(".managerUpdateValidationAlert").html(
+					if (data.responseJSON.deletedKeyStatus === "failure") {
+						$(".keyUpdateValidationAlert").html(
 							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 								data.responseJSON.message +
 								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
@@ -153,15 +153,15 @@ $(function() {
 			.draw();
 	});
 
-	/* Updating manager status */
+	/* Updating key status */
 	$("#key_list tbody").on("change", "input.buttonStatus", function(e) {
 		e.preventDefault();
 
 		var newStatus = "";
 
-		var userId = $(this)
+		var keyId = $(this)
 			.parent()
-			.data("userid");
+			.data("keyid");
 
 		if ($(this).is(":checked") === true) {
 			newStatus = "yes";
@@ -170,18 +170,18 @@ $(function() {
 		}
 
 		$.ajax({
-			url: "/admin/dashboard/manager/status/update",
+			url: "/admin/dashboard/key/status/update",
 			dataType: "JSON",
 			type: "POST",
-			data: { newStatus: newStatus, userId: userId }
+			data: { newStatus: newStatus, keyId: keyId }
 		})
 			.done(function(result) {
-				datatableList.ajax.reload(null, false);
+				keyList.ajax.reload(null, false);
 			})
 			.fail(function(data) {
-				datatableList.ajax.reload(null, false);
+				keyList.ajax.reload(null, false);
 
-				if (data.responseJSON.managerStatusChange === "failure") {
+				if (data.responseJSON.keyStatusChange === "failure") {
 					$(".responseMessage").html(
 						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 							data.responseJSON.message +
@@ -196,16 +196,16 @@ $(function() {
 			});
 	});
 
-	/* Create manager */
+	/* Create key */
 	$("button.createKey").on("click", function(e) {
 		e.preventDefault();
 
-		var shop     = $("#shop").val();
-		var key_type = $("#key_type").val();
-		var category = $("#category").val();
-		var language = $("#language").val();
-		var key      = $("#key").val();
-		var instruction = $("#instruction").text();
+		var shop     	= $("#shop").val();
+		var key_type 	= $("#key_type").val();
+		var category 	= $("#category").val();
+		var language 	= $("#language").val();
+		var key      	= $("#key").val();
+		var instruction = $("#instruction").val();
 
 		$.ajax({
 			url: "/admin/dashboard/key/store",

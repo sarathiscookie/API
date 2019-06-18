@@ -12,4 +12,26 @@ class Key extends Model
     * @var array
     */
     protected $guarded = ['id'];
+
+    /**
+     * Set the key category.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function setCategoryAttribute($value)
+    {
+        $this->attributes['category'] = strtolower($value);
+    }
+
+    /**
+    * Get the key category.
+    *
+    * @param  string  $value
+    * @return string
+    */
+    public function getCategoryAttribute($value)
+    {
+        return ucwords($value);
+    }
 }

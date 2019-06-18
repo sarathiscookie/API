@@ -5,7 +5,7 @@ namespace App\Http\Traits;
 trait KeyTypeTrait {
 
     /**
-     * Get all companies
+     * Get key types
      * @return \Illuminate\Http\Response
      */
 	public function keytype()

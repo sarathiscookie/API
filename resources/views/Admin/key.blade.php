@@ -31,7 +31,7 @@
               <thead class="thead-light">
                 <tr>
                   <th>#</th>
-                  <th>Key</th>
+                  <th>Key Details</th>
                   <th>Active</th>
                   <th>Actions</th>
                 </tr>
@@ -73,7 +73,7 @@
             </div>
             <div class="modal-body">
 
-              <div class="KeyValidationAlert"></div>
+              <div class="keyValidationAlert"></div>
 
               <div class="form-row">
                 <div class="form-group col-md-6">
@@ -104,7 +104,7 @@
               <div class="form-row">
                 <div class="form-group col-md-12">
                   <label for="key">Key <span class="required">*</span></label>
-                  <input id="key" type="text" class="form-control" name="key" maxlength="255">
+                  <input id="key" type="text" class="form-control" name="key" maxlength="255" autocomplete="key">
                 </div>
               </div>
 
@@ -129,8 +129,8 @@
 
               <div class="form-row ">
                 <div class="form-group col-md-12">
-                  <label for="instuction">Key Instructions</label>
-                  <textarea class="form-control" name="instuction" id="instuction" rows="3"></textarea>
+                  <label for="instruction">Key Instructions</label>
+                  <textarea class="form-control" name="instruction" id="instruction" rows="3"></textarea>
                 </div>
               </div>
 
