@@ -27,7 +27,7 @@
 
             <div class="responseKeyMessage"></div>
 
-            <table id="key_list" class="table table-bordered table-hover display" style="width:100%">
+            <table id="" class="table table-bordered table-hover display" style="width:100%">
               <thead class="thead-light">
                 <tr>
                   <th>#</th>
@@ -77,15 +77,8 @@
 
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="shop">Shop <span class="required">*</span></label>
-                  <select id="shop" class="form-control" name="shop">
-                    <option value="0">Choose Shop</option>
-                    @isset($shopDetails)
-                    @foreach ($shopDetails as $shopDetail)
-                      <option value="{{$shopDetail->id}}">{{$shopDetail->shop}}</option>
-                    @endforeach
-                    @endisset
-                  </select>
+                  <label for="key_name">Key Name <span class="required">*</span></label>
+                  <input id="key_name" type="key_name" class="form-control" name="category" maxlength="100" autocomplete="category">
                 </div>
 
                 <div class="form-group col-md-6">
@@ -97,6 +90,28 @@
                       <option value="{{$keyValue}}">{{$keyType}}</option>
                     @endforeach
                     @endisset
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group col-md-6">
+                  <label for="company">Company <span class="required">*</span></label>
+                  <select id="company" class="form-control" name="company">
+                    <option value="">Choose Company</option>
+                    <option value="0">All Companies</option>
+                    @isset($companies)
+                    @foreach ($companies as $company)
+                      <option value="{{$company->id}}">{{$company->company}}</option>
+                    @endforeach
+                    @endisset
+                  </select>
+                </div>
+
+                <div class="form-group col-md-6" style="display:none;" id="divShop">
+                  <label for="shop">Shop <span class="required">*</span></label>
+                  <select id="shop" class="form-control" name="shop">
+                    <option value="">Choose Shop</option>
                   </select>
                 </div>
               </div>

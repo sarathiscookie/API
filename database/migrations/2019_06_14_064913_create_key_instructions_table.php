@@ -18,12 +18,12 @@ class CreateKeyInstructionsTable extends Migration
             $table->unsignedBigInteger('container_id');
             $table->unsignedBigInteger('key_id');
             $table->unsignedBigInteger('company_id');
-            $table->unsignedBigInteger('country_id')->nullable();
+            $table->unsignedBigInteger('country_id');
             $table->string('instruction_url');
             $table->enum('active', ['yes', 'no'])->default('no');
             $table->timestamps();
 
-            $table->foreign('key_container_id')
+            $table->foreign('container_id')
             ->references('id')->on('key_containers');
 
             $table->foreign('key_id')

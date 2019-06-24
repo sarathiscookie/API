@@ -7,6 +7,7 @@ use App\Http\Requests\admin\KeyRequest;
 use App\Http\Traits\CountryTrait;
 use App\Http\Traits\KeyTypeTrait;
 use App\Http\Traits\ShopTrait;
+use App\Http\Traits\companyTrait;
 use App\Key;
 use App\KeyInstruction;
 use App\Shop;
@@ -15,7 +16,7 @@ use DB;
 
 class KeyController extends Controller
 {
-    use CountryTrait, KeyTypeTrait, ShopTrait;
+    use CountryTrait, KeyTypeTrait, ShopTrait, CompanyTrait;
     /**
      * Display a listing of the resource.
      *
@@ -25,10 +26,30 @@ class KeyController extends Controller
     {
         $languages   = $this->country();
         $keyTypes    = $this->keytype(); // Getting key types
+        $companies   = $this->company();
         $shops       = Shop::select('id', 'shop')->active()->get();
         $shopDetails = (!empty($shops)) ? $shops : '';
 
-        return view('admin.key', ['languages' => $languages, 'shopDetails' => $shopDetails, 'keyTypes' => $keyTypes]);
+        return view('admin.key', ['languages' => $languages, 'shopDetails' => $shopDetails, 'keyTypes' => $keyTypes, 'companies' => $companies]);
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function findShops($id)
+    {
+        try {
+
+            $shops = $this->getShops($id);
+
+            return response()->json(['shopAvailableStatus' => 'success', 'shops' => $shops], 200);
+        } 
+        catch(\Exception $e){
+            return response()->json(['shopAvailableStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 
     /**

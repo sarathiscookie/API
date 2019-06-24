@@ -99,6 +99,8 @@ Route::prefix('admin')->group(function(){
 		Route::post('/dashboard/key/store', 'Admin\KeyController@store')->name('admin.dashboard.key.store');
 		/* Update key */
 		Route::put('/dashboard/key/update', 'Admin\KeyController@update')->name('admin.dashboard.key.update');
+		/* Shop related to company */
+		Route::get('/dashboard/key/get/shops/{id}', 'Admin\KeyController@findShops')->name('admin.dashboard.key.get.shop');
 	});
 });
 
