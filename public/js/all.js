@@ -1450,8 +1450,8 @@ $(function() {
 
 /**
  * User: Sarath TS
- * Date: 04.05.2019
- * Created for: adminManagerList
+ * Date: 20.06.2019
+ * Created for: adminKeyList
  */
 
 $(function() {
@@ -1467,10 +1467,9 @@ $(function() {
 	/**
 	 * Hide shops select box when page loads. It shows only when select a company.
 	 */
-	$( "#company" ).change(function(){
+	$( "#company" ).change(function() {
 		let companyId = $(this).val();
 
-		(companyId > 0) ? $( "#divShop" ).fadeIn() : $( "#divShop" ).fadeOut()
 		$.ajax({
 			url: "/admin/dashboard/key/get/shops/" + companyId,
 			dataType: "JSON",
@@ -1478,18 +1477,25 @@ $(function() {
 		})
 		.done(function(data) {
 			if(data.shopAvailableStatus === 'success') {
+				(companyId > 0) ? $( "#shopSelectBoxDiv" ).fadeIn() : $( "#shopSelectBoxDiv" ).fadeOut();
+				$( ".options" ).remove();
+
 				let shopId = '';
 				let shopName = '';
 				for(let i = 0; i < data.shops.length; i++) {
 					shopId = data.shops[i].id;
 					shopName = data.shops[i].shop;
-					$( "#shop" ).append('<option value="'+ shopId +'">'+ shopName +'</option>');
+					$( "#optionChoose" ).after('<option class="options" value="'+ shopId +'">'+ shopName +'</option>');
 				}
 			}
 		})
 		.fail(function(data) {
-			if(data.shopAvailableStatus === 'failure') {
-				//console.log('data.shopAvailableStatus');
+			if(data.responseJSON.shopAvailableStatus === 'failure') {
+				$( "#divShop" ).html(
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+					data.responseJSON.message +
+					'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
 			}
 		});
 	});

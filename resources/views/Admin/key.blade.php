@@ -108,11 +108,13 @@
                   </select>
                 </div>
 
-                <div class="form-group col-md-6" style="display:none;" id="divShop">
-                  <label for="shop">Shop <span class="required">*</span></label>
-                  <select id="shop" class="form-control" name="shop">
-                    <option value="">Choose Shop</option>
-                  </select>
+                <div class="form-group col-md-6" id="divShop">
+                  <div style="display:none;" id="shopSelectBoxDiv">
+                    <label for="shop">Shop <span class="required">*</span></label>
+                    <select id="shop" class="form-control" name="shop">
+                      <option id="optionChoose" value="">Choose Shop</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 

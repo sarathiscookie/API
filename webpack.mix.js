@@ -25,17 +25,23 @@ mix.js("resources/js/app.js", "public/js").sass(
  */
 
 /* css for signin page */
-mix.styles(["resources/css/signin.css"], "public/css/signin.css").version();
+mix.styles(["resources/css/pages/signin.css"], "public/css/signin.css").version();
 
-/* css for all plugins */
+/* CSS for all plugins */
 mix.styles(
-	["resources/css/datatables.min.css"],
+	[
+	  "resources/css/datatables.min.css",
+	  "resources/css/jquery.taghandler.css"
+	],
 	"public/css/plugins.css"
 ).version();
 
-/* css for all pages */
+/* CSS for all pages */
 mix.styles(
-	["resources/css/dashboard.css", "resources/css/adminManagerList.css"],
+	[ 
+	  "resources/css/pages/dashboard.css", 
+	  "resources/css/pages/adminManagerList.css"
+	],
 	"public/css/all.css"
 ).version();
 
@@ -49,19 +55,22 @@ mix.styles(
 
 /* js for all plugins */
 mix.scripts(
-	["resources/js/datatables.min.js"],
+	[ 
+	  "resources/js/datatables.min.js",
+	  "resources/js/jquery.taghandler.js",
+	],
 	"public/js/plugins.js"
 ).version();
 
 /* js for all pages */
 mix.scripts(
 	[
-		"resources/js/dashboard.js",
-		"resources/js/adminManagerList.js",
-		"resources/js/adminCompanyList.js",
-		"resources/js/adminShopList.js",
-		"resources/js/adminUserList.js",
-		"resources/js/adminKeyList.js",
+		"resources/js/pages/dashboard.js",
+		"resources/js/pages/adminManagerList.js",
+		"resources/js/pages/adminCompanyList.js",
+		"resources/js/pages/adminShopList.js",
+		"resources/js/pages/adminUserList.js",
+		"resources/js/pages/adminKeyList.js",
 	],
 	"public/js/all.js"
 ).version();
