@@ -50,6 +50,9 @@ $(function() {
 		});
 	});
 
+	/* Tag Handler for keys */
+	$( "#key" ).tagHandler();
+
 	/* Datatable scripts */
 	let keyList = $( "#key_list" ).DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],

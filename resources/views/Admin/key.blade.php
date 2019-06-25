@@ -121,7 +121,11 @@
               <div class="form-row">
                 <div class="form-group col-md-12">
                   <label for="key">Key <span class="required">*</span></label>
-                  <input id="key" type="text" class="form-control" name="key" maxlength="255" autocomplete="key">
+                  <div class="tagHandler">
+                    <ul id="key" class="tagHandlerContainer">
+                      <li class="tagInput"><input name="key" class="tagInputField form-control" type="text"></li>
+                    </ul>
+                  </div>
                 </div>
               </div>
 
