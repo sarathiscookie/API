@@ -20,6 +20,10 @@ $(function() {
 	$( "#company" ).change(function() {
 		let companyId = $(this).val();
 
+		if(companyId === '') { 
+			$( "#divShop" ).hide(); 
+		}
+
 		$.ajax({
 			url: "/admin/dashboard/key/get/shops/" + companyId,
 			dataType: "JSON",
@@ -27,20 +31,35 @@ $(function() {
 		})
 		.done(function(data) {
 			if(data.shopAvailableStatus === 'success') {
-				(companyId > 0) ? $( "#shopSelectBoxDiv" ).fadeIn() : $( "#shopSelectBoxDiv" ).fadeOut();
-				$( ".options" ).remove();
 
-				let shopId = '';
-				let shopName = '';
-				for(let i = 0; i < data.shops.length; i++) {
-					shopId = data.shops[i].id;
-					shopName = data.shops[i].shop;
-					$( "#optionChoose" ).after('<option class="options" value="'+ shopId +'">'+ shopName +'</option>');
+				$( "#divShop" ).show();
+
+				if( data.shops.length > 0 ) {
+					$( "#noShopsAlert" ).hide();
+					$( "#shopSelectBoxDiv" ).show();
+					$( ".options" ).remove();
+
+					let shopId = '';
+					let shopName = '';
+					for(let i = 0; i < data.shops.length; i++) {
+						shopId = data.shops[i].id;
+						shopName = data.shops[i].shop;
+						$( "#optionChoose" ).after('<option class="options" value="'+ shopId +'">'+ shopName +'</option>');
+					}
 				}
+				else {
+					$( "#noShopsAlert" ).show();
+					$( "#shopSelectBoxDiv" ).hide();
+					$( "#noShopsAlert" ).html(
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> No found any shops for this company<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+				}
+
 			}
 		})
 		.fail(function(data) {
 			if(data.responseJSON.shopAvailableStatus === 'failure') {
+				$( "#divShop" ).show();
 				$( "#divShop" ).html(
 					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 					data.responseJSON.message +
@@ -51,7 +70,7 @@ $(function() {
 	});
 
 	/* Tag Handler for keys */
-	$( "#key" ).tagHandler();
+	$( "#keyTagHandler" ).tagHandler();
 
 	/* Datatable scripts */
 	let keyList = $( "#key_list" ).DataTable({
@@ -239,61 +258,69 @@ $(function() {
 	$( "button.createKey" ).on( "click", function(e) {
 		e.preventDefault();
 
-		var shop     	= $( "#shop" ).val();
+		var key_name    = $( "#key_name" ).val();
 		var key_type 	= $( "#key_type" ).val();
-		var category 	= $( "#category" ).val();
-		var language 	= $( "#language" ).val();
-		var key      	= $( "#key" ).val();
-		var instruction = $( "#instruction" ).val();
+		var company 	= $( "#company" ).val();
+		var shop 		= $( "#shop" ).val();
+		var keys      	= [];
+
+		// Keys are in ul li. Get all keys from li and pushed in to array.
+		$( ".tagItem" ).each(function() {
+			keys.push( $(this).text() );
+		});
+
+		var act_number 	= $( "#activation_number" ).val();
+		var count 		= $( "#count" ).val();
 
 		$.ajax({
 			url: "/admin/dashboard/key/store",
 			dataType: "JSON",
 			type: "POST",
 			data: {
-				shop: shop,
+				key_name: key_name,
 				key_type: key_type,
-				category: category,
-				language: language,
-				key: key,
-				instruction: instruction
+				company: company,
+				shop: shop,
+				keys: keys,
+				act_number: act_number,
+				count: count
 			}
 		})
-			.done(function(result) {
-				if (result.keyStatus === "success") {
+		.done(function(result) {
+			if (result.keyStatus === "success") {
 					$( "#createKeyModal" ).modal( "hide" ); // It hides the modal
 
 					keyList.ajax.reload(null, false);
 
 					$( ".responseKeyMessage" ).html(
 						'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
-							result.message +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-					);
+						result.message +
+						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
 
 					$( ".responseKeyMessage" )
-						.show()
-						.delay(5000)
-						.fadeOut();
+					.show()
+					.delay(5000)
+					.fadeOut();
 				}
 			})
-			.fail(function(data) {
-				if (data.responseJSON.keyStatus === "failure") {
-					$( ".keyValidationAlert" ).html(
-						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
-							data.responseJSON.message +
-							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+		.fail(function(data) {
+			if (data.responseJSON.keyStatus === "failure") {
+				$( ".keyValidationAlert" ).html(
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+					data.responseJSON.message +
+					'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 					);
-				}
+			}
 
-				if (data.status === 422) {
-					$.each(data.responseJSON.errors, function(key, val) {
-						$( ".keyValidationAlert" ).html(
-							"<p class='alert alert-danger'>" + val + "</p>"
+			if (data.status === 422) {
+				$.each(data.responseJSON.errors, function(key, val) {
+					$( ".keyValidationAlert" ).html(
+						"<p class='alert alert-danger'>" + val + "</p>"
 						);
-					});
-				}
-			});
+				});
+			}
+		});
 	});
 
 	/* Clearing data of create manager modal fields */

@@ -78,7 +78,7 @@
               <div class="form-row">
                 <div class="form-group col-md-6">
                   <label for="key_name">Key Name <span class="required">*</span></label>
-                  <input id="key_name" type="key_name" class="form-control" name="category" maxlength="100" autocomplete="category">
+                  <input type="text" name="key_name" id="key_name" class="form-control" name="category" maxlength="100">
                 </div>
 
                 <div class="form-group col-md-6">
@@ -99,7 +99,7 @@
                   <label for="company">Company <span class="required">*</span></label>
                   <select id="company" class="form-control" name="company">
                     <option value="">Choose Company</option>
-                    <option value="0">All Companies</option>
+                    {{-- <option value="0">All Companies</option> --}}
                     @isset($companies)
                     @foreach ($companies as $company)
                       <option value="{{$company->id}}">{{$company->company}}</option>
@@ -109,6 +109,7 @@
                 </div>
 
                 <div class="form-group col-md-6" id="divShop">
+                  <div id="noShopsAlert"></div>
                   <div style="display:none;" id="shopSelectBoxDiv">
                     <label for="shop">Shop <span class="required">*</span></label>
                     <select id="shop" class="form-control" name="shop">
@@ -122,8 +123,8 @@
                 <div class="form-group col-md-12">
                   <label for="key">Key <span class="required">*</span></label>
                   <div class="tagHandler">
-                    <ul id="key" class="tagHandlerContainer">
-                      <li class="tagInput"><input name="key" class="tagInputField form-control" type="text"></li>
+                    <ul id="keyTagHandler" class="tagHandlerContainer">
+                      <li class="tagInput"><input type="text" class="tagInputField form-control" ></li>
                     </ul>
                   </div>
                 </div>
@@ -131,27 +132,13 @@
 
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="category">Category <span class="required">*</span></label>
-                  <input id="category" type="category" class="form-control" name="category" maxlength="150" autocomplete="category">
+                  <label for="activation_number">Activation Number <span class="required">*</span></label>
+                  <input type="number" id="activation_number" class="form-control" name="activation_number" maxlength="10">
                 </div>
 
                 <div class="form-group col-md-6">
-                  <label for="language">Key Instruction Language <span class="required">*</span></label>
-                  <select id="language" class="form-control" name="language">
-                    <option value="">Choose Language</option>
-                    @isset($languages)
-                    @foreach ($languages as $language)
-                      <option value="{{$language->id}}">{{$language->code}}</option>
-                    @endforeach
-                    @endisset
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-row ">
-                <div class="form-group col-md-12">
-                  <label for="instruction">Key Instructions <span class="required">*</span></label>
-                  <textarea class="form-control" name="instruction" id="instruction" rows="3"></textarea>
+                  <label for="count">Count <span class="required">*</span></label>
+                  <input type="number" id="count" class="form-control" name="count" maxlength="10">
                 </div>
               </div>
 

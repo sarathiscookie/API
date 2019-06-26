@@ -23,30 +23,8 @@ class KeyRequest extends FormRequest
      */
     public function rules()
     {
-        switch($this->method()) {
-            case 'POST':
-            {
-                return [
-                    'instruction'   => ['required', 'string'],
-                    'language'      => ['required', 'not_in:0'],
-                    'category'      => ['required', 'string', 'max:150'],
-                    'key'           => ['required', 'string', 'max:255'],
-                    'key_type'      => ['required', 'not_in:0'],
-                    'shop'          => ['required', 'not_in:0']
-                ]; 
-            }
-            case 'PUT':
-            {
-                return [
-                    'instruction'   => ['required', 'string'],
-                    'language'      => ['required', 'not_in:0'],
-                    'category'      => ['required', 'string', 'max:150'],
-                    'key'           => ['required', 'string', 'max:255'],
-                    'key_type'      => ['required', 'not_in:0'],
-                    'shop'          => ['required', 'not_in:0']
-                ]; 
-            }
-            default:break;
-        }
+        return [
+            //
+        ];
     }
 }

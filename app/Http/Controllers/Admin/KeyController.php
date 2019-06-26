@@ -8,15 +8,17 @@ use App\Http\Traits\CountryTrait;
 use App\Http\Traits\KeyTypeTrait;
 use App\Http\Traits\ShopTrait;
 use App\Http\Traits\companyTrait;
+use App\Http\Traits\KeyContainerTrait;
 use App\Key;
+use App\KeyContainer;
 use App\KeyInstruction;
 use App\Shop;
-use Illuminate\Http\Request;
 use DB;
+use Illuminate\Http\Request;
 
 class KeyController extends Controller
 {
-    use CountryTrait, KeyTypeTrait, ShopTrait, CompanyTrait;
+    use CountryTrait, KeyTypeTrait, ShopTrait, CompanyTrait, KeyContainerTrait;
     /**
      * Display a listing of the resource.
      *
@@ -331,20 +333,26 @@ class KeyController extends Controller
     {
         DB::beginTransaction();
         try {
-            $key            = new Key;
-            $key->shop_id   = $request->shop;
-            $key->category  = $request->category;
-            $key->key       = $request->key;
-            $key->key_type  = $request->key_type;
-            $key->allot     = 'no';
-            $key->active    = 'no';
-            $key->save();
-
-            $instruction                = new KeyInstruction;
-            $instruction->key_id        = $key->id;
-            $instruction->country_id    = $request->language;
-            $instruction->instructions  = $request->instruction;
-            $instruction->save();
+            $keyContainer                    = new KeyContainer;
+            $keyContainer->name              = $request->key_name;
+            $keyContainer->container         = $this->generateContainer($request->key_type);
+            $keyContainer->shop_id           = $request->shop;
+            $keyContainer->company_id        = $request->company;
+            $keyContainer->type              = $request->key_type;
+            $keyContainer->activation_number = $request->act_number;
+            $keyContainer->count             = $request->count;
+            $keyContainer->total_activation  = $request->act_number * $request->count;
+            $keyContainer->total_available   = $request->act_number * $request->count;
+            $keyContainer->active            = 'no';
+            $keyContainer->save();
+            
+            foreach($request->keys as $key) {
+                $keyDetails                   = new Key;
+                $keyDetails->key_container_id = $keyContainer->id;
+                $keyDetails->key              = $key;
+                $keyDetails->available        = 1;
+                $keyDetails->save();
+            }
 
             DB::commit();
             return response()->json(['keyStatus' => 'success', 'message' => 'Well done! Key created successfully'], 201);
