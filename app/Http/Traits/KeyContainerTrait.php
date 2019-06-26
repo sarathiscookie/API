@@ -13,7 +13,7 @@ trait KeyContainerTrait {
      */
 	public function generateContainer($keyType)
 	{
-		return $keyType[0].mt_rand(1000, 99999);
+		return strtoupper($keyType[0]).mt_rand(1000, 99999);
 	}
 }
 
