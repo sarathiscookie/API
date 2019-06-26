@@ -26,7 +26,7 @@ trait CompanyTrait {
 
     /**
      * Get company matching with id
-     * @param  string $id
+     * @param  int $id
      * @return \Illuminate\Http\Response
      */
     public function fetchCompany($id)

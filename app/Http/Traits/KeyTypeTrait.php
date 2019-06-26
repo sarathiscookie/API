@@ -8,7 +8,7 @@ trait KeyTypeTrait {
      * Get key types
      * @return \Illuminate\Http\Response
      */
-	public function keytype()
+	public function keytypes()
 	{
 		$keyType = ['single' => 'Single', 'multiple' => 'Multiple'];
 

@@ -4,7 +4,6 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\KeyRequest;
-use App\Http\Traits\CountryTrait;
 use App\Http\Traits\KeyTypeTrait;
 use App\Http\Traits\ShopTrait;
 use App\Http\Traits\companyTrait;
@@ -18,7 +17,7 @@ use Illuminate\Http\Request;
 
 class KeyController extends Controller
 {
-    use CountryTrait, KeyTypeTrait, ShopTrait, CompanyTrait, KeyContainerTrait;
+    use KeyTypeTrait, ShopTrait, CompanyTrait, KeyContainerTrait;
     /**
      * Display a listing of the resource.
      *
@@ -26,13 +25,10 @@ class KeyController extends Controller
      */
     public function index()
     {
-        $languages   = $this->country();
-        $keyTypes    = $this->keytype(); // Getting key types
+        $keyTypes    = $this->keytypes(); // Getting key types
         $companies   = $this->company();
-        $shops       = Shop::select('id', 'shop')->active()->get();
-        $shopDetails = (!empty($shops)) ? $shops : '';
 
-        return view('admin.key', ['languages' => $languages, 'shopDetails' => $shopDetails, 'keyTypes' => $keyTypes, 'companies' => $companies]);
+        return view('admin.key', [ 'keyTypes' => $keyTypes, 'companies' => $companies ]);
     }
 
     /**
@@ -44,7 +40,6 @@ class KeyController extends Controller
     public function findShops($id)
     {
         try {
-
             $shops = $this->getShops($id);
 
             return response()->json(['shopAvailableStatus' => 'success', 'shops' => $shops], 200);
@@ -90,7 +85,7 @@ class KeyController extends Controller
             $this->tfootKey($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for user status
+        // tfoot search query for key status
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootKeyStatus($q, $params['columns'][2]['search']['value']);
         }
@@ -102,12 +97,14 @@ class KeyController extends Controller
 
         $data = [];
 
-        if(!empty($keyLists)) {
-            foreach ($keyLists as $key=> $keyList) {
+        if( !empty($keyLists) ) {
+            foreach ($keyLists as $key => $keyList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$keyList->id.'" />';
-                $nestedData['name']        = $keyList->name.'<hr><div><small>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></small></div> <div><small>Company: <span class="badge badge-info badge-pill">'.$this->fetchCompany($keyList->company_id)->company.'</span></small></div> <div><small>Shop: <span class="badge badge-info badge-pill">'.$this->fetchShop($keyList->shop_id)->shop.'</span></small></div>';
-                $nestedData['active']     = $this->keyStatusHtml($keyList->id, $keyList->active);
-                $nestedData['actions']    = $this->editKeyModel($keyList->id);
+                $nestedData['name']       = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$this->fetchCompany($keyList->company_id)->company.'</span></div> <div>Shop: <span class="badge badge-info badge-pill">'.$this->fetchShop($keyList->shop_id)->shop.'</span></div>';
+                $nestedData['active']     = '<label class="switch"><input type="checkbox" class="buttonStatus"><span class="slider round"></span></label>';
+                $nestedData['actions']    = '<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-cog"></i></a> <a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>';
+                //$nestedData['active']     = $this->keyStatusHtml($keyList->id, $keyList->active);
+                //$nestedData['actions']    = $this->editKeyModel($keyList->id);
                 $data[]                   = $nestedData;
             }
         }
@@ -131,11 +128,11 @@ class KeyController extends Controller
     public function searchKey($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('container', 'like', "%{$searchData}%");
+            $query->where('name', 'like', "%{$searchData}%");
         });
 
         $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('container', 'like', "%{$searchData}%");
+            $query->where('name', 'like', "%{$searchData}%");
         })
         ->count();
 
@@ -151,11 +148,11 @@ class KeyController extends Controller
     public function tfootKey($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('container', 'like', "%{$searchData}%");
+            $query->where('name', 'like', "%{$searchData}%");
         });
 
         $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('continer', 'like', "%{$searchData}%");
+            $query->where('name', 'like', "%{$searchData}%");
         })
         ->count();
 
@@ -171,11 +168,11 @@ class KeyController extends Controller
     public function tfootKeyStatus($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('active', "{$searchData}");
+            $query->where('name', "{$searchData}");
         });
 
         $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('active', "{$searchData}");
+            $query->where('name', "{$searchData}");
         })
         ->count();
 

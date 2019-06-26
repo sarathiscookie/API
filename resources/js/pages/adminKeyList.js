@@ -127,7 +127,7 @@ $(function() {
 	let buttons;
 
 	try {
-		buttons = new $.fn.dataTable.Buttons(datatableList, {
+		buttons = new $.fn.dataTable.Buttons(keyList, {
 			buttons: [
 				{
 					extend: "csv",
@@ -158,7 +158,7 @@ $(function() {
 	}
 
 	/* Delete key functionality */
-	$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
+	/*$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
 		e.preventDefault();
 		var keyId = $(this).data( "id" );
 		var r = confirm("Are you sure you want to remove the key?");
@@ -199,7 +199,7 @@ $(function() {
 					}
 				});
 		}
-	});
+	});*/
 
 	/* <tfoot> search functionality */
 	$( ".search-input" ).on("keyup change", function() {
@@ -212,7 +212,7 @@ $(function() {
 	});
 
 	/* Updating key status */
-	$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
+	/*$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
 		e.preventDefault();
 
 		var newStatus = "";
@@ -252,7 +252,7 @@ $(function() {
 					.delay(5000)
 					.fadeOut();
 			});
-	});
+	});*/
 
 	/* Create key */
 	$( "button.createKey" ).on( "click", function(e) {
@@ -326,7 +326,7 @@ $(function() {
 	/* Clearing data of create manager modal fields */
 	$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
 		$(this)
-			.find("input,textarea,select")
+			.find("input,textarea,select,li")
 			.val("")
 			.end()
 			.find("input[type=checkbox], input[type=radio]")
@@ -335,7 +335,7 @@ $(function() {
 	});
 
 	/* Edit manager */
-	$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
+	/*$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
 		e.preventDefault();
 		var managerid = $(this).data("keyid");
 
@@ -400,5 +400,5 @@ $(function() {
 					}
 				});
 		});
-	});
+	});*/
 });

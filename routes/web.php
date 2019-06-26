@@ -90,7 +90,7 @@ Route::prefix('admin')->group(function(){
 		/* Show key listing page */
 		Route::get('/dashboard/key/list', 'Admin\KeyController@index')->name('admin.dashboard.key.list');
 		/* Listing key on datatable */
-		Route::post('/dashboard/key/list/datatables', 'Admin\KeyController@datatable')->name('admin.dashboard.key.list.datatable');
+		Route::post('/dashboard/key/list/datatables', 'Admin\KeyController@datatable')->name('admin.dashboard.key.list.datatables');
 		/* Delete key */
 		Route::delete('/dashboard/key/delete/{id}', 'Admin\KeyController@destroy')->name('admin.dashboard.key.delete');
 		/* Update key status */
