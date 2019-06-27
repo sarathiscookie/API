@@ -41,9 +41,9 @@
                         <a class="dropdown-item" href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a>
                         <a class="dropdown-item" href="/admin/dashboard/company/list"><i class="fas fa-list-alt"></i> Company List</a>
                         <a class="dropdown-item" href="/admin/dashboard/manager/list"><i class="far fa-address-book"></i> Manager List</a>
-                        <a class="dropdown-item" href="/admin/dashboard/manager/list"><i class="fas fa-store"></i> Shop List</a>
+                        <a class="dropdown-item" href="/admin/dashboard/shop/list"><i class="fas fa-store"></i> Shop List</a>
                         <a class="dropdown-item" href="/admin/dashboard/user/list"><i class="fas fa-users"></i> User List</a>
-                        <a class="dropdown-item" href="/admin/dashboard/key/list"><i class="fas fa-key"></i> User List</a>
+                        <a class="dropdown-item" href="/admin/dashboard/key/list"><i class="fas fa-key"></i> Key List</a>
                         
                         <div class="dropdown-divider"></div>
                         <a class="dropdown-item" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">

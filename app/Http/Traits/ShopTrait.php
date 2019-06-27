@@ -43,6 +43,30 @@ trait ShopTrait {
             abort(404);
         } 
     }
+
+    /**
+     * Find shop name for container
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function getShopsName($id)
+    {
+        try {
+            $shop = Shop::join('key_shops', 'shops.id', '=', 'key_shops.shop_id')
+            ->select('shops.shop')
+            ->where('key_shops.key_container_id', $id)
+            ->get();
+
+            return $shop;
+        }
+        catch(\Exception $e) {
+            abort(404);
+        } 
+    }
+
+    /*SELECT t1.shop, t1.id
+  FROM shops AS t1 INNER JOIN key_shops AS t2 ON t1.id = t2.shop_id where t2.key_container_id = 3;*/
+
 }
 
 ?>

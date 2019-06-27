@@ -31,7 +31,9 @@ mix.styles(["resources/css/pages/signin.css"], "public/css/signin.css").version(
 mix.styles(
 	[
 	  "resources/css/datatables.min.css",
-	  "resources/css/jquery.taghandler.css"
+	  "resources/css/jquery.taghandler.css",
+	  "resources/css/select2.css",
+	  "resources/css/select2-bootstrap4.css",
 	],
 	"public/css/plugins.css"
 ).version();
@@ -58,6 +60,7 @@ mix.scripts(
 	[ 
 	  "resources/js/datatables.min.js",
 	  "resources/js/jquery.taghandler.js",
+	  "resources/js/select2.js",
 	],
 	"public/js/plugins.js"
 ).version();

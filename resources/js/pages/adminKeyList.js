@@ -72,6 +72,23 @@ $(function() {
 	/* Tag Handler for keys */
 	$( "#keyTagHandler" ).tagHandler();
 
+	/* Multiple select for shops */
+	if( $("#shop")[0] ) {
+		$( "#shop" ).select2();
+	}
+
+	/* Select all shops by clicking checkbox */
+	$( "#checkAllShops" ).on('click', function() {
+		if( $( "#checkAllShops" ).is(':checked') ) {
+			$( "#shop > option:not(:first)" ).prop( "selected", true);
+			$( "#shop" ).trigger("change");
+		} 
+		else {
+			$( "#shop > option" ).prop( "selected", false);
+			$( "#shop" ).trigger("change");
+		}
+	});
+
 	/* Datatable scripts */
 	let keyList = $( "#key_list" ).DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],
@@ -261,7 +278,7 @@ $(function() {
 		var key_name    = $( "#key_name" ).val();
 		var key_type 	= $( "#key_type" ).val();
 		var company 	= $( "#company" ).val();
-		var shop 		= $( "#shop" ).val();
+		var shops 		= $( "#shop" ).val();
 		var keys      	= [];
 
 		// Keys are in ul li. Get all keys from li and pushed in to array.
@@ -280,7 +297,7 @@ $(function() {
 				key_name: key_name,
 				key_type: key_type,
 				company: company,
-				shop: shop,
+				shops: shops,
 				keys: keys,
 				act_number: act_number,
 				count: count
@@ -326,7 +343,7 @@ $(function() {
 	/* Clearing data of create manager modal fields */
 	$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
 		$(this)
-			.find("input,textarea,select,li")
+			.find("input,textarea,select")
 			.val("")
 			.end()
 			.find("input[type=checkbox], input[type=radio]")

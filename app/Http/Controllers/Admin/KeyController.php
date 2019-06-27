@@ -4,13 +4,14 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\admin\KeyRequest;
+use App\Http\Traits\KeyContainerTrait;
 use App\Http\Traits\KeyTypeTrait;
 use App\Http\Traits\ShopTrait;
 use App\Http\Traits\companyTrait;
-use App\Http\Traits\KeyContainerTrait;
 use App\Key;
 use App\KeyContainer;
 use App\KeyInstruction;
+use App\KeyShop;
 use App\Shop;
 use DB;
 use Illuminate\Http\Request;
@@ -64,10 +65,10 @@ class KeyController extends Controller
             2 => 'active',
         );
 
-        $totalData     = KeyContainer::select('id', 'name', 'container', 'shop_id', 'company_id', 'active')
+        $totalData     = KeyContainer::select('id', 'name', 'container', 'company_id', 'active')
         ->count();
 
-        $q             = KeyContainer::select('id', 'name', 'container', 'shop_id', 'company_id', 'active');
+        $q             = KeyContainer::select('id', 'name', 'container', 'company_id', 'active');
 
         $totalFiltered = $totalData;
         $limit         = (int)$request->input('length');
@@ -100,7 +101,7 @@ class KeyController extends Controller
         if( !empty($keyLists) ) {
             foreach ($keyLists as $key => $keyList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$keyList->id.'" />';
-                $nestedData['name']       = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$this->fetchCompany($keyList->company_id)->company.'</span></div> <div>Shop: <span class="badge badge-info badge-pill">'.$this->fetchShop($keyList->shop_id)->shop.'</span></div>';
+                $nestedData['name']       = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$this->fetchCompany($keyList->company_id)->company.'</span></div> <div>Shop: <span class="badge badge-info badge-pill">'.$this->getShopsName($keyList->id).'</span></div>';
                 $nestedData['active']     = '<label class="switch"><input type="checkbox" class="buttonStatus"><span class="slider round"></span></label>';
                 $nestedData['actions']    = '<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-cog"></i></a> <a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>';
                 //$nestedData['active']     = $this->keyStatusHtml($keyList->id, $keyList->active);
@@ -333,7 +334,6 @@ class KeyController extends Controller
             $keyContainer                    = new KeyContainer;
             $keyContainer->name              = $request->key_name;
             $keyContainer->container         = $this->generateContainer($request->key_type);
-            $keyContainer->shop_id           = $request->shop;
             $keyContainer->company_id        = $request->company;
             $keyContainer->type              = $request->key_type;
             $keyContainer->activation_number = $request->act_number;
@@ -342,7 +342,16 @@ class KeyController extends Controller
             $keyContainer->total_available   = $request->act_number * $request->count;
             $keyContainer->active            = 'no';
             $keyContainer->save();
+
+            // Storing shops id in to key shop table
+            foreach($request->shops as $shop) {
+                $keyShops                   = new KeyShop;
+                $keyShops->key_container_id = $keyContainer->id;
+                $keyShops->shop_id          = $shop;
+                $keyShops->save();
+            }
             
+            //Storing keys in to key table
             foreach($request->keys as $key) {
                 $keyDetails                   = new Key;
                 $keyDetails->key_container_id = $keyContainer->id;

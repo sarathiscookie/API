@@ -99,7 +99,6 @@
                   <label for="company">Company <span class="required">*</span></label>
                   <select id="company" class="form-control" name="company">
                     <option value="">Choose Company</option>
-                    {{-- <option value="0">All Companies</option> --}}
                     @isset($companies)
                     @foreach ($companies as $company)
                       <option value="{{$company->id}}">{{$company->company}}</option>
@@ -107,13 +106,20 @@
                     @endisset
                   </select>
                 </div>
+              </div>
 
-                <div class="form-group col-md-6" id="divShop">
+              <div class="form-row">
+                <div class="form-group col-md-12" id="divShop">
                   <div id="noShopsAlert"></div>
                   <div style="display:none;" id="shopSelectBoxDiv">
-                    <label for="shop">Shop <span class="required">*</span></label>
-                    <select id="shop" class="form-control" name="shop">
-                      <option id="optionChoose" value="">Choose Shop</option>
+                    <div class="form-check">
+                      <input class="form-check-input" type="checkbox" id="checkAllShops">
+                      <label class="form-check-label" for="gridCheck">
+                        Click check box to select all shops. Each shops can select separately by clicking on select box.
+                      </label>
+                    </div>
+                    <select id="shop" class="form-control" name="shop[]" multiple="multiple">
+                      <option id="optionChoose" value="" disabled="disabled">Choose Shop</option>
                     </select>
                   </div>
                 </div>

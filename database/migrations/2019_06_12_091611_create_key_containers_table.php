@@ -17,7 +17,6 @@ class CreateKeyContainersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name', 100);
             $table->string('container', 50);
-            $table->unsignedBigInteger('shop_id');
             $table->unsignedBigInteger('company_id');
             $table->string('type', 15);
             $table->integer('activation_number'); // Eg 20. Eack key can activate 20 times.
@@ -30,9 +29,6 @@ class CreateKeyContainersTable extends Migration
             $table->integer('total_used_not_ok')->nullable();
             $table->enum('active', ['yes', 'no'])->default('no');
             $table->timestamps();
-
-            $table->foreign('shop_id')
-            ->references('id')->on('shops');
 
             $table->foreign('company_id')
             ->references('id')->on('companies');
