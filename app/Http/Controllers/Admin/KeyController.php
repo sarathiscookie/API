@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers\admin;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\admin\KeyRequest;
+use Illuminate\Http\Request;
+use App\Http\Requests\Admin\KeyContainerRequest;
 use App\Http\Traits\KeyContainerTrait;
 use App\Http\Traits\KeyTypeTrait;
 use App\Http\Traits\ShopTrait;
@@ -14,7 +15,6 @@ use App\KeyInstruction;
 use App\KeyShop;
 use App\Shop;
 use DB;
-use Illuminate\Http\Request;
 
 class KeyController extends Controller
 {
@@ -324,10 +324,10 @@ class KeyController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Admin\KeyRequest  $request
+     * @param  \App\Http\Requests\Admin\KeyContainerRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(KeyRequest $request)
+    public function store(KeyContainerRequest $request)
     {
         DB::beginTransaction();
         try {
