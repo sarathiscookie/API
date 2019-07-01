@@ -1592,40 +1592,6 @@ $(function() {
 		}
 	});
 
-	/* Bottom buttons for datatables */
-	let buttons;
-
-	try {
-		buttons = new $.fn.dataTable.Buttons(keyList, {
-			buttons: [
-				{
-					extend: "csv",
-					exportOptions: {
-						columns: [1, 2]
-					}
-				},
-				{
-					extend: "excel",
-					exportOptions: {
-						columns: [1, 2]
-					}
-				},
-				{
-					extend: "pdf",
-					orientation: "portrait",
-					pageSize: "LEGAL",
-					exportOptions: {
-						columns: [1, 2]
-					}
-				}
-			]
-		})
-			.container()
-			.appendTo($("#buttons"));
-	} catch (error) {
-		buttons = null;
-	}
-
 	/* Delete key functionality */
 	/*$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
 		e.preventDefault();

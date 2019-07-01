@@ -103,9 +103,9 @@ class KeyController extends Controller
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$keyList->id.'" />';
                 $nestedData['name']       = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$this->fetchCompany($keyList->company_id)->company.'</span></div> <div>Shops: '.$this->getShopsName($keyList->id).'</div>';
                 $nestedData['active']     = '<label class="switch"><input type="checkbox" class="buttonStatus"><span class="slider round"></span></label>';
-                $nestedData['actions']    = '<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-cog"></i></a> <a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>';
+                //$nestedData['actions']    = '<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-cog"></i></a> <a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>';
                 //$nestedData['active']     = $this->keyStatusHtml($keyList->id, $keyList->active);
-                //$nestedData['actions']    = $this->editKeyModel($keyList->id);
+                $nestedData['actions']    = $this->editKeyContainerModel($keyList->id);
                 $data[]                   = $nestedData;
             }
         }
@@ -221,20 +221,39 @@ class KeyController extends Controller
     }
 
     /**
-     * Model to edit key data
-     * @param  integer $keyId
+     * Model to edit key container data
+     * @param  integer $keyContainerId
      * @return \Illuminate\Http\Response
      */
-    public function editKeyModel($keyId)
+    public function editKeyContainerModel($keyContainerId)
     {
         try {
-            $key        = $this->edit($keyId);
+            $keyContainer   = $this->edit($keyContainerId);
+            $keyTypes       = $this->keytypes();
+            $companies      = $this->company();
 
-            //shop = <option value="{{$shopDetail->id}}">{{$shopDetail->shop}}</option>
-            //keytype = <option value="{{$keyValue}}">{{$keyType}}</option>
-            //language = <option value="{{$language->id}}">{{$language->code}}</option>
-            $html     = '<a class="btn btn-secondary btn-sm editKey" data-keyid="'.$key->id.'" data-toggle="modal" data-target="#editKeyModal_'.$key->id.'"><i class="fas fa-cog"></i></a>
-            <div class="modal fade" id="editKeyModal_'.$key->id.'" tabindex="-1" role="dialog" aria-labelledby="editKeyModalLabel" aria-hidden="true">
+            $keyTypeOptions = '';
+
+            foreach($this->keytypes() as $keyValue => $keyType) {
+                $keyTypeSelected = ($keyContainer->type === $keyValue) ? 'selected' : '';
+                $keyTypeOptions .= '<option value="'.$keyValue.'" '.$keyTypeSelected.'>'.$keyType.'</option>';
+            }
+
+            $companyOptions = '';
+
+            foreach($this->company() as $company) {
+                $companySelected = ($keyContainer->company->id === $company->id) ? 'selected' : '';
+                $companyOptions .= '<option value="'.$company->id.'" '.$companySelected.'>'.$company->company.'</option>';
+            }
+
+            $keys = '';
+            foreach($keyContainer->keys as $keyDetail) {
+                $keys .= $keyDetail->key.',';
+            }
+
+            /*<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>*/
+            $html         = '<a class="btn btn-secondary btn-sm editKey" data-keyid="'.$keyContainer->id.'" data-toggle="modal" data-target="#editKeyModal_'.$keyContainer->id.'"><i class="fas fa-cog"></i></a>
+            <div class="modal fade" id="editKeyModal_'.$keyContainer->id.'" tabindex="-1" role="dialog" aria-labelledby="editKeyModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
@@ -247,64 +266,65 @@ class KeyController extends Controller
             <div class="modal-body">
             <div class="keyUpdateValidationAlert"></div>
             <div class="text-right">
-            <a href="" class="btn btn-danger btn-sm deleteEvent" data-id="'.$key->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
+            <a href="" class="btn btn-danger btn-sm deleteEvent" data-id="'.$keyContainer->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
             <hr>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-6">
-            <label for="shop">Shop <span class="required">*</span></label>
-            <select id="shop" class="form-control" name="shop">
-            <option value="">Choose Shop</option>            
-            </select>
+            <label for="key_name">Key Name <span class="required">*</span></label>
+            <input type="text" name="key_name" id="key_name_'.$keyContainer->id.'" class="form-control" name="category" maxlength="100" value="'.$keyContainer->name.'">
             </div>
 
             <div class="form-group col-md-6">
             <label for="key_type">Key Type <span class="required">*</span></label>
-            <select id="key_type" class="form-control" name="key_type">
-            <option value="">Choose Type</option>            
+            <select id="key_type_'.$keyContainer->id.'" class="form-control" name="key_type">
+            <option value="">Choose Type</option>
+            '.$keyTypeOptions.'
+            </select>
+            </div>
+            </div>
+
+            <div class="form-row">
+            <div class="form-group col-md-6">
+            <label for="company">Company <span class="required">*</span></label>
+            <select id="company_'.$keyContainer->id.'" class="form-control" name="company">
+            <option value="">Choose Company</option>
+            '.$companyOptions.'
+            </select>
+            </div>
+            </div>
+
+            <div class="form-row">
+            <div class="form-group col-md-6">
+            <label for="company">Shops <span class="required">*</span></label>
+            <select id="shopEdit_'.$keyContainer->id.'" class="form-control" name="shopEdit">
+            <option value="">Choose Shops</option>
             </select>
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-12">
-            <label for="key">Key <span class="required">*</span></label>
-            <input id="key_'.$key->id.'" type="text" class="form-control" name="key" value="'.$key->key.'" autocomplete="key" maxlength="255">
+            <label for="key">Key <i class="far fa-question-circle" data-toggle="tooltip" data-placement="right" title="You can separated keys with commas, space and new line. But dont mix with these."></i><span class="required">*</span></label>
+            <textarea class="form-control" name="keys" id="keys_'.$keyContainer->id.'" rows="3">'.trim($keys, ",").'</textarea>
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-6">
-            <label for="category">Category <span class="required">*</span></label>
-            <input id="category_'.$key->id.'" type="category" class="form-control" name="category" value="'.$key->category.'" maxlength="150" autocomplete="category">
-            </div>
-
-            <div class="form-group col-md-6">
-            <label for="language">Key Instruction Language <span class="required">*</span></label>
-            <select id="language" class="form-control" name="language">
-            <option value="">Choose Language</option>
-            </select>
+            <label for="activation_number">Activation Number <span class="required">*</span></label>
+            <input type="number" id="activation_number_'.$keyContainer->id.'" class="form-control" name="activation_number" maxlength="10" value="'.$keyContainer->activation_number.'">
             </div>
             </div>
 
-            <div class="form-row ">
-            <div class="form-group col-md-12">
-            <label for="instruction">Key Instructions</label>
-            <textarea class="form-control" name="instruction" id="instruction" rows="3"></textarea>
-            </div>
-            </div>
-
-            <button type="button" class="btn btn-primary btn-lg btn-block updateKey_'.$key->id.'"><i class="fas fa-user-edit"></i> Update Key</button>
-
-            </div>
+            <button type="button" class="btn btn-primary btn-lg btn-block updateKey"><i class="far fa-edit"></i> Update </button>
 
             </div>
             </div>
             </div>';
 
             return $html;
-            
         } 
         catch(\Exception $e) {
             abort(404);
@@ -388,8 +408,8 @@ class KeyController extends Controller
      */
     public function edit($id)
     {
-        $key = Key::findOrFail($id);
-        return $key;
+        $keyContainer = KeyContainer::findOrFail($id);
+        return $keyContainer;
     }
 
     /**

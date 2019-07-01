@@ -19,7 +19,7 @@
 
         <div class="card-body">
           <div class="text-right">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createKeyModal"><i class="fas fa-key"></i> Create Key</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createKeyModal"><i class="fas fa-plus"></i> Create Key Container</button>
             <hr>
           </div>
           
@@ -66,7 +66,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="createKeyModalLabel">Create Key</h5>
+              <h5 class="modal-title" id="createKeyModalLabel">Create Key Details</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -139,7 +139,7 @@
                 </div>
               </div>
 
-              <button type="button" class="btn btn-primary btn-lg btn-block createKey"><i class="fas fa-key"></i> Create Key</button>
+              <button type="button" class="btn btn-primary btn-lg btn-block createKey"><i class="fas fa-plus"></i> Create </button>
             </div>
 
           </div>

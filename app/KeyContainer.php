@@ -34,4 +34,20 @@ class KeyContainer extends Model
     {
         return ucwords($value);
     }
+
+    /**
+     * Get the keys for the key container.
+     */
+    public function keys()
+    {
+        return $this->hasMany('App\Key');
+    }
+
+    /**
+    * Get the matching company
+    */
+    public function company()
+    {
+        return $this->belongsTo(Company::class);
+    }
 }
