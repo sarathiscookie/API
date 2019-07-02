@@ -52,25 +52,6 @@ class KeyController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @param  int  $keyContainerId
-     * @param  int  $keyShopId
-     * @return \Illuminate\Http\Response
-     */
-    public function findKeyShopId($keyContainerId, $keyShopId)
-    {
-        try {
-            $keyShop = $this->getKeyShop($keyContainerId, $keyShopId);
-
-            return response()->json(['keyShopAvailableStatus' => 'success', 'keyShop' => $keyShop], 200);
-        } 
-        catch(\Exception $e){
-            return response()->json(['keyShopAvailableStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        }
-    }
-
-    /**
      * Display a listing of the resource
      *
      * @param  \Illuminate\Http\Request  $request
@@ -276,6 +257,13 @@ class KeyController extends Controller
                 $keys .= $keyDetail->key.',';
             }
 
+            // Getting shops
+            $shopOptions = '';
+            foreach($this->getShops($keyContainer->company->id) as $shop) {
+                $shopSelected = ($this->getKeyShop($keyContainer->id, $shop->id) !== null) ? 'selected' : '';
+                $shopOptions .= '<option value="'.$shop->id.'" '.$shopSelected.'>'.$shop->shop.'</option>';
+            }
+
             /*<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>*/
             $html         = '<a class="btn btn-secondary btn-sm editKey" data-keycontainerid="'.$keyContainer->id.'" data-keycontainercompanyid="'.$keyContainer->company->id.'"  data-toggle="modal" data-target="#editKeyModal_'.$keyContainer->id.'"><i class="fas fa-cog"></i></a>
             <div class="modal fade" id="editKeyModal_'.$keyContainer->id.'" tabindex="-1" role="dialog" aria-labelledby="editKeyModalLabel" aria-hidden="true">
@@ -323,9 +311,12 @@ class KeyController extends Controller
             <div class="form-row">
             <div class="form-group col-md-12" id="divShopEdit">
             <label for="shop_edit">Shops <span class="required">*</span></label>
+            <div class="shop_edits_first_div">
             <select id="shop_edits_'.$keyContainer->id.'" class="form-control" name="shop_edit[]" multiple="multiple">
-            <option id="optionChooseEdit_'.$keyContainer->id.'" value="" disabled="disabled">Choose Shop</option>
+            <option value="" disabled="disabled">Choose Shop</option>
+            '.$shopOptions.'
             </select>
+            </div>
             </div>
             </div>
 

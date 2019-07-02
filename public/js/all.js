@@ -1773,7 +1773,7 @@ $(function() {
 	});
 
     /* Function to get key shops details */
-	function key_shops(key_container_id, key_shop_id) {
+	/*function key_shops(key_container_id, key_shop_id) {
 		$.ajax({
 			url: "/admin/dashboard/key/get/keyshop/id/" + key_container_id + "/" + key_shop_id,
 			dataType: "JSON",
@@ -1781,7 +1781,7 @@ $(function() {
 		})
 		.done(function(data) {
 			if(data.keyShopAvailableStatus === 'success') {
-				console.log(data.keyShop);
+				//console.log(data.keyShop);
 				return data.keyShop;
 			}
 		})
@@ -1790,7 +1790,7 @@ $(function() {
 				console.log(data.responseJSON.keyShopAvailableStatus);
 			}
 		});
-	}
+	}*/
 
 	/* Edit manager */
 	$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
@@ -1803,33 +1803,17 @@ $(function() {
 			$( "#shop_edits_"+keyContainerId ).select2();
 		}
 
-		$.ajax({
+		/*$.ajax({
 			url: "/admin/dashboard/key/get/shops/" + keyContainerCompanyId,
 			dataType: "JSON",
 			type: "GET"
 		})
 		.done(function(data) {
-			if(data.shopAvailableStatus === 'success') {
-
-				if( data.shops.length > 0 ) {
-					$("options_"+ keyContainerId).remove();
-					let shopEditId = '';
-					let shopEditName = '';
-					let fetchKeyShopsId = '';
-					for(let i = 0; i < data.shops.length; i++) {
-						shopEditId = data.shops[i].id;
-						shopEditName = data.shops[i].shop;
-						$( "#optionChooseEdit_"+keyContainerId ).after('<option class="options_'+ keyContainerId +'" value="'+ shopEditId +'">'+ shopEditName +'</option>');
-					}
-				}
-
-			}
+			
 		})
 		.fail(function(data) {
-			if(data.responseJSON.shopAvailableStatus === 'failure') {
-				console.log(data.responseJSON.shopAvailableStatus);
-			}
-		});
+			
+		});*/
 
 		/*$( ".updateManager_" + managerid).on("click", function(e) {
 			e.preventDefault();
