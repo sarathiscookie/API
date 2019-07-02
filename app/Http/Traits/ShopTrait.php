@@ -57,19 +57,12 @@ trait ShopTrait {
             ->where('key_shops.key_container_id', $id)
             ->get();
 
-            $html = '';
-            foreach($shops as $shop) {
-                $html .= '<span class="badge badge-info badge-pill">'.$shop->shop.'</span>';
-            }
-            return $html;
+            return $shops;
         }
         catch(\Exception $e) {
             abort(404);
         } 
     }
-
-    /*SELECT t1.shop, t1.id
-  FROM shops AS t1 INNER JOIN key_shops AS t2 ON t1.id = t2.shop_id where t2.key_container_id = 3;*/
 
 }
 

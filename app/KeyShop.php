@@ -12,4 +12,12 @@ class KeyShop extends Model
     * @var array
     */
     protected $guarded = ['id'];
+
+    /**
+    * Get the matching shop
+    */
+    public function shop()
+    {
+        return $this->belongsTo(Shop::class);
+    }
 }

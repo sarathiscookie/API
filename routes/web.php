@@ -101,6 +101,8 @@ Route::prefix('admin')->group(function(){
 		Route::put('/dashboard/key/update', 'Admin\KeyController@update')->name('admin.dashboard.key.update');
 		/* Shop related to company */
 		Route::get('/dashboard/key/get/shops/{id}', 'Admin\KeyController@findShops')->name('admin.dashboard.key.get.shop');
+		/* Get key shop id */
+		Route::get('/dashboard/key/get/keyshop/id/{keyContainerId}/{keyShopId}', 'Admin\KeyController@findKeyShopId')->name('admin.dashboard.key.get.keyshop.id');
 	});
 });
 
