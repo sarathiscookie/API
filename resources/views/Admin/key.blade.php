@@ -54,9 +54,6 @@
 
             </table>
 
-            <!-- Export buttons are append here -->
-            <div id="buttons"></div>
-
           </div>
         </div>
       </div>
@@ -118,7 +115,7 @@
                         Click check box to select all shops. Each shops can select separately by clicking on select box.
                       </label>
                     </div>
-                    <select id="shop" class="form-control" name="shop[]" multiple="multiple">
+                    <select id="shop_select" class="form-control" name="shop[]" multiple="multiple">
                       <option id="optionChoose" value="" disabled="disabled">Choose Shop</option>
                     </select>
                   </div>

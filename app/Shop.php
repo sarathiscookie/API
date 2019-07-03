@@ -69,6 +69,17 @@ class Shop extends Model
     }
 
     /**
+    * Scope for shop status.
+    *
+    * @param  string  $query
+    * @return string
+    */
+    public function scopeJoinActive($query)
+    {
+        return $query->where('shops.active', 'yes');
+    }
+
+    /**
     * Get the matching company
     */
     public function company()

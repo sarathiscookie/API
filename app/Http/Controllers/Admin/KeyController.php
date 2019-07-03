@@ -277,7 +277,7 @@ class KeyController extends Controller
             </div>
 
             <div class="modal-body">
-            <div class="keyUpdateValidationAlert"></div>
+            <div class="keyUpdateValidationAlert_'.$keyContainer->id.'"></div>
             <div class="text-right">
             <a href="" class="btn btn-danger btn-sm deleteEvent" data-id="'.$keyContainer->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
             <hr>
@@ -288,17 +288,6 @@ class KeyController extends Controller
             <label for="key_name_edit">Key Name <span class="required">*</span></label>
             <input type="text" name="key_name_edit" id="key_name_edit_'.$keyContainer->id.'" class="form-control"  maxlength="100" value="'.$keyContainer->name.'">
             </div>
-
-            <div class="form-group col-md-6">
-            <label for="key_type_edit">Key Type <span class="required">*</span></label>
-            <select id="key_type_edit_'.$keyContainer->id.'" class="form-control" name="key_type_edit">
-            <option value="">Choose Type</option>
-            '.$keyTypeOptions.'
-            </select>
-            </div>
-            </div>
-
-            <div class="form-row">
             <div class="form-group col-md-6">
             <label for="company_edit">Company <span class="required">*</span></label>
             <select id="company_edit_'.$keyContainer->id.'" class="form-control" name="company_edit">
@@ -309,16 +298,19 @@ class KeyController extends Controller
             </div>
 
             <div class="form-row">
-            <div class="form-group col-md-12" id="divShopEdit">
-            <label for="shop_edit">Shops <span class="required">*</span></label>
+            <div class="form-group col-md-12" id="div_shop_edit_'.$keyContainer->id.'">
+            <div class="no_shop_alert_'.$keyContainer->id.'"></div>
 
+            <div class="div_shop_edit_'.$keyContainer->id.'">
+            <label for="shop_edit">Shops <span class="required">*</span></label>
             <div id="shop_edits_first_div_'.$keyContainer->id.'">
-            <select class="form-control shop_edits_'.$keyContainer->id.'" name="shop_edit[]" multiple="multiple">
+            <select id="shop_edits_'.$keyContainer->id.'" class="form-control shop_edits_'.$keyContainer->id.'" name="shop_edit[]" multiple="multiple">
             <option class="first_option_shop_edit_'.$keyContainer->id.'" value="" disabled="disabled">Choose Shop</option>
             '.$shopOptions.'
             </select>
             </div>
 
+            </div>
             </div>
             </div>
 
@@ -336,7 +328,7 @@ class KeyController extends Controller
             </div>
             </div>
 
-            <button type="button" class="btn btn-primary btn-lg btn-block updateKey"><i class="far fa-edit"></i> Update </button>
+            <button type="button" class="btn btn-primary btn-lg btn-block updateKeyContainer_'.$keyContainer->id.'"><i class="far fa-edit"></i> Update </button>
 
             </div>
             </div>
@@ -377,7 +369,6 @@ class KeyController extends Controller
             $keyContainer->activation_number = $request->act_number;
             $keyContainer->count             = $this->countKeys($request->keys);
             $keyContainer->total_activation  = $request->act_number * $this->countKeys($request->keys);
-            $keyContainer->total_available   = $request->act_number * $this->countKeys($request->keys);
             $keyContainer->active            = 'no';
             $keyContainer->save();
 
@@ -433,13 +424,48 @@ class KeyController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\KeyContainerRequest  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(KeyContainerRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $keyContainer                    = KeyContainer::find($request->key_container_id);
+            $keyContainer->name              = $request->key_name_edit; 
+            $keyContainer->company_id        = $request->company_edit;
+            $keyContainer->activation_number = $request->activation_number_edit;
+            $keyContainer->count             = $this->countKeys($request->keys_edit);
+            $keyContainer->total_activation  = $request->activation_number_edit * $this->countKeys($request->keys_edit);
+            $keyContainer->save();
+
+            // Deleting and Storing shops id in to key shop table
+            KeyShop::where('key_container_id', $keyContainer->id)->delete();
+            foreach($request->shop_edit as $shop) {
+                $keyShops                   = new KeyShop;
+                $keyShops->key_container_id = $keyContainer->id;
+                $keyShops->shop_id          = $shop;
+                $keyShops->save();
+            }
+            
+            // Deleting and Storing keys in to key table
+            Key::where('key_container_id', $keyContainer->id)->delete();
+            foreach($request->keys_edit as $key) {
+                $keyDetails                   = new Key;
+                $keyDetails->key_container_id = $keyContainer->id;
+                $keyDetails->key              = preg_replace('/[ ,]+/', '', $key);
+                $keyDetails->available        = 1;
+                $keyDetails->save();
+            }
+
+            DB::commit();
+            return response()->json(['keyUpdatedStatus' => 'success', 'message' => 'Well done! Key details updated successfully'], 201);
+        } 
+        catch(\Exception $e) {
+            DB::rollBack();
+            return response()->json(['keyUpdatedStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 
     /**

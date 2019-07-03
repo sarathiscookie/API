@@ -1465,7 +1465,7 @@ $(function() {
 	});
 
 	/**
-	 * Hide shops select box when page loads. It shows only when select a company.
+	 * In create page, hide shops when page loads. It shows only when select a company.
 	 */
 	$( "#company" ).change(function() {
 		let companyId = $(this).val();
@@ -1501,7 +1501,7 @@ $(function() {
 					$( "#noShopsAlert" ).show();
 					$( "#shopSelectBoxDiv" ).hide();
 					$( "#noShopsAlert" ).html(
-					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> No found any shops for this company<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> Not found any shops for this company<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 					);
 				}
 
@@ -1525,19 +1525,19 @@ $(function() {
 	});
 
 	/* Multiple select for shops */
-	if( $("#shop")[0] ) {
-		$( "#shop" ).select2();
+	if( $("#shop_select")[0] ) {
+		$( "#shop_select" ).select2();
 	}
 
 	/* Select all shops by clicking checkbox */
 	$( "#checkAllShops" ).on('click', function() {
 		if( $( "#checkAllShops" ).is(':checked') ) {
-			$( "#shop > option:not(:first)" ).prop( "selected", true);
-			$( "#shop" ).trigger("change");
+			$( "#shop_select > option:not(:first)" ).prop( "selected", true);
+			$( "#shop_select" ).trigger("change");
 		} 
 		else {
-			$( "#shop > option" ).prop( "selected", false);
-			$( "#shop" ).trigger("change");
+			$( "#shop_select > option" ).prop( "selected", false);
+			$( "#shop_select" ).trigger("change");
 		}
 	});
 
@@ -1696,8 +1696,8 @@ $(function() {
 		var key_name     = $( "#key_name" ).val();
 		var key_type 	 = $( "#key_type" ).val();
 		var company 	 = $( "#company" ).val();
-		var shops 		 = $( "#shop" ).val();
-		var keyTextarea  = $( "#keys" ).val();
+		var shops 		 = $( "#shop_select" ).val();
+		var act_number 	 = $( "#activation_number" ).val();
 		var replaceSpace = $( "#keys" ).val().replace(/\s/g, ",").split(',');
 		var keys      	 = [];
 
@@ -1707,9 +1707,6 @@ $(function() {
 				keys.push(replaceSpace[i]);
 			}
 		}
-        
-		var act_number 	= $( "#activation_number" ).val();
-		var count 		= $( "#count" ).val();
 
 		$.ajax({
 			url: "/admin/dashboard/key/store",
@@ -1803,6 +1800,7 @@ $(function() {
 			$( ".shop_edits_"+keyContainerId ).select2();
 		}
 
+        // In edit page, select shops while changing company
 		$( "#company_edit_"+keyContainerId ).change(function() {
 		    
 		    let companyEditId = $(this).val();
@@ -1814,11 +1812,13 @@ $(function() {
 			})
 			.done(function(data) {
 				if(data.shopAvailableStatus === 'success') {
+					$( ".div_shop_edit_"+keyContainerId ).show();
+
+					$( ".no_shop_alert_"+keyContainerId ).hide();
+
 					$( ".first_option_shop_edit_"+keyContainerId ).remove();
 			
 			        $( ".shop_edits_"+keyContainerId ).html( '<option class="second_option_shop_edit_'+keyContainerId+'" value="" disabled="disabled">Choose Shop</option>' );
-
-					console.log(data.shops);
 
 					if( data.shops.length > 0 ) {
 						$( ".second_option_shop_result_"+keyContainerId ).remove();
@@ -1833,91 +1833,93 @@ $(function() {
 						}
 					}
 					else {
-						//no shops message
+						$( ".no_shop_alert_"+keyContainerId ).show();
+						$( ".no_shop_alert_"+keyContainerId ).html(
+							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> Not found any shops for this company <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+							);
+						$( ".div_shop_edit_"+keyContainerId ).hide();
 					}
 
 				}
 			})
 			.fail(function(data) {
 				if(data.responseJSON.shopAvailableStatus === 'failure') {
-					console.log(data.responseJSON.shopAvailableStatus);
+					$( ".no_shop_alert_"+keyContainerId ).show();
+					$( ".no_shop_alert_"+keyContainerId ).html(
+					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+					data.responseJSON.message +
+					'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+					$( ".div_shop_edit_"+keyContainerId ).hide();
 				}
 			});
 		});
-		//shop_edits_first_div
-
-		/*$.ajax({
-			url: "/admin/dashboard/key/get/shops/" + keyContainerCompanyId,
-			dataType: "JSON",
-			type: "GET"
-		})
-		.done(function(data) {
-			
-		})
-		.fail(function(data) {
-			
-		});*/
-
-		/*$( ".updateManager_" + managerid).on("click", function(e) {
+		
+		// Update keys and cointainers 
+		$( ".updateKeyContainer_" + keyContainerId).on("click", function(e) {
 			e.preventDefault();
-			var name = $( "#name_" + managerid).val();
-			var phone = $( "#phone_" + managerid).val();
-			var company = $( "#company_" + managerid).val();
-			var street = $( "#street_" + managerid).val();
-			var city = $( "#city_" + managerid).val();
-			var country = $( "#country_" + managerid).val();
-			var zip = $( "#zip_" + managerid).val();
+			var key_name_edit 			= $( "#key_name_edit_"+keyContainerId).val();
+			var company_edit 			= $( "#company_edit_"+keyContainerId).val();
+			var shop_edit  				= $( "#shop_edits_"+keyContainerId).val();
+			var activation_number_edit 	= $( "#activation_number_edit_"+keyContainerId).val();
+			var keys_edit_replace 	    = $( "#keys_edit_"+keyContainerId).val().replace(/\s/g, ",").split(',');
+			var keys_edit = [];
+
+			// Convert textareas string value to javascript array separated by new lines.
+			for( var i = 0; i < keys_edit_replace.length; i++ ) {
+				if( keys_edit_replace[i] ) {
+					keys_edit.push(keys_edit_replace[i]);
+				}
+			}
 
 			$.ajax({
-				url: "/admin/dashboard/manager/update",
+				url: "/admin/dashboard/key/update",
 				dataType: "JSON",
 				type: "PUT",
 				data: {
-					name: name,
-					phone: phone,
-					street: street,
-					city: city,
-					country: country,
-					company: company,
-					zip: zip,
-					managerid: managerid
+					key_name_edit: key_name_edit,
+					company_edit: company_edit,
+					shop_edit: shop_edit,
+					activation_number_edit: activation_number_edit,
+					keys_edit: keys_edit,
+					key_container_id: keyContainerId
 				}
 			})
-				.done(function(result) {
-					if (result.managerStatusUpdate === "success") {
-						$( "#editManagerModal_" + managerid).modal("hide"); // It hides the modal
+			.done(function(result) {
+				if (result.keyUpdatedStatus === "success") {
+						$( "#editKeyModal_"+keyContainerId).modal("hide"); // It hides the modal
 
-						datatableList.ajax.reload(null, false); //Reload data on table
+						keyList.ajax.reload(null, false); //Reload data on table
 
-						$( ".responseMessage" ).html(
+						$( ".responseKeyMessage" ).html(
 							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
-								result.message +
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						);
+							result.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+							);
 
-						$( ".responseMessage" )
-							.show()
-							.delay(5000)
-							.fadeOut();
+						$( ".responseKeyMessage" )
+						.show()
+						.delay(5000)
+						.fadeOut();
 					}
 				})
-				.fail(function(data) {
-					if (data.responseJSON.managerStatusUpdate === "failure") {
-						$( ".managerUpdateValidationAlert" ).html(
-							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
-								data.responseJSON.message +
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+			.fail(function(data) {
+				if (data.responseJSON.keyUpdatedStatus === "failure") {
+					$( ".keyUpdateValidationAlert_"+keyContainerId ).html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+						data.responseJSON.message +
+						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 						);
-					}
+				}
 
-					if (data.status === 422) {
-						$.each(data.responseJSON.errors, function(key, val) {
-							$( ".managerUpdateValidationAlert" ).html(
-								"<p class='alert alert-danger'>" + val + "</p>"
+				if (data.status === 422) {
+					$.each(data.responseJSON.errors, function(key, val) {
+						$( ".keyUpdateValidationAlert_"+keyContainerId ).html(
+							"<p class='alert alert-danger'>" + val + "</p>"
 							);
-						});
-					}
-				});
-		});*/
+					});
+				}
+			});
+		});
 	});
 });

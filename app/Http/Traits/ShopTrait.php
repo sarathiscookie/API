@@ -55,6 +55,7 @@ trait ShopTrait {
             $shops = Shop::join('key_shops', 'shops.id', '=', 'key_shops.shop_id')
             ->select('shops.shop')
             ->where('key_shops.key_container_id', $id)
+            ->joinactive()
             ->get();
 
             return $shops;
