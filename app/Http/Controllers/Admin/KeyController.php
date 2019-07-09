@@ -66,10 +66,13 @@ class KeyController extends Controller
             2 => 'active',
         );
 
-        $totalData     = KeyContainer::select('id', 'name', 'container', 'company_id', 'active')
-        ->count();
+        $q             = KeyContainer::join('key_shops', 'key_containers.id', '=', 'key_shops.key_container_id')
+        ->join('shops', 'key_shops.shop_id', '=', 'shops.id')
+        ->join('companies', 'key_containers.company_id', '=', 'companies.id')
+        ->select('key_containers.id', 'key_containers.name', 'key_containers.container', 'companies.company', DB::raw('group_concat(distinct shops.shop separator ", ") as shopName'), 'key_containers.active')
+        ->groupBy('key_containers.id');
 
-        $q             = KeyContainer::select('id', 'name', 'container', 'company_id', 'active');
+        $totalData     = $q->count();
 
         $totalFiltered = $totalData;
         $limit         = (int)$request->input('length');
@@ -102,18 +105,16 @@ class KeyController extends Controller
         if( !empty($keyLists) ) {
             foreach ($keyLists as $key => $keyList) {
 
-                $htmlBadgeShopName = '';
-                foreach($this->getShopsName($keyList->id) as $shopName) {
-                    $htmlBadgeShopName .= '<span class="badge badge-info badge-pill">'.$shopName->shop.'</span>';
+                $htmlBadgeShopName      = '';
+                foreach(explode(', ', $keyList->shopName) as $shopKey => $shopName) {
+                    $htmlBadgeShopName .= '<span class="badge badge-info badge-pill">'.$shopName.'</span>';
                 }
 
-                $company_key_list         = (isset($this->fetchCompany($keyList->company_id)->company)) ? $this->fetchCompany($keyList->company_id)->company : '';
-
-                $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$keyList->id.'" />';
-                $nestedData['name']       = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$company_key_list.'</span></div> <div>Shops: '.$htmlBadgeShopName.'</div>';
-                $nestedData['active']     = $this->keyStatusHtml($keyList->id, $keyList->active);
-                $nestedData['actions']    = $this->editKeyContainerModel($keyList->id);
-                $data[]                   = $nestedData;
+                $nestedData['hash']     = '<input class="checked" type="checkbox" name="id[]" value="'.$keyList->id.'" />';
+                $nestedData['name']     = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$keyList->company.'</span></div> <div>Shops: '.$htmlBadgeShopName.'</div>';
+                $nestedData['active']   = $this->keyStatusHtml($keyList->id, $keyList->active);
+                $nestedData['actions']  = $this->editKeyContainerModel($keyList->id);
+                $data[]                 = $nestedData;
             }
         }
 
@@ -128,7 +129,7 @@ class KeyController extends Controller
     }
 
     /**
-     * Search query for key
+     * Search query for key name, shops and country
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -136,19 +137,20 @@ class KeyController extends Controller
     public function searchKey($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('name', 'like', "%{$searchData}%");
+            $query->where('key_containers.name', 'like', "%{$searchData}%")
+            ->orWhere('companies.company', 'like', "%{$searchData}%")
+            ->orWhere('shops.shop', 'like', "%{$searchData}%");
+
+            //WHERE kc.id = 2 AND kc.name LIKE '%10%' AND s.shop LIKE '%amaz%' AND c.company LIKE '%info%'
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('name', 'like', "%{$searchData}%");
-        })
-        ->count();
+        $totalFiltered = $q->count();
 
         return $this;    
     }
 
     /**
-     * tfoot search query for key
+     * tfoot search query for key name, shop and country
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -156,13 +158,12 @@ class KeyController extends Controller
     public function tfootKey($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('name', 'like', "%{$searchData}%");
+            $query->where('key_containers.name', 'like', "%{$searchData}%")
+            ->orWhere('companies.company', 'like', "%{$searchData}%")
+            ->orWhere('shops.shop', 'like', "%{$searchData}%");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('name', 'like', "%{$searchData}%");
-        })
-        ->count();
+        $totalFiltered = $q->count();
 
         return $this;    
     }
@@ -176,13 +177,10 @@ class KeyController extends Controller
     public function tfootKeyStatus($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('name', "{$searchData}");
+            $query->where('key_containers.active', "{$searchData}");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('name', "{$searchData}");
-        })
-        ->count();
+        $totalFiltered = $q->count();
 
         return $this;    
     }

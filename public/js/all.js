@@ -1640,7 +1640,7 @@ $(function() {
 	$( ".search-input" ).on("keyup change", function() {
 		var i = $(this).attr("id"); // getting column index
 		var v = $(this).val(); // getting search input value
-		datatableList
+		keyList
 			.columns(i)
 			.search(v)
 			.draw();

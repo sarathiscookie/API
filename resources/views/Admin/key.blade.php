@@ -41,7 +41,7 @@
 
               <tfoot>
                 <td></td>
-                <th><input type="text" id="1"  class="form-control input-sm search-input" placeholder="Search key name"></th>
+                <th><input type="text" id="1"  class="form-control input-sm search-input" placeholder="Key name or Company or Shops"></th>
                 <td>
                   <select class="form-control input-sm search-input" id="2">
                     <option value="">All</option>
