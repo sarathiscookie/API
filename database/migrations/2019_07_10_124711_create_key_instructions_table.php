@@ -44,6 +44,6 @@ class CreateKeyInstructionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('key_counts');
+        Schema::dropIfExists('key_instructions');
     }
 }

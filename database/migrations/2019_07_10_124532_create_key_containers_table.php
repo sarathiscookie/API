@@ -42,6 +42,6 @@ class CreateKeyContainersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('keys');
+        Schema::dropIfExists('key_containers');
     }
 }

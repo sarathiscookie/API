@@ -28,6 +28,7 @@ class CreateShopsTable extends Migration
             $table->string('customer_number', 100)->nullable();
             $table->string('password')->nullable();
             $table->string('api_key')->nullable();
+            $table->string('token')->nullable();
             $table->enum('active', ['yes', 'no'])->default('no');
             $table->timestamps();
 
