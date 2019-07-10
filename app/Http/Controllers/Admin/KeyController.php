@@ -70,9 +70,7 @@ class KeyController extends Controller
         ->join('shops', 'key_shops.shop_id', '=', 'shops.id')
         ->join('companies', 'key_containers.company_id', '=', 'companies.id')
         ->select('key_containers.id', 'key_containers.name', 'key_containers.container', 'companies.company', DB::raw('group_concat(distinct shops.shop separator ", ") as shopName'), 'key_containers.active')
-        ->groupBy('key_containers.id')
-        ->toSql();
-        dd($q);
+        ->groupBy('key_containers.id');
 
         $totalData     = $q->count();
 
@@ -82,7 +80,7 @@ class KeyController extends Controller
         $order         = $columns[$params['order'][0]['column']]; //contains column index
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // Search query for key
+        /*// Search query for key
         if(!empty($request->input('search.value'))) {
             $this->searchKey($q, $request->input('search.value'));
         }
@@ -95,12 +93,12 @@ class KeyController extends Controller
         // tfoot search query for key status
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootKeyStatus($q, $params['columns'][2]['search']['value']);
-        }
+        }*/
 
         $keyLists = $q->skip($start)
             ->take($limit)
             ->orderBy($order, $dir)
-            ->get();
+            ->toSql();
 
             dd($keyLists);
 
