@@ -80,7 +80,7 @@
                   <label for="shop_name">Shop <span class="required">*</span></label>
 
                   <select class="form-control" id="shop_name" name="shop_name">
-                    <option>Choose shop name</option>
+                    <option>Choose shop</option>
                     @isset($shopNames)
                     @foreach($shopNames as $shopName) 
                     <option value="{{ $shopName->id }}">{{ $shopName->name }}</option>
@@ -92,13 +92,20 @@
                 <div class="form-group col-md-6">
                   <label for="shop_company">Company <span class="required">*</span></label>
                   <select id="shop_company" class="form-control" name="shop_company">
-                    <option value="">Choose...</option>
+                    <option value="">Choose Company</option>
                     @isset($companies)
                       @foreach( $companies as $company )
                           <option value="{{ $company->id }}">{{ $company->company }}</option>
                       @endforeach
                     @endisset
                   </select>
+                </div>
+              </div>
+
+              <div class="form-row shop_token_div" style="display: none;">
+                <div class="form-group col-md-12">
+                  <label for="shop_token">Token</label>
+                  <input id="shop_token" type="text" class="form-control" name="shop_token" maxlength="255">
                 </div>
               </div>
 
@@ -178,3 +185,16 @@
 
     </main>
 @endsection
+
+@push('scripts')
+<script>
+  window.environment = {
+    shop_name_amazone: '{{ env('SHOP_NAME_AMAZONE') }}',
+    shop_name_ebay: '{{ env('SHOP_NAME_EBAY') }}',
+  }
+</script>
+@endpush
+
+
+
+

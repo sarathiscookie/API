@@ -769,6 +769,24 @@ $(function() {
 		}
 	});
 
+	/* Hide & Show token while selecting amazon and ebay */
+
+	let shop_names_token = {
+		shop_name_amazone: window.environment.shop_name_amazone,
+		shop_name_ebay: window.environment.shop_name_ebay,
+	};
+
+	$( "#shop_name" ).change(function() {
+		if( $(this).val() > 1 ) {
+			if( ($("option:selected", this).text() === shop_names_token.shop_name_amazone) || ($("option:selected", this).text() === shop_names_token.shop_name_ebay) ) {
+				$( ".shop_token_div" ).show();
+			}
+		}
+		else {
+			$( ".shop_token_div" ).hide();
+		}
+	});
+
 	/* Datatable scripts */
 	let shopList = $("#shop_list").DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],
@@ -879,6 +897,7 @@ $(function() {
 		let shop_mail_username 	  	= $("#shop_mail_username").val();
 		let shop_mail_password 	  	= $("#shop_mail_password").val();
 		let shop_api_key 		  	= $("#shop_api_key").val();
+		let shop_token 		  	    = $("#shop_token").val();
 		let shop_customer_number  	= $("#shop_customer_number").val();
 		let shop_password 		  	= $("#shop_password").val();
 
@@ -898,6 +917,7 @@ $(function() {
 				shop_mail_username: shop_mail_username,
 				shop_mail_password: shop_mail_password,
 				shop_api_key: shop_api_key,
+				shop_token: shop_token,
 				shop_customer_number: shop_customer_number,
 				shop_password: shop_password
 			}

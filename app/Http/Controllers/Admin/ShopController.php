@@ -375,6 +375,7 @@ class ShopController extends Controller
             $shop->mail_username    = $request->shop_mail_username;
             $shop->mail_password    = Hash::make($request->shop_mail_password);
             $shop->api_key          = $request->shop_api_key;
+            $shop->token            = $request->shop_token;
             $shop->customer_number  = $request->shop_customer_number;
             $shop->password         = Hash::make($request->shop_password);
             $shop->active           = 'no';
