@@ -38,8 +38,8 @@ class ShopRequest extends FormRequest
                     'shop_mail_encryption'   => ['required', 'string', 'max:20'],
                     'shop_mail_port'         => ['required', 'string', 'max:20'],
                     'shop_mail_driver'       => ['required', 'string', 'max:150'],
-                    'shop_company'           => ['required', 'not_in:0'],
                     'shop_token'             => ['max:255'],
+                    'shop_company'           => ['required', 'not_in:0'],
                     'shop_name'              => ['required', 'not_in:0']
                 ];
             }
@@ -57,8 +57,8 @@ class ShopRequest extends FormRequest
                     'shop_mail_encryption'   => ['required', 'string', 'max:20'],
                     'shop_mail_port'         => ['required', 'string', 'max:20'],
                     'shop_mail_driver'       => ['required', 'string', 'max:150'],
-                    'shop_company'           => ['required', 'not_in:0'],
                     'shop_token'             => ['max:255'],
+                    'shop_company'           => ['required', 'not_in:0'],
                     'shop_name'              => ['required', 'not_in:0']
                 ];
             }

@@ -17,7 +17,7 @@ $(function() {
 	/**
 	 * In create page, hide shops when page loads. It shows only when select a company.
 	 */
-	$( "#company" ).change(function() {
+	/*$( "#company" ).change(function() {
 		let companyId = $(this).val();
 
 		if(companyId === '') { 
@@ -67,20 +67,20 @@ $(function() {
 					);
 			}
 		});
-	});
+	});*/
 
     /* Tooltip */
-	$('.fa-question-circle').tooltip({
+	/*$('.fa-question-circle').tooltip({
 		container: 'body'
-	});
+	});*/
 
 	/* Multiple select for shops */
-	if( $("#shop_select")[0] ) {
+	/*if( $("#shop_select")[0] ) {
 		$( "#shop_select" ).select2();
-	}
+	}*/
 
 	/* Select all shops by clicking checkbox */
-	$( "#checkAllShops" ).on('click', function() {
+	/*$( "#checkAllShops" ).on('click', function() {
 		if( $( "#checkAllShops" ).is(':checked') ) {
 			$( "#shop_select > option:not(:first)" ).prop( "selected", true);
 			$( "#shop_select" ).trigger("change");
@@ -89,10 +89,10 @@ $(function() {
 			$( "#shop_select > option" ).prop( "selected", false);
 			$( "#shop_select" ).trigger("change");
 		}
-	});
+	});*/
 
 	/* Datatable scripts */
-	let keyList = $( "#key_list" ).DataTable({
+	/*let keyList = $( "#key_list" ).DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],
 		order: [1, "desc"],
 		processing: true,
@@ -140,7 +140,7 @@ $(function() {
 					": aktivieren, um Spalte absteigend zu sortieren"
 			}
 		}
-	});
+	});*/
 
 	/* Delete key functionality */
 	/*$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
@@ -187,17 +187,17 @@ $(function() {
 	});*/
 
 	/* <tfoot> search functionality */
-	$( ".search-input" ).on("keyup change", function() {
+	/*$( ".search-input" ).on("keyup change", function() {
 		var i = $(this).attr("id"); // getting column index
 		var v = $(this).val(); // getting search input value
 		keyList
 			.columns(i)
 			.search(v)
 			.draw();
-	});
+	});*/
 
 	/* Updating key status */
-	$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
+	/*$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
 		e.preventDefault();
 
 		var newStatus = "";
@@ -237,10 +237,10 @@ $(function() {
 					.delay(5000)
 					.fadeOut();
 			});
-	});
+	});*/
 
 	/* Create key */
-	$( "button.createKey" ).on( "click", function(e) {
+	/*$( "button.createKey" ).on( "click", function(e) {
 		e.preventDefault();
 
 		var key_name     = $( "#key_name" ).val();
@@ -306,10 +306,10 @@ $(function() {
 				});
 			}
 		});
-	});
+	});*/
 
 	/* Clearing data of create manager modal fields */
-	$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
+	/*$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
 		$(this)
 			.find("input,textarea,select")
 			.val("")
@@ -317,10 +317,10 @@ $(function() {
 			.find("input[type=checkbox], input[type=radio]")
 			.prop("checked", "")
 			.end();
-	});
+	});*/
 
 	/* Edit manager */
-	$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
+	/*$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
 		e.preventDefault();
 		let keyContainerId 			= $(this).data( "keycontainerid" );
 		let keyContainerCompanyId 	= $(this).data( "keycontainercompanyid" );
@@ -451,5 +451,5 @@ $(function() {
 				}
 			});
 		});
-	});
+	});*/
 });

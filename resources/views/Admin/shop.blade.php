@@ -27,7 +27,7 @@
 
             <div class="responseShopMessage"></div>
 
-            <table id="{{-- shop_list --}}" class="table table-bordered table-hover display" style="width:100%">
+            <table id="shop_list" class="table table-bordered table-hover display" style="width:100%">
               <thead class="thead-light">
                 <tr>
                   <th>#</th>
@@ -41,7 +41,7 @@
 
               <tfoot>
                 <td></td>
-                <th><input type="text" id="1"  class="form-control input-sm search-input" placeholder="Search Shop"></th>
+                <th><input type="text" id="1"  class="form-control input-sm search-input" placeholder="Search shop or company"></th>
                 <td>
                   <select class="form-control input-sm search-input" id="2">
                     <option value="">All</option>

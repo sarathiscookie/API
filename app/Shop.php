@@ -87,4 +87,12 @@ class Shop extends Model
         return $this->belongsTo(Company::class);
     }
 
+    /**
+    * Get the matching shop name
+    */
+    public function shopname()
+    {
+        return $this->belongsTo(Shopname::class);
+    }
+
 }

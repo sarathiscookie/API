@@ -370,15 +370,14 @@ class CompaniesController extends Controller
     public function update(CompanyRequest $request)
     {
         try {
-            Company::where('id', $request->companyid)
-            ->update([
-                'company'   => $request->company,  
-                'phone'     => $request->phone, 
-                'street'    => $request->street, 
-                'city'      => $request->city, 
-                'country_id'=> $request->country,
-                'postal'    => $request->zip
-            ]);
+            $company             = Company::find($request->companyid);
+            $company->company    = $request->company; 
+            $company->phone      = $request->phone;
+            $company->street     = $request->street; 
+            $company->city       = $request->city; 
+            $company->country_id = $request->country;
+            $company->postal     = $request->zip;
+            $company->save();
 
             return response()->json(['companyStatusUpdate' => 'success', 'message' => 'Well done! Company details updated successfully'], 201);
         } 

@@ -770,17 +770,19 @@ $(function() {
 	});
 
 	/* Hide & Show token while selecting amazon and ebay */
+	let shop_names_token;
+	function shopGlobalVariabeFn() {
+		shop_names_token = {
+			shop_name_amazone: window.environment.shop_name_amazone,
+			shop_name_ebay: window.environment.shop_name_ebay,
+		};
 
-	let shop_names_token = {
-		shop_name_amazone: window.environment.shop_name_amazone,
-		shop_name_ebay: window.environment.shop_name_ebay,
-	};
+		return shop_names_token;
+	}
 
 	$( "#shop_name" ).change(function() {
-		if( $(this).val() > 1 ) {
-			if( ($("option:selected", this).text() === shop_names_token.shop_name_amazone) || ($("option:selected", this).text() === shop_names_token.shop_name_ebay) ) {
-				$( ".shop_token_div" ).show();
-			}
+		if( ($("option:selected", this).text() === shopGlobalVariabeFn().shop_name_amazone) || ($("option:selected", this).text() === shopGlobalVariabeFn().shop_name_ebay) ) {
+			$( ".shop_token_div" ).show();
 		}
 		else {
 			$( ".shop_token_div" ).hide();
@@ -961,82 +963,106 @@ $(function() {
 
 	/* Edit shop */
 	$("#shop_list tbody").on("click", "a.editShop", function(e) {
+
 		e.preventDefault();
-		var shopid = $(this).data("shopid");
+
+		let shopid    = $(this).data("shopid");
+		let shoptoken = $(this).data("shoptoken");
+
+		// Show & Hide shops default when page loads initially
+		if( ($( "#shop_name_"+shopid+" option:selected" ).text() === shopGlobalVariabeFn().shop_name_amazone) || ($( "#shop_name_"+shopid+" option:selected" ).text() === shopGlobalVariabeFn().shop_name_ebay) ) {
+			$( ".shop_token_div_"+shopid ).html('<div class="form-group col-md-12"><label for="shop_token">Token</label><input id="shop_token_'+shopid+'" type="text" class="form-control" name="shop_token" value = "'+shoptoken+'" maxlength="255"></div>');
+		}
+		else {
+			$( ".shop_token_div_"+shopid ).hide();
+		}
+		
+		// Hide & Show token while choosing amazon or ebay
+		$( "#shop_name_"+shopid ).on('change', function() {
+			if( ($( "#shop_name_"+shopid+" option:selected" ).text() === shopGlobalVariabeFn().shop_name_amazone) || ($( "#shop_name_"+shopid+" option:selected" ).text() === shopGlobalVariabeFn().shop_name_ebay) ) {
+				$( ".shop_token_div_"+shopid ).show();
+				$( ".shop_token_div_"+shopid ).html('<div class="form-group col-md-12"><label for="shop_token">Token</label><input id="shop_token_'+shopid+'" type="text" class="form-control" name="shop_token" value = "'+shoptoken+'" maxlength="255"></div>');
+			}
+			else {
+				$( ".shop_token_div_"+shopid ).hide();
+			}
+		});
 
 		$(".updateShop_" + shopid).on("click", function(e) {
 			e.preventDefault();
 
-			var shop = $("#shop_" + shopid).val();
-			var company = $("#company_" + shopid).val();
-			var mail_driver = $("#mail_driver_" + shopid).val();
-			var mail_port = $("#mail_port_" + shopid).val();
-			var mail_encryption = $("#mail_encryption_" + shopid).val();
-			var mail_host = $("#mail_host_" + shopid).val();
-			var mail_from_address = $("#mail_from_address_" + shopid).val();
-			var mail_from_name = $("#mail_from_name_" + shopid).val();
-			var mail_username = $("#mail_username_" + shopid).val();
-			var mail_password = $("#mail_password_" + shopid).val();
-			var api_key = $("#api_key_" + shopid).val();
-			var customer_number = $("#customer_number_" + shopid).val();
-			var password = $("#password_" + shopid).val();
+			let shop_name 			 	= $("#shop_name_" + shopid).val();
+			let shop_company 		 	= $("#shop_company_" + shopid).val();
+			let shop_token 		 	    = ( $( "#shop_name_"+shopid ).val() > 1 ) ? $("#shop_token_" + shopid).val() : '';
+			let shop_mail_driver 	 	= $("#shop_mail_driver_" + shopid).val();
+			let shop_mail_port 		 	= $("#shop_mail_port_" + shopid).val();
+			let shop_mail_encryption 	= $("#shop_mail_encryption_" + shopid).val();
+			let shop_mail_host 		   	= $("#shop_mail_host_" + shopid).val();
+			let shop_mail_from_address 	= $("#shop_mail_from_address_" + shopid).val();
+			let shop_mail_from_name 	= $("#shop_mail_from_name_" + shopid).val();
+			let shop_mail_username 		= $("#shop_mail_username_" + shopid).val();
+			let shop_mail_password 		= $("#shop_mail_password_" + shopid).val();
+			let shop_api_key 			= $("#shop_api_key_" + shopid).val();
+			let shop_customer_number 	= $("#shop_customer_number_" + shopid).val();
+			let shop_password 			= $("#shop_password_" + shopid).val();
 
 			$.ajax({
 				url: "/admin/dashboard/shop/update",
 				dataType: "JSON",
 				type: "PUT",
 				data: {
-					shop: shop,
-					company: company,
-					mail_driver: mail_driver,
-					mail_port: mail_port,
-					mail_encryption: mail_encryption,
-					mail_host: mail_host,
-					mail_from_address: mail_from_address,
-					mail_from_name: mail_from_name,
-					mail_username: mail_username,
-					mail_password: mail_password,
-					api_key: api_key,
-					customer_number: customer_number,
-					password: password,
+					shop_name: shop_name,
+					shop_company: shop_company,
+					shop_token: shop_token,
+					shop_mail_driver: shop_mail_driver,
+					shop_mail_port: shop_mail_port,
+					shop_mail_encryption: shop_mail_encryption,
+					shop_mail_host: shop_mail_host,
+					shop_mail_from_address: shop_mail_from_address,
+					shop_mail_from_name: shop_mail_from_name,
+					shop_mail_username: shop_mail_username,
+					shop_mail_password: shop_mail_password,
+					shop_api_key: shop_api_key,
+					shop_customer_number: shop_customer_number,
+					shop_password: shop_password,
 					shopid: shopid
 				}
 			})
-				.done(function(result) {
-					if (result.shopStatusUpdate === "success") {
+			.done(function(result) {
+				if (result.shopStatusUpdate === "success") {
 						$("#editShopModal_" + shopid).modal("hide"); // It hides the modal
 
 						shopList.ajax.reload(null, false); //Reload data on table
 
 						$(".responseShopMessage").html(
 							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
-								result.message +
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
-						);
+							result.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+							);
 
 						$(".responseShopMessage")
-							.show()
-							.delay(5000)
-							.fadeOut();
+						.show()
+						.delay(5000)
+						.fadeOut();
 					}
-				})
-				.fail(function(data) {
-					if (data.responseJSON.shopStatusUpdate === "failure") {
-						$(".shopUpdateValidationAlert").html(
-							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
-								data.responseJSON.message +
-								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+			})
+			.fail(function(data) {
+				if (data.responseJSON.shopStatusUpdate === "failure") {
+					$(".shopUpdateValidationAlert").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+						data.responseJSON.message +
+						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
 						);
-					}
+				}
 
-					if (data.status === 422) {
-						$.each(data.responseJSON.errors, function(key, val) {
-							$(".shopUpdateValidationAlert").html(
-								"<p class='alert alert-danger'>" + val + "</p>"
+				if (data.status === 422) {
+					$.each(data.responseJSON.errors, function(key, val) {
+						$(".shopUpdateValidationAlert").html(
+							"<p class='alert alert-danger'>" + val + "</p>"
 							);
-						});
-					}
-				});
+					});
+				}
+			});
 		});
 	});
 
@@ -1509,7 +1535,7 @@ $(function() {
 	/**
 	 * In create page, hide shops when page loads. It shows only when select a company.
 	 */
-	$( "#company" ).change(function() {
+	/*$( "#company" ).change(function() {
 		let companyId = $(this).val();
 
 		if(companyId === '') { 
@@ -1559,20 +1585,20 @@ $(function() {
 					);
 			}
 		});
-	});
+	});*/
 
     /* Tooltip */
-	$('.fa-question-circle').tooltip({
+	/*$('.fa-question-circle').tooltip({
 		container: 'body'
-	});
+	});*/
 
 	/* Multiple select for shops */
-	if( $("#shop_select")[0] ) {
+	/*if( $("#shop_select")[0] ) {
 		$( "#shop_select" ).select2();
-	}
+	}*/
 
 	/* Select all shops by clicking checkbox */
-	$( "#checkAllShops" ).on('click', function() {
+	/*$( "#checkAllShops" ).on('click', function() {
 		if( $( "#checkAllShops" ).is(':checked') ) {
 			$( "#shop_select > option:not(:first)" ).prop( "selected", true);
 			$( "#shop_select" ).trigger("change");
@@ -1581,10 +1607,10 @@ $(function() {
 			$( "#shop_select > option" ).prop( "selected", false);
 			$( "#shop_select" ).trigger("change");
 		}
-	});
+	});*/
 
 	/* Datatable scripts */
-	let keyList = $( "#key_list" ).DataTable({
+	/*let keyList = $( "#key_list" ).DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],
 		order: [1, "desc"],
 		processing: true,
@@ -1632,7 +1658,7 @@ $(function() {
 					": aktivieren, um Spalte absteigend zu sortieren"
 			}
 		}
-	});
+	});*/
 
 	/* Delete key functionality */
 	/*$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
@@ -1679,17 +1705,17 @@ $(function() {
 	});*/
 
 	/* <tfoot> search functionality */
-	$( ".search-input" ).on("keyup change", function() {
+	/*$( ".search-input" ).on("keyup change", function() {
 		var i = $(this).attr("id"); // getting column index
 		var v = $(this).val(); // getting search input value
 		keyList
 			.columns(i)
 			.search(v)
 			.draw();
-	});
+	});*/
 
 	/* Updating key status */
-	$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
+	/*$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
 		e.preventDefault();
 
 		var newStatus = "";
@@ -1729,10 +1755,10 @@ $(function() {
 					.delay(5000)
 					.fadeOut();
 			});
-	});
+	});*/
 
 	/* Create key */
-	$( "button.createKey" ).on( "click", function(e) {
+	/*$( "button.createKey" ).on( "click", function(e) {
 		e.preventDefault();
 
 		var key_name     = $( "#key_name" ).val();
@@ -1798,10 +1824,10 @@ $(function() {
 				});
 			}
 		});
-	});
+	});*/
 
 	/* Clearing data of create manager modal fields */
-	$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
+	/*$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
 		$(this)
 			.find("input,textarea,select")
 			.val("")
@@ -1809,10 +1835,10 @@ $(function() {
 			.find("input[type=checkbox], input[type=radio]")
 			.prop("checked", "")
 			.end();
-	});
+	});*/
 
 	/* Edit manager */
-	$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
+	/*$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
 		e.preventDefault();
 		let keyContainerId 			= $(this).data( "keycontainerid" );
 		let keyContainerCompanyId 	= $(this).data( "keycontainercompanyid" );
@@ -1943,5 +1969,5 @@ $(function() {
 				}
 			});
 		});
-	});
+	});*/
 });

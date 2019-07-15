@@ -43,10 +43,14 @@ class ShopController extends Controller
             2 => 'active',
         );
 
-        $totalData = Shop::select('id', 'shopname_id', 'active', 'company_id')
-        ->count();
+        $totalData      = Shop::join('shopnames AS sn', 'shops.shopname_id', '=', 'sn.id')
+            ->join('companies AS cm', 'shops.company_id', '=', 'cm.id')
+            ->select('shops.id', 'sn.name AS shop', 'shops.active', 'cm.company')
+            ->count();
 
-        $q         = Shop::select('id', 'shopname_id', 'active', 'company_id');
+        $q              = Shop::join('shopnames AS sn', 'shops.shopname_id', '=', 'sn.id')
+            ->join('companies AS cm', 'shops.company_id', '=', 'cm.id')
+            ->select('shops.id', 'sn.name AS shop', 'shops.active', 'cm.company');
 
         $totalFiltered = $totalData;
         $limit         = (int)$request->input('length');
@@ -78,9 +82,8 @@ class ShopController extends Controller
 
         if(!empty($shopLists)) {
             foreach ($shopLists as $key=> $shopList) {
-                $company_shop_list        = (isset($this->fetchCompany($shopList->company_id)->company)) ? $this->fetchCompany($shopList->company_id)->company : '';
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$shopList->id.'" />';
-                $nestedData['shop']       = $shopList->shop.' <span class="badge badge-secondary">'.$company_shop_list.'</span>';
+                $nestedData['shop']       = $shopList->shop.' <span class="badge badge-secondary text-capitalize">'.$shopList->company.'</span>';
                 $nestedData['active']     = $this->shopStatusHtml($shopList->id, $shopList->active);
                 $nestedData['actions']    = $this->editShopModel($shopList->id);
                 $data[]                   = $nestedData;
@@ -106,13 +109,11 @@ class ShopController extends Controller
     public function searchShop($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('shop', 'like', "%{$searchData}%");
+            $query->where('sn.name', 'like', "%{$searchData}%")
+            ->orWhere('cm.company', 'like', "%{$searchData}%");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('shop', 'like', "%{$searchData}%");
-        })
-        ->count();
+        $totalFiltered = $q->count();
 
         return $this;    
     }
@@ -126,13 +127,11 @@ class ShopController extends Controller
     public function tfootShop($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('shop', 'like', "%{$searchData}%");
+            $query->where('sn.name', 'like', "%{$searchData}%")
+            ->orWhere('cm.company', 'like', "%{$searchData}%");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('shop', 'like', "%{$searchData}%");
-        })
-        ->count();
+        $totalFiltered = $q->count();
 
         return $this;    
     }
@@ -146,13 +145,10 @@ class ShopController extends Controller
     public function tfootShopStatus($q, $searchData)
     {
         $q->where(function($query) use ($searchData) {
-            $query->where('active', "{$searchData}");
+            $query->where('shops.active', "{$searchData}");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
-            $query->where('active', "{$searchData}");
-        })
-        ->count();
+        $totalFiltered = $q->count();
 
         return $this;    
     }
@@ -206,14 +202,25 @@ class ShopController extends Controller
     {
         try {
             $shop               = $this->edit($shopId);
-            $companyOptions     = '';
 
+            //Company select box
+            $companyOptions     = '';
             foreach($this->company() as $company) {
-                $companySelected = ($shop->company->id === $company->id) ? 'selected' : '';
+                $companySelected = ($shop->company_id === $company->id) ? 'selected' : '';
                 $companyOptions .= '<option value="'.$company->id.'" '.$companySelected.'>'.$company->company.'</option>';
             }
 
-            $html               = '<a class="btn btn-secondary btn-sm editShop" data-shopid="'.$shop->id.'" data-toggle="modal" data-target="#editShopModal_'.$shop->id.'"><i class="fas fa-cog"></i></a>
+            //Shop name select box
+            $shopNameOptions    = '';
+            foreach($this->shopNames() as $shopName) {
+                $shopNameSelected = ($shop->shopname_id === $shopName->id) ? 'selected' : '';
+                $shopNameOptions .= '<option value="'.$shopName->id.'" '.$shopNameSelected.'>'.$shopName->name.'</option>';
+            }
+
+            //Getting shop token
+            $shopToken = ( ($shop->shopname->name === env('SHOP_NAME_AMAZONE')) || ($shop->shopname->name === env('SHOP_NAME_EBAY')) ) ? $shop->token : '';
+
+            $html               = '<a class="btn btn-secondary btn-sm editShop" data-shoptoken="'.$shopToken.'" data-shopid="'.$shop->id.'" data-toggle="modal" data-target="#editShopModal_'.$shop->id.'"><i class="fas fa-cog"></i></a>
             <div class="modal fade" id="editShopModal_'.$shop->id.'" tabindex="-1" role="dialog" aria-labelledby="editShopModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -246,14 +253,17 @@ class ShopController extends Controller
             <div class="form-row">
             <div class="form-group col-md-6">
 
-            <label for="shop">Shop <span class="required">*</span></label>
-            <input id="shop_'.$shop->id.'" type="text" class="form-control" name="shop" value="'.$shop->shop.'" maxlength="150">
+            <label for="shop_name">Shop <span class="required">*</span></label>
+            <select id="shop_name_'.$shop->id.'" class="form-control" name="shop_name">
+            <option value="">Choose Shop</option>
+            '.$shopNameOptions.'
+            </select>
 
             </div>
             <div class="form-group col-md-6">
 
-            <label for="company">Company <span class="required">*</span></label>
-            <select id="company_'.$shop->id.'" class="form-control" name="company">
+            <label for="shop_company">Company <span class="required">*</span></label>
+            <select id="shop_company_'.$shop->id.'" class="form-control" name="shop_company">
             <option value="">Choose Company</option>
             '.$companyOptions.'
             </select>
@@ -261,70 +271,73 @@ class ShopController extends Controller
             </div>
             </div>
 
+            <div class="form-row shop_token_div_'.$shop->id.'">
+            </div>
+
             <div class="form-row">
             <div class="form-group col-md-4">
-            <label for="mail_driver">Mail Driver <span class="required">*</span></label>
-            <input id="mail_driver_'.$shop->id.'" type="text" class="form-control" name="mail_driver" maxlength="150" value="'.$shop->mail_driver.'">
+            <label for="shop_mail_driver">Mail Driver <span class="required">*</span></label>
+            <input id="shop_mail_driver_'.$shop->id.'" type="text" class="form-control" name="shop_mail_driver" maxlength="150" value="'.$shop->mail_driver.'">
             </div>
 
             <div class="form-group col-md-4">
-            <label for="mail_port">Mail Port <span class="required">*</span></label>
-            <input id="mail_port_'.$shop->id.'" type="text" class="form-control" name="mail_port" maxlength="20" value="'.$shop->mail_port.'">
+            <label for="shop_mail_port">Mail Port <span class="required">*</span></label>
+            <input id="shop_mail_port_'.$shop->id.'" type="text" class="form-control" name="shop_mail_port" maxlength="20" value="'.$shop->mail_port.'">
             </div>
 
             <div class="form-group col-md-4">
-            <label for="mail_encryption">Mail Encryption <span class="required">*</span></label>
-            <input id="mail_encryption_'.$shop->id.'" type="text" class="form-control" name="mail_encryption" maxlength="20" value="'.$shop->mail_encryption.'">
+            <label for="shop_mail_encryption">Mail Encryption <span class="required">*</span></label>
+            <input id="shop_mail_encryption_'.$shop->id.'" type="text" class="form-control" name="shop_mail_encryption" maxlength="20" value="'.$shop->mail_encryption.'">
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-12">
-            <label for="mail_host">Mail Host <span class="required">*</span></label>
-            <input id="mail_host_'.$shop->id.'" type="text" class="form-control" name="mail_host" maxlength="150" value="'.$shop->mail_host.'">
+            <label for="shop_mail_host">Mail Host <span class="required">*</span></label>
+            <input id="shop_mail_host_'.$shop->id.'" type="text" class="form-control" name="shop_mail_host" maxlength="150" value="'.$shop->mail_host.'">
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-6">
-            <label for="mail_from_address">Mail From Address <span class="required">*</span></label>
-            <input id="mail_from_address_'.$shop->id.'" type="text" class="form-control" name="mail_from_address" maxlength="255" value="'.$shop->mail_from_address.'">
+            <label for="shop_mail_from_address">Mail From Address <span class="required">*</span></label>
+            <input id="shop_mail_from_address_'.$shop->id.'" type="text" class="form-control" name="shop_mail_from_address" maxlength="255" value="'.$shop->mail_from_address.'">
             </div>
 
             <div class="form-group col-md-6">
-            <label for="mail_from_name">Mail From Name <span class="required">*</span></label>
-            <input id="mail_from_name_'.$shop->id.'" type="text" class="form-control" name="mail_from_name" maxlength="150" value="'.$shop->mail_from_name.'">
+            <label for="shop_mail_from_name">Mail From Name <span class="required">*</span></label>
+            <input id="shop_mail_from_name_'.$shop->id.'" type="text" class="form-control" name="shop_mail_from_name" maxlength="150" value="'.$shop->mail_from_name.'">
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-6">
-            <label for="mail_username">Mail Username <span class="required">*</span></label>
-            <input id="mail_username_'.$shop->id.'" type="text" class="form-control" name="mail_username" maxlength="100" value="'.$shop->mail_username.'">
+            <label for="shop_mail_username">Mail Username <span class="required">*</span></label>
+            <input id="shop_mail_username_'.$shop->id.'" type="text" class="form-control" name="shop_mail_username" maxlength="100" value="'.$shop->mail_username.'">
             </div>
 
             <div class="form-group col-md-6">
-            <label for="mail_password">Mail Password <span class="required">*</span></label>
-            <input id="mail_password_'.$shop->id.'" type="password" class="form-control" name="mail_password" maxlength="255" value="'.$shop->mail_password.'">
+            <label for="shop_mail_password">Mail Password <span class="required">*</span></label>
+            <input id="shop_mail_password_'.$shop->id.'" type="password" class="form-control" name="shop_mail_password" maxlength="255" value="'.$shop->mail_password.'">
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-12">
-            <label for="api_key">Api Key</label>
-            <input id="api_key_'.$shop->id.'" type="text" class="form-control" name="api_key" maxlength="255" value="'.$shop->api_key.'">
+            <label for="shop_api_key">Api Key</label>
+            <input id="shop_api_key_'.$shop->id.'" type="text" class="form-control" name="shop_api_key" maxlength="255" value="'.$shop->api_key.'">
             </div>
             </div>
 
             <div class="form-row">
             <div class="form-group col-md-6">
-            <label for="customer_number">Customer Number</label>
-            <input id="customer_number_'.$shop->id.'" type="text" class="form-control" name="customer_number" maxlength="100" value="'.$shop->customer_number.'">
+            <label for="shop_customer_number">Customer Number</label>
+            <input id="shop_customer_number_'.$shop->id.'" type="text" class="form-control" name="shop_customer_number" maxlength="100" value="'.$shop->customer_number.'">
             </div>
 
             <div class="form-group col-md-6">
-            <label for="password">Password</label>
-            <input id="password_'.$shop->id.'" type="password" class="form-control" name="password" maxlength="255" value="'.$shop->password.'">
+            <label for="shop_password">Password</label>
+            <input id="shop_password_'.$shop->id.'" type="password" class="form-control" name="shop_password" maxlength="255" value="'.$shop->password.'">
             </div>
             </div>
 
@@ -407,7 +420,7 @@ class ShopController extends Controller
      */
     public function edit($id)
     {
-        $shop = Shop::with('company:id,company')->findOrFail($id);
+        $shop = Shop::with('shopname:id,name')->findOrFail($id);
         return $shop;
     }
 
@@ -420,23 +433,22 @@ class ShopController extends Controller
     public function update(ShopRequest $request)
     {
         try {
-            //dd($request->all());
-            Shop::where('id', (int)$request->shopid)
-            ->update([
-                'shop'              => $request->shop,
-                'company_id'        => $request->company,
-                'mail_driver'       => $request->mail_driver,
-                'mail_port'         => $request->mail_port,
-                'mail_encryption'   => $request->mail_encryption,
-                'mail_host'         => $request->mail_host,
-                'mail_from_address' => $request->mail_from_address,
-                'mail_from_name'    => $request->mail_from_name,
-                'mail_username'     => $request->mail_username,
-                'mail_password'     => $request->mail_password,
-                'api_key'           => $request->api_key,
-                'customer_number'   => $request->customer_number,
-                'password'          => $request->password
-            ]);
+            $shop                    = Shop::find($request->shopid);
+            $shop->shopname_id       = $request->shop_name;
+            $shop->company_id        = $request->shop_company;
+            $shop->token             = $request->shop_token;
+            $shop->mail_driver       = $request->shop_mail_driver;
+            $shop->mail_port         = $request->shop_mail_port;
+            $shop->mail_encryption   = $request->shop_mail_encryption;
+            $shop->mail_host         = $request->shop_mail_host;
+            $shop->mail_from_address = $request->shop_mail_from_address;
+            $shop->mail_from_name    = $request->shop_mail_from_name;
+            $shop->mail_username     = $request->shop_mail_username;
+            $shop->mail_password     = Hash::make($request->shop_mail_password);
+            $shop->api_key           = $request->shop_api_key;
+            $shop->customer_number   = $request->shop_customer_number;
+            $shop->password          = Hash::make($request->shop_password);
+            $shop->save();
 
             return response()->json(['shopStatusUpdate' => 'success', 'message' => 'Well done! Shop details updated successfully'], 201);
         } 
