@@ -8,7 +8,7 @@ use App\Http\Requests\Admin\KeyContainerRequest;
 use App\Http\Traits\KeyContainerTrait;
 use App\Http\Traits\KeyTypeTrait;
 use App\Http\Traits\ShopTrait;
-use App\Http\Traits\companyTrait;
+use App\Http\Traits\CompanyTrait;
 use App\Http\Traits\KeyShopTrait;
 use App\Key;
 use App\KeyContainer;
@@ -69,7 +69,8 @@ class KeyController extends Controller
         $q             = KeyContainer::join('key_shops', 'key_containers.id', '=', 'key_shops.key_container_id')
         ->join('shops', 'key_shops.shop_id', '=', 'shops.id')
         ->join('companies', 'key_containers.company_id', '=', 'companies.id')
-        ->select('key_containers.id', 'key_containers.name', 'key_containers.container', 'companies.company', DB::raw('group_concat(distinct shops.shop separator ", ") as shopName'), 'key_containers.active')
+        ->join('shopnames', 'shops.shopname_id', '=', 'shopnames.id')
+        ->select('key_containers.id', 'key_containers.name', 'key_containers.container', 'companies.company', DB::raw('group_concat(distinct shopnames.name separator ", ") as shopName'), 'key_containers.active')
         ->groupBy('key_containers.id');
 
         $totalData     = $q->count();
@@ -111,7 +112,7 @@ class KeyController extends Controller
                 }
 
                 $nestedData['hash']     = '<input class="checked" type="checkbox" name="id[]" value="'.$keyList->id.'" />';
-                $nestedData['name']     = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill">'.$keyList->company.'</span></div> <div>Shops: '.$htmlBadgeShopName.'</div>';
+                $nestedData['name']     = $keyList->name.'<hr><div>Container: <span class="badge badge-info badge-pill">'.$keyList->container.'</span></div> <div>Company: <span class="badge badge-info badge-pill text-capitalize">'.$keyList->company.'</span></div> <div>Shops: '.$htmlBadgeShopName.'</div>';
                 $nestedData['active']   = $this->keyStatusHtml($keyList->id, $keyList->active);
                 $nestedData['actions']  = $this->editKeyContainerModel($keyList->id);
                 $data[]                 = $nestedData;
@@ -139,7 +140,7 @@ class KeyController extends Controller
         $q->where(function($query) use ($searchData) {
             $query->where('key_containers.name', 'like', "%{$searchData}%")
             ->orWhere('companies.company', 'like', "%{$searchData}%")
-            ->orWhere('shops.shop', 'like', "%{$searchData}%");
+            ->orWhere('shopnames.name', 'like', "%{$searchData}%");
         });
 
         $totalFiltered = $q->count();
@@ -158,7 +159,7 @@ class KeyController extends Controller
         $q->where(function($query) use ($searchData) {
             $query->where('key_containers.name', 'like', "%{$searchData}%")
             ->orWhere('companies.company', 'like', "%{$searchData}%")
-            ->orWhere('shops.shop', 'like', "%{$searchData}%");
+            ->orWhere('shopnames.name', 'like', "%{$searchData}%");
         });
 
         $totalFiltered = $q->count();
@@ -262,7 +263,7 @@ class KeyController extends Controller
             }
 
             /*<a class="btn btn-secondary btn-sm" data-toggle="modal"><i class="fas fa-pen"></i></a>*/
-            $html         = '<a class="btn btn-secondary btn-sm editKey" data-keycontainerid="'.$keyContainer->id.'" data-keycontainercompanyid="'.$keyContainer->company->id.'"  data-toggle="modal" data-target="#editKeyModal_'.$keyContainer->id.'"><i class="fas fa-cog"></i></a>
+            $html        = '<a class="btn btn-secondary btn-sm editKey" data-keycontainerid="'.$keyContainer->id.'" data-keycontainercompanyid="'.$keyContainer->company->id.'"  data-toggle="modal" data-target="#editKeyModal_'.$keyContainer->id.'"><i class="fas fa-cog"></i></a>
             <div class="modal fade" id="editKeyModal_'.$keyContainer->id.'" tabindex="-1" role="dialog" aria-labelledby="editKeyModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -286,8 +287,8 @@ class KeyController extends Controller
             <input type="text" name="key_name_edit" id="key_name_edit_'.$keyContainer->id.'" class="form-control"  maxlength="100" value="'.$keyContainer->name.'">
             </div>
             <div class="form-group col-md-6">
-            <label for="company_edit">Company <span class="required">*</span></label>
-            <select id="company_edit_'.$keyContainer->id.'" class="form-control" name="company_edit">
+            <label for="key_company_name">Company <span class="required">*</span></label>
+            <select id="key_company_name_'.$keyContainer->id.'" class="form-control" name="key_company_name">
             <option value="">Choose Company</option>
             '.$companyOptions.'
             </select>
@@ -358,19 +359,21 @@ class KeyController extends Controller
     {
         DB::beginTransaction();
         try {
+            $countOfKeys                     = $this->countKeys($request->keys); //Count of array
+
             $keyContainer                    = new KeyContainer;
             $keyContainer->name              = $request->key_name;
             $keyContainer->container         = $this->generateContainer($request->key_type);
-            $keyContainer->company_id        = $request->company;
+            $keyContainer->company_id        = $request->key_company;
             $keyContainer->type              = $request->key_type;
-            $keyContainer->activation_number = $request->act_number;
-            $keyContainer->count             = $this->countKeys($request->keys);
-            $keyContainer->total_activation  = $request->act_number * $this->countKeys($request->keys);
+            $keyContainer->activation_number = $request->key_activation_number;
+            $keyContainer->count             = $countOfKeys;
+            $keyContainer->total_activation  = $request->key_activation_number * $countOfKeys;
             $keyContainer->active            = 'no';
             $keyContainer->save();
 
             // Storing shops id in to key shop table
-            foreach($request->shops as $shop) {
+            foreach($request->key_shops as $shop) {
                 $keyShops                   = new KeyShop;
                 $keyShops->key_container_id = $keyContainer->id;
                 $keyShops->shop_id          = $shop;
@@ -429,26 +432,32 @@ class KeyController extends Controller
     {
         DB::beginTransaction();
         try {
+            $countOfKeys                     = $this->countKeys($request->keys); // Count of array
+
+            // Deleting shops from key shop table
+            KeyShop::where('key_container_id', $request->key_container_id)->delete();
+
+            // Deleting keys from key table
+            Key::where('key_container_id', $request->key_container_id)->delete();
+
             $keyContainer                    = KeyContainer::find($request->key_container_id);
-            $keyContainer->name              = $request->key_name_edit; 
-            $keyContainer->company_id        = $request->company_edit;
-            $keyContainer->activation_number = $request->activation_number_edit;
-            $keyContainer->count             = $this->countKeys($request->keys_edit);
-            $keyContainer->total_activation  = $request->activation_number_edit * $this->countKeys($request->keys_edit);
+            $keyContainer->name              = $request->key_name; 
+            $keyContainer->company_id        = $request->key_company;
+            $keyContainer->activation_number = $request->key_activation_number;
+            $keyContainer->count             = $countOfKeys;
+            $keyContainer->total_activation  = $request->key_activation_number * $countOfKeys;
             $keyContainer->save();
 
-            // Deleting and Storing shops id in to key shop table
-            KeyShop::where('key_container_id', $keyContainer->id)->delete();
-            foreach($request->shop_edit as $shop) {
+            // Storing shops id in to key shop table
+            foreach($request->key_shop as $shop) {
                 $keyShops                   = new KeyShop;
                 $keyShops->key_container_id = $keyContainer->id;
                 $keyShops->shop_id          = $shop;
                 $keyShops->save();
             }
             
-            // Deleting and Storing keys in to key table
-            Key::where('key_container_id', $keyContainer->id)->delete();
-            foreach($request->keys_edit as $key) {
+            // Storing keys in to key table
+            foreach($request->keys as $key) {
                 $keyDetails                   = new Key;
                 $keyDetails->key_container_id = $keyContainer->id;
                 $keyDetails->key              = preg_replace('/[ ,]+/', '', $key);
@@ -475,10 +484,9 @@ class KeyController extends Controller
     {
         DB::beginTransaction();
         try {
-            $keyInstruction  = KeyInstruction::where('key_id', $id)->first();
-            $keyInstruction->delete();
-
-            $key             = Key::destroy($id);
+            $key          = Key::where('key_container_id', $id)->delete();
+            $keyShop      = KeyShop::where('key_container_id', $id)->delete();
+            $keyContainer = KeyContainer::destroy($id); 
             
             DB::commit();
             return response()->json(['deletedKeyStatus' => 'success', 'message' => 'Key details deleted successfully'], 201);

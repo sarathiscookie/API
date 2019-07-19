@@ -93,8 +93,8 @@
 
               <div class="form-row">
                 <div class="form-group col-md-6">
-                  <label for="company">Company <span class="required">*</span></label>
-                  <select id="company" class="form-control" name="company">
+                  <label for="key_company">Company <span class="required">*</span></label>
+                  <select id="key_company" class="form-control" name="key_company">
                     <option value="">Choose Company</option>
                     @isset($companies)
                     @foreach ($companies as $company)
@@ -116,7 +116,6 @@
                       </label>
                     </div>
                     <select id="shop_select" class="form-control" name="shop[]" multiple="multiple">
-                      <option id="optionChoose" value="" disabled="disabled">Choose Shop</option>
                     </select>
                   </div>
                 </div>
@@ -124,7 +123,7 @@
 
               <div class="form-row">
                 <div class="form-group col-md-12">
-                  <label for="key">Key <i class="far fa-question-circle" data-toggle="tooltip" data-placement="right" title="You can separated keys with commas, space and new line. But dont mix with these."></i><span class="required">*</span></label>
+                  <label for="key">Key <i class="far fa-question-circle" data-toggle="tooltip" data-placement="right" title="You can separated keys with commas, space or new line."></i><span class="required">*</span></label>
                   <textarea class="form-control" name="keys" id="keys" rows="3"></textarea>
                 </div>
               </div>

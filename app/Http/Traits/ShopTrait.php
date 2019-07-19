@@ -13,7 +13,7 @@ trait ShopTrait {
     public function fetchShop($id)
     {
         try {
-            $shop = Shop::select('shop')
+            $shop = Shop::select('shopname_id')
             ->active()
             ->find($id);
 
@@ -32,9 +32,10 @@ trait ShopTrait {
     public function getShops($id)
     {
         try {
-            $shop = Shop::select('id', 'shop')
-            ->active()
-            ->where('company_id', $id)
+            $shop = Shop::join('shopnames', 'shops.shopname_id', '=', 'shopnames.id')
+            ->select('shops.id', 'shopnames.name AS shop')
+            ->where('shops.company_id', $id)
+            ->joinactive()
             ->get();
 
             return $shop;
@@ -53,7 +54,7 @@ trait ShopTrait {
     {
         try {
             $shops = Shop::join('key_shops', 'shops.id', '=', 'key_shops.shop_id')
-            ->select('shops.shop')
+            ->select('shops.shopname_id')
             ->where('key_shops.key_container_id', $id)
             ->joinactive()
             ->get();

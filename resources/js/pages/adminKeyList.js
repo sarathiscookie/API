@@ -17,7 +17,7 @@ $(function() {
 	/**
 	 * In create page, hide shops when page loads. It shows only when select a company.
 	 */
-	/*$( "#company" ).change(function() {
+	$( "#key_company" ).change(function() {
 		let companyId = $(this).val();
 
 		if(companyId === '') { 
@@ -37,14 +37,14 @@ $(function() {
 				if( data.shops.length > 0 ) {
 					$( "#noShopsAlert" ).hide();
 					$( "#shopSelectBoxDiv" ).show();
-					$( ".options" ).remove();
+					$( ".key_shop_options" ).remove();
 
 					let shopId = '';
 					let shopName = '';
 					for(let i = 0; i < data.shops.length; i++) {
 						shopId = data.shops[i].id;
 						shopName = data.shops[i].shop;
-						$( "#optionChoose" ).after('<option class="options" value="'+ shopId +'">'+ shopName +'</option>');
+						$( "#shop_select" ).append('<option class="key_shop_options" value="'+ shopId +'">'+ shopName +'</option>');
 					}
 				}
 				else {
@@ -67,32 +67,32 @@ $(function() {
 					);
 			}
 		});
-	});*/
+	});
 
     /* Tooltip */
-	/*$('.fa-question-circle').tooltip({
+	$('.fa-question-circle').tooltip({
 		container: 'body'
-	});*/
+	});
 
 	/* Multiple select for shops */
-	/*if( $("#shop_select")[0] ) {
+	if( $("#shop_select")[0] ) {
 		$( "#shop_select" ).select2();
-	}*/
+	}
 
 	/* Select all shops by clicking checkbox */
-	/*$( "#checkAllShops" ).on('click', function() {
+	$( "#checkAllShops" ).on('click', function() {
 		if( $( "#checkAllShops" ).is(':checked') ) {
-			$( "#shop_select > option:not(:first)" ).prop( "selected", true);
+			$( "#shop_select > option" ).prop( "selected", true);
 			$( "#shop_select" ).trigger("change");
 		} 
 		else {
 			$( "#shop_select > option" ).prop( "selected", false);
 			$( "#shop_select" ).trigger("change");
 		}
-	});*/
+	});
 
 	/* Datatable scripts */
-	/*let keyList = $( "#key_list" ).DataTable({
+	let keyList = $( "#key_list" ).DataTable({
 		lengthMenu: [10, 25, 50, 75, 100],
 		order: [1, "desc"],
 		processing: true,
@@ -140,10 +140,10 @@ $(function() {
 					": aktivieren, um Spalte absteigend zu sortieren"
 			}
 		}
-	});*/
+	});
 
 	/* Delete key functionality */
-	/*$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
+	$( "#key_list tbody" ).on("click", "a.deleteEvent", function(e) {
 		e.preventDefault();
 		var keyId = $(this).data( "id" );
 		var r = confirm("Are you sure you want to remove the key?");
@@ -184,20 +184,20 @@ $(function() {
 					}
 				});
 		}
-	});*/
+	});
 
 	/* <tfoot> search functionality */
-	/*$( ".search-input" ).on("keyup change", function() {
+	$( ".search-input" ).on("keyup change", function() {
 		var i = $(this).attr("id"); // getting column index
 		var v = $(this).val(); // getting search input value
 		keyList
 			.columns(i)
 			.search(v)
 			.draw();
-	});*/
+	});
 
 	/* Updating key status */
-	/*$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
+	$( "#key_list tbody" ).on("change", "input.buttonStatus", function(e) {
 		e.preventDefault();
 
 		var newStatus = "";
@@ -237,22 +237,22 @@ $(function() {
 					.delay(5000)
 					.fadeOut();
 			});
-	});*/
+	});
 
 	/* Create key */
-	/*$( "button.createKey" ).on( "click", function(e) {
+	$( "button.createKey" ).on( "click", function(e) {
 		e.preventDefault();
 
-		var key_name     = $( "#key_name" ).val();
-		var key_type 	 = $( "#key_type" ).val();
-		var company 	 = $( "#company" ).val();
-		var shops 		 = $( "#shop_select" ).val();
-		var act_number 	 = $( "#activation_number" ).val();
-		var replaceSpace = $( "#keys" ).val().replace(/\s/g, ",").split(',');
-		var keys      	 = [];
+		let key_name     	      = $( "#key_name" ).val();
+		let key_type 	 	      = $( "#key_type" ).val();
+		let key_company  	  	  = $( "#key_company" ).val();
+		let key_shops 		 	  = $( "#shop_select" ).val();
+		let key_activation_number = $( "#activation_number" ).val();
+		let replaceSpace 	      = $( "#keys" ).val().replace(/\s/g, ",").split(',');
+		let keys      	 	      = [];
 
 		// Convert textareas string value to javascript array separated by new lines.
-		for( var i = 0; i < replaceSpace.length; i++ ) {
+		for( let i = 0; i < replaceSpace.length; i++ ) {
 			if( replaceSpace[i] ) {
 				keys.push(replaceSpace[i]);
 			}
@@ -265,10 +265,10 @@ $(function() {
 			data: {
 				key_name: key_name,
 				key_type: key_type,
-				company: company,
-				shops: shops,
+				key_company: key_company,
+				key_shops: key_shops,
 				keys: keys,
-				act_number: act_number
+				key_activation_number: key_activation_number
 			}
 		})
 		.done(function(result) {
@@ -288,7 +288,7 @@ $(function() {
 					.delay(5000)
 					.fadeOut();
 				}
-			})
+		})
 		.fail(function(data) {
 			if (data.responseJSON.keyStatus === "failure") {
 				$( ".keyValidationAlert" ).html(
@@ -306,10 +306,15 @@ $(function() {
 				});
 			}
 		});
-	});*/
+	});
 
 	/* Clearing data of create manager modal fields */
-	/*$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
+	$( "#createKeyModal" ).on( "hidden.bs.modal", function(e) {
+
+		// On model close, it will hide alert messages and multiselect. Reason is, it shows default when model opens.
+		$( "p .alert, .alert-danger" ).hide();
+		$( ".select2-selection__choice" ).hide();
+
 		$(this)
 			.find("input,textarea,select")
 			.val("")
@@ -317,11 +322,12 @@ $(function() {
 			.find("input[type=checkbox], input[type=radio]")
 			.prop("checked", "")
 			.end();
-	});*/
+	});
 
 	/* Edit manager */
-	/*$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
+	$( "#key_list tbody" ).on("click", "a.editKey", function(e) {
 		e.preventDefault();
+		
 		let keyContainerId 			= $(this).data( "keycontainerid" );
 		let keyContainerCompanyId 	= $(this).data( "keycontainercompanyid" );
 
@@ -331,7 +337,7 @@ $(function() {
 		}
 
         // In edit page, select shops while changing company
-		$( "#company_edit_"+keyContainerId ).change(function() {
+		$( "#key_company_name_"+keyContainerId ).change(function() {
 		    
 		    let companyEditId = $(this).val();
 
@@ -388,15 +394,16 @@ $(function() {
 		// Update keys and cointainers 
 		$( ".updateKeyContainer_" + keyContainerId).on("click", function(e) {
 			e.preventDefault();
-			var key_name_edit 			= $( "#key_name_edit_"+keyContainerId).val();
-			var company_edit 			= $( "#company_edit_"+keyContainerId).val();
-			var shop_edit  				= $( "#shop_edits_"+keyContainerId).val();
-			var activation_number_edit 	= $( "#activation_number_edit_"+keyContainerId).val();
-			var keys_edit_replace 	    = $( "#keys_edit_"+keyContainerId).val().replace(/\s/g, ",").split(',');
-			var keys_edit = [];
+
+			let key_name 			  = $( "#key_name_edit_"+keyContainerId).val();
+			let key_company 		  = $( "#key_company_name_"+keyContainerId).val();
+			let key_shop  			  = $( "#shop_edits_"+keyContainerId).val();
+			let key_activation_number = $( "#activation_number_edit_"+keyContainerId).val();
+			let keys_edit_replace 	  = $( "#keys_edit_"+keyContainerId).val().replace(/\s/g, ",").split(',');
+			let keys_edit 		      = [];
 
 			// Convert textareas string value to javascript array separated by new lines.
-			for( var i = 0; i < keys_edit_replace.length; i++ ) {
+			for( let i = 0; i < keys_edit_replace.length; i++ ) {
 				if( keys_edit_replace[i] ) {
 					keys_edit.push(keys_edit_replace[i]);
 				}
@@ -407,11 +414,11 @@ $(function() {
 				dataType: "JSON",
 				type: "PUT",
 				data: {
-					key_name_edit: key_name_edit,
-					company_edit: company_edit,
-					shop_edit: shop_edit,
-					activation_number_edit: activation_number_edit,
-					keys_edit: keys_edit,
+					key_name: key_name,
+					key_company: key_company,
+					key_shop: key_shop,
+					key_activation_number: key_activation_number,
+					keys: keys_edit,
 					key_container_id: keyContainerId
 				}
 			})
@@ -432,7 +439,7 @@ $(function() {
 						.delay(5000)
 						.fadeOut();
 					}
-				})
+			})
 			.fail(function(data) {
 				if (data.responseJSON.keyUpdatedStatus === "failure") {
 					$( ".keyUpdateValidationAlert_"+keyContainerId ).html(
@@ -451,5 +458,5 @@ $(function() {
 				}
 			});
 		});
-	});*/
+	});
 });

@@ -27,22 +27,22 @@ class KeyContainerRequest extends FormRequest
             case 'POST':
             {
                 return [
-                    'act_number'    => ['required', 'numeric'],
-                    'keys'          => ['required'],
-                    'shops'         => ['required', 'not_in:0'],
-                    'company'       => ['required', 'not_in:0'],
-                    'key_type'      => ['required', 'not_in:0'],
-                    'key_name'      => ['required', 'string', 'max:100'],
+                    'key_activation_number' => ['required', 'numeric'],
+                    'keys'                  => ['required'],
+                    'key_shops'             => ['required', 'not_in:0'],
+                    'key_company'           => ['required', 'not_in:0'],
+                    'key_type'              => ['required', 'not_in:0'],
+                    'key_name'              => ['required', 'string', 'max:100'],
                 ]; 
             }
             case 'PUT':
             {
                 return [
-                    'activation_number_edit' => ['required', 'numeric'],
-                    'keys_edit'              => ['required'],
-                    'shop_edit'              => ['required', 'not_in:0'],
-                    'company_edit'           => ['required', 'not_in:0'],
-                    'key_name_edit'          => ['required', 'string', 'max:100'],
+                    'key_activation_number' => ['required', 'numeric'],
+                    'keys'                  => ['required'],
+                    'key_shop'              => ['required', 'not_in:0'],
+                    'key_company'           => ['required', 'not_in:0'],
+                    'key_name'              => ['required', 'string', 'max:100'],
                 ]; 
             }
             default:break;        
