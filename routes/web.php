@@ -112,6 +112,19 @@ Route::prefix('admin')->group(function(){
 		Route::get('/dashboard/key/instruction/download/file/{id}', 'Admin\KeyInstructionController@download')->name('admin.dashboard.key.instruction.download.file');
 		/* Delete key */
 		Route::delete('/dashboard/key/instruction/delete/{keydeleteinstructionid}', 'Admin\KeyInstructionController@destroy')->name('admin.dashboard.key.instruction.delete');
+
+		/* Show supplier listing page */
+		Route::get('/dashboard/supplier/list', 'Admin\SupplierController@index')->name('admin.dashboard.supplier.list');
+		/* Listing supplier on datatable */
+		Route::post('/dashboard/supplier/list/datatables', 'Admin\SupplierController@datatable')->name('admin.dashboard.supplier.list.datatable');
+		/* Store supplier */
+		Route::post('/dashboard/supplier/store', 'Admin\SupplierController@store')->name('admin.dashboard.supplier.store');
+		/* Update supplier status */
+		Route::post('/dashboard/supplier/status/update', 'Admin\SupplierController@updateStatus')->name('admin.dashboard.supplier.status.update');
+		/* Update supplier */
+		Route::put('/dashboard/supplier/update', 'Admin\SupplierController@update')->name('admin.dashboard.supplier.update');
+		/* Delete supplier */
+		Route::delete('/dashboard/supplier/delete/{id}', 'Admin\SupplierController@destroy')->name('admin.dashboard.supplier.delete');
 	});
 });
 

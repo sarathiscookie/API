@@ -138,6 +138,17 @@ class User extends Authenticatable
     }
 
     /**
+    * Scope for supplier role.
+    *
+    * @param  string  $query
+    * @return string
+    */
+    public function scopeSupplier($query)
+    {
+        return $query->where('role', 'supplier');
+    }
+
+    /**
     * Getting the companies
     */
     public function userCompanies()
