@@ -31,7 +31,7 @@
               <thead class="thead-light">
                 <tr>
                   <th>#</th>
-                  <th>Shop Name</th>
+                  <th>Company & Shop</th>
                   <th>Active</th>
                   <th>Actions</th>
                 </tr>

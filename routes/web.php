@@ -126,10 +126,12 @@ Route::prefix('admin')->group(function(){
 		/* Delete supplier */
 		Route::delete('/dashboard/supplier/delete/{id}', 'Admin\SupplierController@destroy')->name('admin.dashboard.supplier.delete');
 
+        /* Get products */
+        Route::get('/dashboard/product/get', 'Admin\ProductController@index')->name('admin.dashboard.product.get');
 		/* Show product listing page */
-		Route::get('/dashboard/product/list', 'Admin\ProductController@index')->name('admin.dashboard.product.list');
+		Route::get('/dashboard/product/list/{shopId}/{companyId}', 'Admin\ProductController@show')->name('admin.dashboard.product.list');
 		/* Listing product on datatable */
-		Route::post('/dashboard/product/list/datatables', 'Admin\ProductController@datatable')->name('admin.dashboard.product.list.datatable');
+		//Route::post('/dashboard/product/list/datatables', 'Admin\ProductController@datatable')->name('admin.dashboard.product.list.datatable');
 	});
 });
 

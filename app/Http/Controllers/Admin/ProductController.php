@@ -4,11 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Traits\CompanyTrait;
+use App\Http\Traits\ShopnameTrait;
 use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
-    use CompanyTrait;
+    use CompanyTrait, ShopnameTrait;
     /**
      * Display a listing of the resource.
      *
@@ -18,7 +19,9 @@ class ProductController extends Controller
     {
         $companies = $this->company();
 
-        return view('admin.product', ['companies' => $companies]);
+        $shopNames = $this->shopNames();
+
+        return view('admin.product', ['companies' => $companies, 'shopNames' => $shopNames]);
     }
 
     /**
@@ -48,9 +51,9 @@ class ProductController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($shopId, $companyId)
     {
-        //
+        dd($shopId);
     }
 
     /**
