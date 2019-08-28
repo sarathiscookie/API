@@ -83,7 +83,7 @@ class ShopController extends Controller
         if(!empty($shopLists)) {
             foreach ($shopLists as $key=> $shopList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$shopList->id.'" />';
-                $nestedData['shop']       = $shopList->shop.' <span class="badge badge-secondary text-capitalize">'.$shopList->company.'</span>';
+                $nestedData['shop']       = ucwords($shopList->company).' <span class="badge badge-secondary text-capitalize">'.$shopList->shop.'</span>';
                 $nestedData['active']     = $this->shopStatusHtml($shopList->id, $shopList->active);
                 $nestedData['actions']    = $this->editShopModel($shopList->id);
                 $data[]                   = $nestedData;
