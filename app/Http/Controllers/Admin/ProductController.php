@@ -84,7 +84,7 @@ class ProductController extends Controller
 
                         foreach($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
                             $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
-                            $nestedData['name']       = $productList['name'];
+                            $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div>';
                             $nestedData['active']     = 'active';
                             $nestedData['actions']    = 'actions';
                             $data[]                   = $nestedData;
