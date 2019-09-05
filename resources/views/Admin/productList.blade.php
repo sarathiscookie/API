@@ -12,49 +12,118 @@
         </ol>
       </nav>
 
-      <div class="card border-primary">
-        <div class="card-header bg-primary">
-          Product List
-        </div>
-
-        <div class="card-body">
-           <div class="table-responsive">
-
-            <div class="responseProductListMessage"></div>
-            <input type="hidden" name="productListShopId" value="{{ $shopId }}" class="productListShopIdClass">
-            <input type="hidden" name="productListCompanyId" value="{{ $companyId }}" class="productListCompanyIdClass">
-
-            <table id="product_list" class="table table-bordered table-hover display" style="width:100%">
-              <thead class="thead-light">
-                <tr>
-                  <th>#</th>
-                  <th>Product Name</th>
-                  <th>Active</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              <tbody></tbody>
-
-              <tfoot>
-                <td></td>
-                <th><input type="text" id="1"  class="form-control input-sm search-input" placeholder="Search Name"></th>
-                <td>
-                  <select class="form-control input-sm search-input" id="2">
-                    <option value="">All</option>
-                    <option value="yes">Active</option>
-                    <option value="no">Not Active</option>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">Filter</h5>
+              <div class="row">
+                <div class="form-group col-md-12">
+                  <label for="exampleFormControlSelect1">Category:</label>
+                  <select class="form-control" id="exampleFormControlSelect1">
+                    <option>1</option>
+                    <option>2</option>
+                    <option>3</option>
+                    <option>4</option>
+                    <option>5</option>
                   </select>
-                </td>
-                <td></td>
-              </tfoot>
+                </div>
 
-            </table>
+              </div>
 
+              <div class="row">
+
+                <div class="form-group col-md-3">
+                  <label for="exampleFormControlSelect1">Visible:</label>
+                  <div>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-check-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-times-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm">All</a>
+                  </div>
+                </div>
+
+                <div class="form-group col-md-3">
+                  <label for="exampleFormControlSelect1">Available:</label>
+                  <div>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-check-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-times-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm">All</a>
+                  </div>
+                </div>
+
+                <div class="form-group col-md-3">
+                  <label for="exampleFormControlSelect1">Active:</label>
+                  <div>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-check-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-times-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm">All</a>
+                  </div>
+                </div>
+
+                <div class="form-group col-md-3">
+                  <label for="exampleFormControlSelect1">Config:</label>
+                  <div>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-check-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm"><i class="fas fa-times-circle"></i></a>
+                    <a href="#" class="btn btn-primary btn-sm">All</a>
+                  </div>
+                </div>
+
+              </div>
+              
+              
+            </div>
           </div>
         </div>
-
       </div>
+
+      <div class="row">
+        <div class="col-md-12 mt-3">
+          <div class="card border-primary">
+            <div class="card-header bg-primary">
+              Product List
+            </div>
+
+            <div class="card-body">
+             <div class="table-responsive">
+
+              <div class="responseProductListMessage"></div>
+              <input type="hidden" name="productListShopId" value="{{ $shopId }}" class="productListShopIdClass">
+              <input type="hidden" name="productListCompanyId" value="{{ $companyId }}" class="productListCompanyIdClass">
+
+              <table id="product_list" class="table table-bordered table-hover display" style="width:100%">
+                <thead class="thead-light">
+                  <tr>
+                    <th>#</th>
+                    <th>Product Name</th>
+                    <th>Active</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                <tbody></tbody>
+
+                <tfoot>
+                  <td></td>
+                  <th><input type="text" id="1"  class="form-control input-sm search-input" placeholder="Search Name"></th>
+                  <td>
+                    <select class="form-control input-sm search-input" id="2">
+                      <option value="">All</option>
+                      <option value="yes">Active</option>
+                      <option value="no">Not Active</option>
+                    </select>
+                  </td>
+                  <td></td>
+                </tfoot>
+
+              </table>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
 
     </main>
 @endsection
