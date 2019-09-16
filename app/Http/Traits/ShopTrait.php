@@ -66,6 +66,27 @@ trait ShopTrait {
         } 
     }
 
+    /**
+     * Find shop name for container
+     * @param  string $shopId
+     * @param  string $companyId
+     * @return \Illuminate\Http\Response
+     */
+    public function getApiKey($shopId, $companyId)
+    {
+        try {
+            $api_key = Shop::select('api_key')
+            ->where('shopname_id', $shopId)
+            ->where('company_id', $companyId)
+            ->first();
+
+            return $api_key;
+        }
+        catch(\Exception $e) {
+            abort(404);
+        } 
+    }
+
 }
 
 ?>

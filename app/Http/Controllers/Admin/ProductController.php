@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Traits\CompanyTrait;
 use App\Http\Traits\ShopnameTrait;
+use App\Http\Traits\ShopTrait;
 use App\Shop;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    use CompanyTrait, ShopnameTrait;
+    use CompanyTrait, ShopnameTrait, ShopTrait;
     /**
      * Display a listing of the resource.
      *
@@ -40,34 +41,65 @@ class ProductController extends Controller
     /**
      * Display the specified resource.
      *
+     * @param  int  $shopId
+     * @param  int  $companyId
+     * @return \Illuminate\Http\Response
+     */
+    public function getProductCategories($shopId, $companyId)
+    {
+        $category_details = [];
+        //If shop is rakuten then below code will execute.
+        if($shopId === '1') {
+            //get company api key from shops
+            $api_key = $this->getApiKey($shopId, $companyId);
+
+            $url     = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key='.$api_key->api_key.'&format=json';
+
+            if( !empty($url) ) {
+                //Fetching data from API
+                $jsonDecodedResults = $this->curl($url);
+
+                //If json status is success then value is '1' error value is '-1'
+                if($jsonDecodedResults['result']['success'] === '1') {
+                    if($jsonDecodedResults['result']['categories']['paging'][0]['total'] != 0) {
+                        $category_details[]   = $jsonDecodedResults['result']['categories']['category'];
+                    }
+                }
+            }
+        }
+
+        return response()->json($category_details[0]);
+    }
+
+    /**
+     * Display the specified resource.
+     *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
         try {
-
-            $params         = $request->all();
-            $totalData      = '';
-            $totalFiltered  = '';
-            $data           = [];
+            $params           = $request->all();
+            $totalData        = '';
+            $totalFiltered    = '';
+            $data             = [];
+            $category_details = [];
 
             //If shop is rakuten then below code will execute.
             if($request->productListShopID === '1') {
-
                 //get company api key from shops
-                $api_key = Shop::select('api_key')
-                ->where('shopname_id', $request->productListShopID)
-                ->where('company_id', $request->productListCompanyId)
-                ->first();
+                $api_key           = $this->getApiKey($request->productListShopID, $request->productListCompanyId); 
 
-                $url = 'http://webservice.rakuten.de/merchants/products/getProducts?key='.$api_key->api_key.'&format=json&page='.$request->pageActive;
+                $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key='.$api_key->api_key.'&format=json&page='.$request->pageActive;
+
+                $urlShopCategories = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key='.$api_key->api_key.'&format=json';
             }
 
-            if( !empty($url) ) {
-
+            //Getting product details
+            if( !empty($urlGetProducts) ) {
                 //Fetching data from API
-                $jsonDecodedResults = $this->curl($url);
+                $jsonDecodedResults = $this->curl($urlGetProducts);
 
                 //If json status is success then value is '1' error value is '-1'
                 if($jsonDecodedResults['result']['success'] === '1') {
@@ -96,11 +128,25 @@ class ProductController extends Controller
 
             }
 
+            //Getting shop category details
+            if( !empty($urlShopCategories) ) {
+                //Fetching data from API
+                $jsonDecodedResults = $this->curl($urlShopCategories);
+
+                //If json status is success then value is '1' error value is '-1'
+                if($jsonDecodedResults['result']['success'] === '1') {
+                    if($jsonDecodedResults['result']['categories']['paging'][0]['total'] != 0) {
+                        $category_details[]   = $jsonDecodedResults['result']['categories']['category'];
+                    }
+                }
+            }
+
             $json_data = array(
                 'draw'            => (int)$params['draw'],
                 'recordsTotal'    => (int)$totalData,
                 'recordsFiltered' => (int)$totalFiltered,
-                'data'            => $data
+                'data'            => $data,
+                'categoryDetails' => $category_details[0]
             );
 
             return response()->json($json_data);

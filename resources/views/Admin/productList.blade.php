@@ -19,13 +19,9 @@
               <h5 class="card-title">Filter</h5>
               <div class="row">
                 <div class="form-group col-md-12">
-                  <label for="exampleFormControlSelect1">Category:</label>
-                  <select class="form-control" id="exampleFormControlSelect1">
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
+                  <label for="shopCategoriesSelect">Category:</label>
+                  <select class="form-control" id="shopCategoriesSelect" name="shopCategoriesSelect">
+                    <option>Choose Category</option>
                   </select>
                 </div>
 
