@@ -47,18 +47,24 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         try {
-            $params           = $request->all();
-            $totalData        = '';
-            $totalFiltered    = '';
-            $product_details  = '';
-            $category_details = '';
+            $params              = $request->all();
+            $totalData           = '';
+            $totalFiltered       = '';
+            $product_details     = '';
+            $category_details    = '';
+            $search_product_name = '';
+
+            // Search query for product name
+            if( !empty($request->input('search.value')) ) {
+                $search_product_name = "&search=".$request->input('search.value')."&search_field=product_id";
+            }
 
             //If shop is rakuten then below code will execute.
             if($request->productListShopID === '1') {
                 //get company api key from shops
                 $api_key           = $this->getApiKey($request->productListShopID, $request->productListCompanyId); 
 
-                $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key='.$api_key->api_key.'&format=json&page='.$request->pageActive;
+                $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key='.$api_key->api_key.'&format=json&page='.$request->pageActive.$search_product_name;
 
                 $urlShopCategories = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key='.$api_key->api_key.'&format=json';
             }
@@ -68,7 +74,6 @@ class ProductController extends Controller
                 $product_details  = $this->getUrlProducts($urlGetProducts);
             }
             
-
             //Get shop categories
             if( !empty($urlShopCategories) ) {
                 $category_details = $this->getUrlShopCategories($urlShopCategories);
@@ -98,7 +103,7 @@ class ProductController extends Controller
      */
     public function getUrlProducts($urlGetProducts)
     {
-        $data             = [];
+        $data               = [];
 
         //Fetching data from API
         $jsonDecodedResults = $this->curl($urlGetProducts);
@@ -162,7 +167,8 @@ class ProductController extends Controller
      * @param  string  $url
      * @return \Illuminate\Http\Response
      */
-    public function curl($url) {
+    public function curl($url) 
+    {
         //create a new cURL resource
         $ch = curl_init();
 
