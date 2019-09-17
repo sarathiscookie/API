@@ -2483,8 +2483,17 @@ $(function() {
 				}
 			},
 			dataSrc: function(result) {
-				for(let i = 0; i < result.categoryDetails.length; i++) {
-					$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="'+ result.categoryDetails[i].shop_category_id +'">'+ result.categoryDetails[i].name +'</option>');
+				if(result.categoryDetails.length > 0) {
+					if(result.categoryDetails.length > 1) {
+						$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="0">All Categories</option>'); 
+					}
+					for(let i = 0; i < result.categoryDetails.length; i++) {
+						$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="'+ result.categoryDetails[i].shop_category_id +'">'+ result.categoryDetails[i].name +'</option>');
+					}
+				}
+				else  {
+					$( ".noCategoriesFound" ).remove();
+					$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="">Categories are not available for this shop from rakuten</option>'); 
 				}
 				return result.data;
 			}

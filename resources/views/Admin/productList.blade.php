@@ -22,7 +22,7 @@
                 <div class="form-group col-md-12">
                   <label for="shopCategoriesSelect">Category:</label>
                   <select class="form-control" id="shopCategoriesSelect" name="shopCategoriesSelect">
-                    <option>Choose Category</option>
+                    <option class="noCategoriesFound">Choose Category</option>
                   </select>
                 </div>
 

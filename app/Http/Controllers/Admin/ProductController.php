@@ -46,12 +46,13 @@ class ProductController extends Controller
      */
     public function datatable(Request $request)
     {
-        try {
+        /*try {*/
             $params           = $request->all();
             $totalData        = '';
             $totalFiltered    = '';
             $data             = [];
             $category_details = [];
+            $category_details_offset = [];
 
             //If shop is rakuten then below code will execute.
             if($request->productListShopID === '1') {
@@ -103,7 +104,8 @@ class ProductController extends Controller
                 //If json status is success then value is '1' error value is '-1'
                 if($jsonDecodedResults['result']['success'] === '1') {
                     if($jsonDecodedResults['result']['categories']['paging'][0]['total'] != 0) {
-                        $category_details[]   = $jsonDecodedResults['result']['categories']['category'];
+                        $category_details[]        = $jsonDecodedResults['result']['categories']['category'];
+                        $category_details_offset   = $category_details[0];
                     }
                 }
             }
@@ -113,14 +115,14 @@ class ProductController extends Controller
                 'recordsTotal'    => (int)$totalData,
                 'recordsFiltered' => (int)$totalFiltered,
                 'data'            => $data,
-                'categoryDetails' => $category_details[0]
+                'categoryDetails' => $category_details_offset
             );
 
             return response()->json($json_data);
-        } 
+        /*} 
         catch(\Exception $e){
             return response()->json(['productListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        }
+        }*/
     }
 
     /**
