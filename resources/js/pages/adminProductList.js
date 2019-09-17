@@ -65,7 +65,7 @@ $(function() {
 				}
 				else  {
 					$( ".noCategoriesFound" ).remove();
-					$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="">Categories are not available for this shop from rakuten</option>'); 
+					$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="">Categories are not available for this shop</option>'); 
 				}
 				return result.data;
 			}

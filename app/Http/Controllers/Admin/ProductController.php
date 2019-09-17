@@ -46,13 +46,12 @@ class ProductController extends Controller
      */
     public function datatable(Request $request)
     {
-        /*try {*/
+        try {
             $params           = $request->all();
             $totalData        = '';
             $totalFiltered    = '';
-            $data             = [];
-            $category_details = [];
-            $category_details_offset = [];
+            $product_details  = '';
+            $category_details = '';
 
             //If shop is rakuten then below code will execute.
             if($request->productListShopID === '1') {
@@ -64,65 +63,97 @@ class ProductController extends Controller
                 $urlShopCategories = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key='.$api_key->api_key.'&format=json';
             }
 
-            //Getting product details
+            //Get product details
             if( !empty($urlGetProducts) ) {
-                //Fetching data from API
-                $jsonDecodedResults = $this->curl($urlGetProducts);
-
-                //If json status is success then value is '1' error value is '-1'
-                if($jsonDecodedResults['result']['success'] === '1') {
-
-                    $columns = array(
-                        1 => 'name',
-                        2 => 'active',
-                    );
-
-                    $totalData     = $jsonDecodedResults['result']['products']['paging'][0]['total'];
-                    $totalFiltered = $totalData;
-
-                    if($jsonDecodedResults['result']['products']['paging'][0]['total'] != '0') {
-
-                        foreach($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
-                            $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
-                            $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div>';
-                            $nestedData['active']     = 'active';
-                            $nestedData['actions']    = 'actions';
-                            $data[]                   = $nestedData;
-                        }
-
-                    }
-
-                }
-
+                $product_details  = $this->getUrlProducts($urlGetProducts);
             }
+            
 
-            //Getting shop category details
+            //Get shop categories
             if( !empty($urlShopCategories) ) {
-                //Fetching data from API
-                $jsonDecodedResults = $this->curl($urlShopCategories);
-
-                //If json status is success then value is '1' error value is '-1'
-                if($jsonDecodedResults['result']['success'] === '1') {
-                    if($jsonDecodedResults['result']['categories']['paging'][0]['total'] != 0) {
-                        $category_details[]        = $jsonDecodedResults['result']['categories']['category'];
-                        $category_details_offset   = $category_details[0];
-                    }
-                }
+                $category_details = $this->getUrlShopCategories($urlShopCategories);
             }
+            
 
             $json_data = array(
                 'draw'            => (int)$params['draw'],
                 'recordsTotal'    => (int)$totalData,
                 'recordsFiltered' => (int)$totalFiltered,
-                'data'            => $data,
-                'categoryDetails' => $category_details_offset
+                'data'            => $product_details,
+                'categoryDetails' => $category_details
             );
 
             return response()->json($json_data);
-        /*} 
+        } 
         catch(\Exception $e){
             return response()->json(['productListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        }*/
+        }
+    }
+
+    /**
+     * Get shop products details.
+     *
+     * @param  string  $urlShopCategories
+     * @return \Illuminate\Http\Response
+     */
+    public function getUrlProducts($urlGetProducts)
+    {
+        $data             = [];
+
+        //Fetching data from API
+        $jsonDecodedResults = $this->curl($urlGetProducts);
+
+        //If json status is success then value is '1' error value is '-1'
+        if($jsonDecodedResults['result']['success'] === '1') {
+
+            $columns = array(
+                1 => 'name',
+                2 => 'active',
+            );
+
+            $totalData     = $jsonDecodedResults['result']['products']['paging'][0]['total'];
+            $totalFiltered = $totalData;
+
+            if($jsonDecodedResults['result']['products']['paging'][0]['total'] != '0') {
+
+                foreach($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
+                    $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
+                    $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div>';
+                    $nestedData['active']     = 'active';
+                    $nestedData['actions']    = 'actions';
+                    $data[]                   = $nestedData;
+                }
+
+            }
+
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get shop categories details.
+     *
+     * @param  string  $urlShopCategories
+     * @return \Illuminate\Http\Response
+     */
+    public function getUrlShopCategories($urlShopCategories) 
+    {
+        $category_details        = [];
+        $category_details_offset = [];
+
+        //Fetching data from API
+        $jsonDecodedResults = $this->curl($urlShopCategories);
+
+        //If json status is success then value is '1' error value is '-1'
+        if($jsonDecodedResults['result']['success'] === '1') {
+            if($jsonDecodedResults['result']['categories']['paging'][0]['total'] != 0) {
+                $category_details[]        = $jsonDecodedResults['result']['categories']['category'];
+                $category_details_offset   = $category_details[0];
+            }
+        }
+
+        return $category_details_offset;
     }
 
     /**
@@ -152,6 +183,7 @@ class ProductController extends Controller
         return $jsonDecodedResults;
     }
 
+    
     /**
      * Show the form for creating a new resource.
      *
