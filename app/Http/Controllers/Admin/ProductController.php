@@ -56,7 +56,7 @@ class ProductController extends Controller
 
             // Search query for product name
             if( !empty($request->input('search.value')) ) {
-                $search_product_name = "&search=".$request->input('search.value')."&search_field=product_id";
+                $search_product_name = "&search=".urlencode($request->input('search.value'))."&search_field=name";
             }
 
             //If shop is rakuten then below code will execute.

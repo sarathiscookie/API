@@ -110,5 +110,19 @@ $(function() {
 		}
 	});
 
+	// Datatable search min 3 char length needed
+    $('input[type=search]') .unbind() // Unbind previous default bindings
+        .bind("input", function(e) { // Bind our desired behavior
+            // If the length is 3 or more characters, or the user pressed ENTER, search
+            if(this.value.length >= 3 || e.keyCode == 13) {
+            	productList.search(this.value).draw();
+            }
+
+            if(this.value == "") {
+            	productList.search("").draw();
+            }
+            return;
+        });
+
 
 });	
