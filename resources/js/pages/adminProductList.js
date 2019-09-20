@@ -14,6 +14,7 @@ $(function() {
 
 	let shopId = '';
 	let companyId = '';
+	let productList;
 
 	// Setting href attribute when changing shop
 	$( "#product_shop" ).on( "change", function() {
@@ -35,81 +36,87 @@ $(function() {
 		}
 	});
 
+	//On page loading it works 
+	dataTableFn(null);
+
 	/* Datatable scripts */
-	let productList = $("#product_list").DataTable({
-		pageLength: 20,
-		order: [1, "desc"],
-		processing: true,
-		serverSide: true,
-		lengthChange: false,
-		ajax: {
-			url: "/admin/dashboard/product/list/datatables",
-			dataType: "json",
-			type: "POST",
-			data: {
-				productListShopID: $(".productListShopIdClass").val(),
-				productListCompanyId: $(".productListCompanyIdClass").val(),
-				pageActive: function() {
-					let productListTableInfo = $("#product_list").DataTable().page.info();
-					return productListTableInfo.page + 1;
+	function dataTableFn(productCategoryId) {
+		productList = $("#product_list").DataTable({
+			pageLength: 20,
+			order: [1, "desc"],
+			processing: true,
+			serverSide: true,
+			lengthChange: false,
+			ajax: {
+				url: "/admin/dashboard/product/list/datatables",
+				dataType: "json",
+				type: "POST",
+				data: {
+					productListShopID: $(".productListShopIdClass").val(),
+					productListCompanyId: $(".productListCompanyIdClass").val(),
+					pageActive: function() {
+						let productListTableInfo = $("#product_list").DataTable().page.info();
+						return productListTableInfo.page + 1;
+					},
+					productCategoryId: productCategoryId
+				},
+				dataSrc: function(result) {
+					$( ".shop_categories_options" ).remove();
+					if(result.categoryDetails.length > 0) {
+						if(result.categoryDetails.length > 1) {
+							$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="allCategories">All Categories</option>'); 
+						}
+						for(let i = 0; i < result.categoryDetails.length; i++) {
+							$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="'+ result.categoryDetails[i].shop_category_id +'">'+ result.categoryDetails[i].name +'</option>');
+						}
+					}
+					else  {
+						$( ".noCategoriesFound" ).remove();
+						$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="0">Categories are not available for this shop</option>'); 
+					}
+					return result.data;
 				}
 			},
-			dataSrc: function(result) {
-				$( ".shop_categories_options" ).remove();
-				if(result.categoryDetails.length > 0) {
-					if(result.categoryDetails.length > 1) {
-						$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="0">All Categories</option>'); 
-					}
-					for(let i = 0; i < result.categoryDetails.length; i++) {
-						$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="'+ result.categoryDetails[i].shop_category_id +'">'+ result.categoryDetails[i].name +'</option>');
-					}
-				}
-				else  {
-					$( ".noCategoriesFound" ).remove();
-					$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="">Categories are not available for this shop</option>'); 
-				}
-				return result.data;
-			}
-		},
-		deferRender: true,
-		columns: [
+			deferRender: true,
+			columns: [
 			{ data: "hash" },
 			{ data: "name" },
 			{ data: "active" },
 			{ data: "actions" }
-		],
-		columnDefs: [
+			],
+			columnDefs: [
 			{
 				orderable: false,
 				targets: [0, 2, 3]
 			}
-		],
-		language: {
-			sEmptyTable: "Keine Daten in der Tabelle vorhanden",
-			sInfo: "_START_ bis _END_ von _TOTAL_ Einträgen",
-			sInfoEmpty: "0 bis 0 von 0 Einträgen",
-			sInfoFiltered: "(gefiltert von _MAX_ Einträgen)",
-			sInfoPostFix: "",
-			sInfoThousands: ".",
-			sLengthMenu: "_MENU_ Einträge anzeigen",
-			sLoadingRecords: "Wird geladen...",
-			sProcessing: "Bitte warten...",
-			sSearch: "Suchen",
-			sZeroRecords: "Keine Einträge vorhanden.",
-			oPaginate: {
-				sFirst: "Erste",
-				sPrevious: "Zurück",
-				sNext: "Nächste",
-				sLast: "Letzte"
-			},
-			oAria: {
-				sSortAscending:
+			],
+			language: {
+				sEmptyTable: "Keine Daten in der Tabelle vorhanden",
+				sInfo: "_START_ bis _END_ von _TOTAL_ Einträgen",
+				sInfoEmpty: "0 bis 0 von 0 Einträgen",
+				sInfoFiltered: "(gefiltert von _MAX_ Einträgen)",
+				sInfoPostFix: "",
+				sInfoThousands: ".",
+				sLengthMenu: "_MENU_ Einträge anzeigen",
+				sLoadingRecords: "Wird geladen...",
+				sProcessing: "Bitte warten...",
+				sSearch: "Suchen",
+				sZeroRecords: "Keine Einträge vorhanden.",
+				oPaginate: {
+					sFirst: "Erste",
+					sPrevious: "Zurück",
+					sNext: "Nächste",
+					sLast: "Letzte"
+				},
+				oAria: {
+					sSortAscending:
 					": aktivieren, um Spalte aufsteigend zu sortieren",
-				sSortDescending:
+					sSortDescending:
 					": aktivieren, um Spalte absteigend zu sortieren"
+				}
 			}
-		}
-	});
+		});
+	}
 
 	// Datatable search min 3 char length needed
     $('input[type=search]') .unbind() // Unbind previous default bindings
@@ -124,6 +131,15 @@ $(function() {
             }
             return;
         });
+
+    //Filter for category
+	$( "#shopCategoriesSelect" ).change(function() {
+		let categoryId = $( "#shopCategoriesSelect" ).val();
+		if( categoryId !== null ) {
+			productList.destroy();
+			dataTableFn(categoryId);
+		}
+	});    
 
 
 });	

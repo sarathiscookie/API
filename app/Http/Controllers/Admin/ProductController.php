@@ -47,22 +47,27 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         try {
-            $params              = $request->all();
-            $product_details     = '';
-            $category_details    = '';
-            $search_product_name = '';
+            $params           = $request->all();
+            $product_details  = '';
+            $category_details = '';
+            $search           = '';
 
             // Search query for product name
             if( !empty($request->input('search.value')) ) {
-                $search_product_name = "&search=".urlencode($request->input('search.value'))."&search_field=name";
+                $search = "&search=".urlencode($request->input('search.value'))."&search_field=name";
+            }
+
+            // Search query for category
+            if( ($request->productCategoryId !== 'allCategories') && ($request->productCategoryId !== null) ) {
+                $search = "&search=".urlencode($request->productCategoryId)."&search_field=shop_category_id";
             }
 
             //If shop is rakuten then below code will execute.
             if($request->productListShopID === '1') {
                 //get company api key from shops
-                $api_key           = $this->getApiKey($request->productListShopID, $request->productListCompanyId); 
+                $api_key           = $this->getApiKey($request->productListShopID, $request->productListCompanyId);
 
-                $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key='.$api_key->api_key.'&format=json&page='.$request->pageActive.$search_product_name;
+                $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key='.$api_key->api_key.'&format=json&page='.$request->pageActive.$search;
 
                 $urlShopCategories = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key='.$api_key->api_key.'&format=json';
             }
@@ -118,8 +123,8 @@ class ProductController extends Controller
             foreach($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
                 $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div>';
-                $nestedData['active']     = 'active';
-                $nestedData['actions']    = 'actions';
+                $nestedData['active']     = '<i class="fas fa-check"></i>';
+                $nestedData['actions']    = '<i class="fas fa-cog"></i>';
                 $data[]                   = $nestedData;
             }
 
