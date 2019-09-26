@@ -2440,36 +2440,46 @@ $(function() {
 		}
 	});
 
-	let shopId = '';
-	let companyId = '';
+	let shopId = "";
+	let companyId = "";
 	let productList;
 	let selected;
 
 	// Setting href attribute when changing shop
-	$( "#product_shop" ).on( "change", function() {
-	    shopId = $( this ).val();
-		$( ".getProducts" ).attr( "href", "/admin/dashboard/product/list/"+shopId+"/"+companyId);
+	$("#product_shop").on("change", function() {
+		shopId = $(this).val();
+		$(".getProducts").attr(
+			"href",
+			"/admin/dashboard/product/list/" + shopId + "/" + companyId
+		);
 	});
 
 	// Setting href attribute when select a company
-	$( "#product_company" ).on( "change", function() {
-	    companyId = $( this ).val();
-		$( ".getProducts" ).attr( "href", "/admin/dashboard/product/list/"+shopId+"/"+companyId);
+	$("#product_company").on("change", function() {
+		companyId = $(this).val();
+		$(".getProducts").attr(
+			"href",
+			"/admin/dashboard/product/list/" + shopId + "/" + companyId
+		);
 	});
 
 	// Alert message if user forgot to fill the fields
-	$( ".getProducts" ).on( "click", function (e){
-		if( ($( "#product_shop" ).val() == '') || ($( "#product_company" ).val() == '') ) {
+	$(".getProducts").on("click", function(e) {
+		if (
+			$("#product_shop").val() == "" ||
+			$("#product_company").val() == ""
+		) {
 			e.preventDefault();
-			alert('Please fill the data');
+			alert("Please fill the data");
 		}
 	});
 
-	//On page loading it works 
+	//On page loading it works
 	dataTableFn(null, null, null);
 
 	/* Datatable scripts */
 	function dataTableFn(productCategoryId, visible, available) {
+		console.log("visible: " + visible + " available: " + available);
 		productList = $("#product_list").DataTable({
 			pageLength: 20,
 			order: [1, "desc"],
@@ -2484,7 +2494,9 @@ $(function() {
 					productListShopID: $(".productListShopIdClass").val(),
 					productListCompanyId: $(".productListCompanyIdClass").val(),
 					pageActive: function() {
-						let productListTableInfo = $("#product_list").DataTable().page.info();
+						let productListTableInfo = $("#product_list")
+							.DataTable()
+							.page.info();
 						return productListTableInfo.page + 1;
 					},
 					productCategoryId: productCategoryId,
@@ -2492,25 +2504,42 @@ $(function() {
 					available: available
 				},
 				dataSrc: function(result) {
-					$( ".shop_categories_options" ).remove();
-					
-					if(result.categoryDetails.length > 0) {
-						if(result.categoryDetails.length > 1) {
-							$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="allCategories">All Categories</option>'); 
+					$(".shop_categories_options").remove();
+
+					if (result.categoryDetails.length > 0) {
+						if (result.categoryDetails.length > 1) {
+							$("#shopCategoriesSelect").append(
+								'<option class="shop_categories_options" value="allCategories">All Categories</option>'
+							);
 						}
-						for(let i = 0; i < result.categoryDetails.length; i++) {
-							if(productCategoryId == result.categoryDetails[i].shop_category_id) {
+						for (
+							let i = 0;
+							i < result.categoryDetails.length;
+							i++
+						) {
+							if (
+								productCategoryId ==
+								result.categoryDetails[i].shop_category_id
+							) {
 								selected = 'selected="selected"';
+							} else {
+								selected = "";
 							}
-							else {
-								selected = '';
-							}
-							$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" '+selected+' value="'+ result.categoryDetails[i].shop_category_id +'">'+ result.categoryDetails[i].name +'</option>');
+							$("#shopCategoriesSelect").append(
+								'<option class="shop_categories_options" ' +
+									selected +
+									' value="' +
+									result.categoryDetails[i].shop_category_id +
+									'">' +
+									result.categoryDetails[i].name +
+									"</option>"
+							);
 						}
-					}
-					else  {
-						$( ".noCategoriesFound" ).remove();
-						$( "#shopCategoriesSelect" ).append('<option class="shop_categories_options" value="0">Categories are not available for this shop</option>'); 
+					} else {
+						$(".noCategoriesFound").remove();
+						$("#shopCategoriesSelect").append(
+							'<option class="shop_categories_options" value="0">Categories are not available for this shop</option>'
+						);
 					}
 
 					return result.data;
@@ -2518,16 +2547,16 @@ $(function() {
 			},
 			deferRender: true,
 			columns: [
-			{ data: "hash" },
-			{ data: "name" },
-			{ data: "active" },
-			{ data: "actions" }
+				{ data: "hash" },
+				{ data: "name" },
+				{ data: "active" },
+				{ data: "actions" }
 			],
 			columnDefs: [
-			{
-				orderable: false,
-				targets: [0, 2, 3]
-			}
+				{
+					orderable: false,
+					targets: [0, 2, 3]
+				}
 			],
 			language: {
 				sEmptyTable: "Keine Daten in der Tabelle vorhanden",
@@ -2549,104 +2578,203 @@ $(function() {
 				},
 				oAria: {
 					sSortAscending:
-					": aktivieren, um Spalte aufsteigend zu sortieren",
+						": aktivieren, um Spalte aufsteigend zu sortieren",
 					sSortDescending:
-					": aktivieren, um Spalte absteigend zu sortieren"
+						": aktivieren, um Spalte absteigend zu sortieren"
 				}
 			}
 		});
 	}
 
 	// Datatable search min 3 char length needed
-    $('input[type=search]') .unbind() // Unbind previous default bindings
-        .bind("input", function(e) { // Bind our desired behavior
-            // If the length is 3 or more characters, or the user pressed ENTER, search
-            if(this.value.length >= 3 || e.keyCode == 13) {
-            	productList.search(this.value).draw();
-            }
+	$("input[type=search]")
+		.unbind() // Unbind previous default bindings
+		.bind("input", function(e) {
+			// Bind our desired behavior
+			// If the length is 3 or more characters, or the user pressed ENTER, search
+			if (this.value.length >= 3 || e.keyCode == 13) {
+				productList.search(this.value).draw();
+			}
 
-            if(this.value == "") {
-            	productList.search("").draw();
-            }
-            return;
-        });
+			if (this.value == "") {
+				productList.search("").draw();
+			}
+			return;
+		});
 
-    //Filter for category
-	$( "#shopCategoriesSelect" ).change(function() {
-		let categoryId = $( "#shopCategoriesSelect" ).val();
-		if( categoryId !== null ) {
+	//Filter for category
+	$("#shopCategoriesSelect").change(function() {
+		let categoryId = $("#shopCategoriesSelect").val();
+		if (categoryId !== null) {
 			productList.destroy();
 			dataTableFn(categoryId, null, null);
 		}
 	});
 
 	//Filter for visible
-	$( ".visibleActive" ).on("click", function(e) {
+	$(".visibleActive").on("click", function(e) {
 		e.preventDefault();
-		if($(this).hasClass('btn-secondary')) {
-			$(this).addClass('btn-success').removeClass('btn-secondary');
-			$( ".visibleDisable" ).addClass('btn-secondary').removeClass('btn-success');
-			$( ".visibleAll" ).addClass('btn-secondary').removeClass('btn-success');
-			productList.destroy();
-			dataTableFn(null, 1, null);
-		}
-	});   
+		if ($(this).hasClass("btn-secondary")) {
+			$(this)
+				.addClass("btn-success")
+				.removeClass("btn-secondary");
+			$(".visibleDisable")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+			$(".visibleAll")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
 
-	$( ".visibleDisable" ).on("click", function(e) {
-		e.preventDefault();
-		if($(this).hasClass('btn-secondary')) {
-			$(this).addClass('btn-success').removeClass('btn-secondary');
-			$( ".visibleActive" ).addClass('btn-secondary').removeClass('btn-success');
-			$( ".visibleAll" ).addClass('btn-secondary').removeClass('btn-success');
+			//Passing class name to function
+			let availableActiveStatus = statusFunc(
+				$(".availableActive").hasClass("btn-success"),
+				$(".availableDisable").hasClass("btn-success"),
+				$(".availableAll").hasClass("btn-success")
+			);
+
 			productList.destroy();
-			dataTableFn(null, 0, null);
+			dataTableFn(null, 1, availableActiveStatus);
 		}
 	});
 
-	$( ".visibleAll" ).on("click", function(e) {
+	$(".visibleDisable").on("click", function(e) {
 		e.preventDefault();
-		if($(this).hasClass('btn-secondary')) {
-			$(this).addClass('btn-success').removeClass('btn-secondary');
-			$( ".visibleActive" ).addClass('btn-secondary').removeClass('btn-success');
-			$( ".visibleDisable" ).addClass('btn-secondary').removeClass('btn-success');
+		if ($(this).hasClass("btn-secondary")) {
+			$(this)
+				.addClass("btn-success")
+				.removeClass("btn-secondary");
+			$(".visibleActive")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+			$(".visibleAll")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+
+			//Passing class name to function
+			let availableDisableStatus = statusFunc(
+				$(".availableActive").hasClass("btn-success"),
+				$(".availableDisable").hasClass("btn-success"),
+				$(".availableAll").hasClass("btn-success")
+			);
+
 			productList.destroy();
-			dataTableFn(null, null, null);
+			dataTableFn(null, 0, availableDisableStatus);
+		}
+	});
+
+	$(".visibleAll").on("click", function(e) {
+		e.preventDefault();
+		if ($(this).hasClass("btn-secondary")) {
+			$(this)
+				.addClass("btn-success")
+				.removeClass("btn-secondary");
+			$(".visibleActive")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+			$(".visibleDisable")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+
+			//Passing class name to function
+			let availableAllStatus = statusFunc(
+				$(".availableActive").hasClass("btn-success"),
+				$(".availableDisable").hasClass("btn-success"),
+				$(".availableAll").hasClass("btn-success")
+			);
+
+			productList.destroy();
+			dataTableFn(null, null, availableAllStatus);
 		}
 	});
 
 	//Filter for available
-	$( ".availableActive" ).on("click", function(e) {
+	$(".availableActive").on("click", function(e) {
 		e.preventDefault();
-		if($(this).hasClass('btn-secondary')) {
-			$(this).addClass('btn-success').removeClass('btn-secondary');
-			$( ".availableDisable" ).addClass('btn-secondary').removeClass('btn-success');
-			$( ".availableAll" ).addClass('btn-secondary').removeClass('btn-success');
-			productList.destroy();
-			dataTableFn(null, null, 1);
-		}
-	});   
+		if ($(this).hasClass("btn-secondary")) {
+			$(this)
+				.addClass("btn-success")
+				.removeClass("btn-secondary");
+			$(".availableDisable")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+			$(".availableAll")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
 
-	$( ".availableDisable" ).on("click", function(e) {
-		e.preventDefault();
-		if($(this).hasClass('btn-secondary')) {
-			$(this).addClass('btn-success').removeClass('btn-secondary');
-			$( ".availableActive" ).addClass('btn-secondary').removeClass('btn-success');
-			$( ".availableAll" ).addClass('btn-secondary').removeClass('btn-success');
-			productList.destroy();
-			dataTableFn(null, null, 0);
-		}
-	});
+			//Passing class name to function
+			let visibleActiveStatus = statusFunc(
+				$(".visibleActive").hasClass("btn-success"),
+				$(".visibleDisable").hasClass("btn-success"),
+				$(".visibleAll").hasClass("btn-success")
+			);
 
-	$( ".availableAll" ).on("click", function(e) {
-		e.preventDefault();
-		if($(this).hasClass('btn-secondary')) {
-			$(this).addClass('btn-success').removeClass('btn-secondary');
-			$( ".availableActive" ).addClass('btn-secondary').removeClass('btn-success');
-			$( ".availableDisable" ).addClass('btn-secondary').removeClass('btn-success');
 			productList.destroy();
-			dataTableFn(null, null, null);
+			dataTableFn(null, visibleActiveStatus, 1);
 		}
 	});
 
+	$(".availableDisable").on("click", function(e) {
+		e.preventDefault();
+		if ($(this).hasClass("btn-secondary")) {
+			$(this)
+				.addClass("btn-success")
+				.removeClass("btn-secondary");
+			$(".availableActive")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+			$(".availableAll")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
 
-});	
+			//Passing class name to function
+			let visibleDisableStatus = statusFunc(
+				$(".visibleActive").hasClass("btn-success"),
+				$(".visibleDisable").hasClass("btn-success"),
+				$(".visibleAll").hasClass("btn-success")
+			);
+
+			productList.destroy();
+			dataTableFn(null, visibleDisableStatus, 0);
+		}
+	});
+
+	$(".availableAll").on("click", function(e) {
+		e.preventDefault();
+		if ($(this).hasClass("btn-secondary")) {
+			$(this)
+				.addClass("btn-success")
+				.removeClass("btn-secondary");
+			$(".availableActive")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+			$(".availableDisable")
+				.addClass("btn-secondary")
+				.removeClass("btn-success");
+
+			//Passing class name to function
+			let visibleAllStatus = statusFunc(
+				$(".visibleActive").hasClass("btn-success"),
+				$(".visibleDisable").hasClass("btn-success"),
+				$(".visibleAll").hasClass("btn-success")
+			);
+
+			productList.destroy();
+			dataTableFn(null, visibleAllStatus, null);
+		}
+	});
+
+	//Function to set status for classes
+	function statusFunc(activeClass, disableClass, allClass) {
+		let status;
+
+		if (activeClass) {
+			status = 1;
+		} else if (disableClass) {
+			status = 0;
+		} else {
+			status = null;
+		}
+
+		return status;
+	}
+});
