@@ -129,12 +129,15 @@ class ProductController extends Controller
         //If json status is success then value is '1' error value is '-1'
         if( ($jsonDecodedResults['result']['success'] === '1') && ($jsonDecodedResults['result']['products']['paging'][0]['total'] != '0') ) {
 
-            $totalData     = $jsonDecodedResults['result']['products']['paging'][0]['total'];
-            $totalFiltered = $totalData;
+            $totalData       = $jsonDecodedResults['result']['products']['paging'][0]['total'];
+            $totalFiltered   = $totalData;
 
             foreach($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
+                $visibleStatus            = ($productList['visible'] === '1') ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                $availableStatus          = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
+
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
-                $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div>';
+                $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div> <div>Visible: '.$visibleStatus.'</div> <div>Available: '.$availableStatus.'</div>';
                 $nestedData['active']     = '<i class="fas fa-check"></i>';
                 $nestedData['actions']    = '<i class="fas fa-cog"></i>';
                 $data[]                   = $nestedData;

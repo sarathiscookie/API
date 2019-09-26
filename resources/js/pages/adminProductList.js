@@ -51,7 +51,6 @@ $(function() {
 
 	/* Datatable scripts */
 	function dataTableFn(productCategoryId, visible, available) {
-		console.log("visible: " + visible + " available: " + available);
 		productList = $("#product_list").DataTable({
 			pageLength: 20,
 			order: [1, "desc"],
