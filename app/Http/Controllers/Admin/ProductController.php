@@ -134,7 +134,13 @@ class ProductController extends Controller
 
             foreach($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
                 $visibleStatus            = ($productList['visible'] === '1') ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
-                $availableStatus          = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
+
+                if( $productList['has_variants'] === '1' && empty($productList['available']) ) {
+                    $availableStatus      = '<i class="fas fa-thumbs-down"></i>';
+                }
+                else {
+                    $availableStatus      = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
+                }
 
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
                 $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div> <div>Visible: '.$visibleStatus.'</div> <div>Available: '.$availableStatus.'</div>';
