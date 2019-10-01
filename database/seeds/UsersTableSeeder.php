@@ -14,15 +14,24 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $data = [
+        $data = [/*[
         	'name' => 'admin',
         	'email' => 'admin@gmail.com',
             'username' => 'admin',
-        	'password' => Hash::make('11111111'),
-        	'created_at' => Carbon::now(),
-        	'role' => 'admin',
-        	'active' => 'yes',
-        ];
+            'password' => Hash::make('11111111'),
+            'created_at' => Carbon::now(),
+            'role' => 'admin',
+            'active' => 'yes',
+        ],*/
+        [
+            'name' => 'marko',
+            'email' => 'marko@herm.de',
+            'username' => 'marko',
+            'password' => Hash::make('www.herm.de'),
+            'created_at' => Carbon::now(),
+            'role' => 'admin',
+            'active' => 'yes',
+        ]];
 
         User::insert($data);
     }
