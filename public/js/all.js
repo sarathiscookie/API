@@ -2509,36 +2509,31 @@ $(function() {
 						if (result.categoryDetails.length > 1) {
 							$("#shopCategoriesSelect").append(
 								'<option class="shop_categories_options" value="allCategories">All Categories</option>'
-							);
+								);
 						}
-						for (
-							let i = 0;
-							i < result.categoryDetails.length;
-							i++
-						) {
-							if (
-								productCategoryId ==
-								result.categoryDetails[i].shop_category_id
-							) {
+						for (let i = 0;i < result.categoryDetails.length;i++) {
+							if (productCategoryId == result.categoryDetails[i].shop_category_id) {
 								selected = 'selected="selected"';
-							} else {
+							} 
+							else {
 								selected = "";
 							}
 							$("#shopCategoriesSelect").append(
 								'<option class="shop_categories_options" ' +
-									selected +
-									' value="' +
-									result.categoryDetails[i].shop_category_id +
-									'">' +
-									result.categoryDetails[i].name +
-									"</option>"
-							);
+								selected +
+								' value="' +
+								result.categoryDetails[i].shop_category_id +
+								'">' +
+								result.categoryDetails[i].name +
+								"</option>"
+								);
 						}
-					} else {
+					} 
+					else {
 						$(".noCategoriesFound").remove();
 						$("#shopCategoriesSelect").append(
 							'<option class="shop_categories_options" value="0">Categories are not available for this shop</option>'
-						);
+							);
 					}
 
 					return result.data;
@@ -2601,13 +2596,45 @@ $(function() {
 			return;
 		});
 
+    //Function for shop category id
+	function shopCategoriesFun(filterShopCategoryId)	{
+
+		let shopCategoryIdFilter;
+		if( (filterShopCategoryId !== null) || (filterShopCategoryId !== '') ) {
+			shopCategoryIdFilter = filterShopCategoryId;
+		}
+		else {
+			shopCategoryIdFilter = null;
+		}
+
+		return shopCategoryIdFilter;
+	}		
+
 	//Filter for category
 	$("#shopCategoriesSelect").change(function() {
+
 		let categoryId = $("#shopCategoriesSelect").val();
-		if (categoryId !== null) {
+
+		if ( (categoryId !== null) || (categoryId !== '') ) {
+
+			//Passing available class name to function
+			let availableStatus = statusFunc(
+				$(".availableActive").hasClass("btn-success"),
+				$(".availableDisable").hasClass("btn-success"),
+				$(".availableAll").hasClass("btn-success")
+			);
+
+			//Passing visible class name to function
+			let visibleActiveStatus = statusFunc(
+				$(".visibleActive").hasClass("btn-success"),
+				$(".visibleDisable").hasClass("btn-success"),
+				$(".visibleAll").hasClass("btn-success")
+			);
+
 			productList.destroy();
-			dataTableFn(categoryId, null, null);
+			dataTableFn(categoryId, visibleActiveStatus, availableStatus);
 		}
+
 	});
 
 	//Filter for visible
@@ -2631,8 +2658,11 @@ $(function() {
 				$(".availableAll").hasClass("btn-success")
 			);
 
+			//Filter to visible active
+			let visibleActiveCategoryId = shopCategoriesFun($("#shopCategoriesSelect").val());
+			
 			productList.destroy();
-			dataTableFn(null, 1, availableActiveStatus);
+			dataTableFn(visibleActiveCategoryId, 1, availableActiveStatus);
 		}
 	});
 
@@ -2656,8 +2686,11 @@ $(function() {
 				$(".availableAll").hasClass("btn-success")
 			);
 
+			//Filter to visible disable
+			let visibleDisableCategoryId = shopCategoriesFun($("#shopCategoriesSelect").val());
+
 			productList.destroy();
-			dataTableFn(null, 0, availableDisableStatus);
+			dataTableFn(visibleDisableCategoryId, 0, availableDisableStatus);
 		}
 	});
 
@@ -2681,8 +2714,11 @@ $(function() {
 				$(".availableAll").hasClass("btn-success")
 			);
 
+			//Filter to visible all
+			let visibleAllCategoryId = shopCategoriesFun($("#shopCategoriesSelect").val());
+
 			productList.destroy();
-			dataTableFn(null, null, availableAllStatus);
+			dataTableFn(visibleAllCategoryId, null, availableAllStatus);
 		}
 	});
 
@@ -2707,8 +2743,11 @@ $(function() {
 				$(".visibleAll").hasClass("btn-success")
 			);
 
+			//Filter to available active
+			let availableActiveCategoryId = shopCategoriesFun($("#shopCategoriesSelect").val());
+
 			productList.destroy();
-			dataTableFn(null, visibleActiveStatus, 1);
+			dataTableFn(availableActiveCategoryId, visibleActiveStatus, 1);
 		}
 	});
 
@@ -2732,8 +2771,11 @@ $(function() {
 				$(".visibleAll").hasClass("btn-success")
 			);
 
+			//Filter to available disable
+			let availableDisableCategoryId = shopCategoriesFun($("#shopCategoriesSelect").val());
+
 			productList.destroy();
-			dataTableFn(null, visibleDisableStatus, 0);
+			dataTableFn(availableDisableCategoryId, visibleDisableStatus, 0);
 		}
 	});
 
@@ -2757,8 +2799,11 @@ $(function() {
 				$(".visibleAll").hasClass("btn-success")
 			);
 
+			//Filter to available all
+			let availableAllCategoryId = shopCategoriesFun($("#shopCategoriesSelect").val());
+
 			productList.destroy();
-			dataTableFn(null, visibleAllStatus, null);
+			dataTableFn(availableAllCategoryId, visibleAllStatus, null);
 		}
 	});
 
