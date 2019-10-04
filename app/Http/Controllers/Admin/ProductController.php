@@ -145,7 +145,7 @@ class ProductController extends Controller
 
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$productList['product_id'].'" />';
                 $nestedData['name']       = '<h6>'.$productList['name'].'</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">'.$productList['product_id'].'</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">'.$productList['producer'].'</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">'.$productList['product_art_no'].'</span></div> <div>Visible: '.$visibleStatus.'</div> <div>Available: '.$availableStatus.'</div>';
-                $nestedData['active']     = '<i class="fas fa-check"></i>';
+                $nestedData['active']     = $this->productStatusHtml($productList['product_id']);
                 $nestedData['actions']    = '<i class="fas fa-cog"></i>';
                 $data[]                   = $nestedData;
             }
@@ -153,6 +153,24 @@ class ProductController extends Controller
         }
         return compact('data', 'totalData', 'totalFiltered');
     }
+
+    /**
+     * html group button to change product status 
+     * @param  string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function productStatusHtml($id)
+    {
+        //------------ Write query to check default status
+        $checked = 'checked';
+        $html    = '<label class="switch" data-productstatusid="'.$id.'">
+        <input type="checkbox" class="buttonStatus" '.$checked.'>
+        <span class="slider round"></span>
+        </label>';
+
+        return $html;
+    }
+
 
     /**
      * Get shop categories details.
