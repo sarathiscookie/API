@@ -15,7 +15,7 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('product_id');
+            $table->integer('api_product_id'); // Product id from API
             $table->unsignedBigInteger('shopname_id');
             $table->unsignedBigInteger('company_id');
             $table->string('product_art_no', 15)->nullable();
@@ -43,6 +43,7 @@ class CreateProductsTable extends Migration
             $table->string('inci', 50)->nullable();
             $table->string('comment')->nullable();
             $table->string('cross_selling_title', 100)->nullable();
+            $table->tinyInteger('module_status')->default(0); // Status to enable and disable product_module_details
             $table->timestamps();
 
             $table->foreign('shopname_id')

@@ -132,6 +132,11 @@ Route::prefix('admin')->group(function(){
 		Route::get('/dashboard/product/list/{shopId}/{companyId}', 'Admin\ProductController@show')->name('admin.dashboard.product.list');
 		/* Listing supplier on datatable */
 		Route::post('/dashboard/product/list/datatables', 'Admin\ProductController@datatable')->name('admin.dashboard.product.list.datatable');
+
+		/* Show module listing page */
+		Route::get('/dashboard/module/list', 'Admin\ModuleController@index')->name('admin.dashboard.module.list');
+		/* Listing managers on datatable */
+		Route::post('/dashboard/module/list/datatables', 'Admin\ModuleController@datatable')->name('admin.dashboard.module.list.datatable');
 		
 	});
 });

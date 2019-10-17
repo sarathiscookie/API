@@ -47,6 +47,7 @@
                         <a class="dropdown-item" href="/admin/dashboard/user/list"><i class="fas fa-users"></i> User List</a>
                         <a class="dropdown-item" href="/admin/dashboard/key/list"><i class="fas fa-key"></i> Key List</a>
                         <a class="dropdown-item" href="/admin/dashboard/supplier/list"><i class="fas fa-user-tie"></i> Supplier List</a>
+                        <a class="dropdown-item" href="/admin/dashboard/module/list"><i class="fas fa-list-alt"></i> Module List</a>
                         <a class="dropdown-item" href="/admin/dashboard/product/get"><i class="fas fa-list-ul"></i> Product List</a>
                         
                         <div class="dropdown-divider"></div>
@@ -118,6 +119,13 @@
                             <a class="nav-link" href="/admin/dashboard/supplier/list">
                                 <i class="fas fa-user-tie"></i>
                                 Supplier List
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="/admin/dashboard/module/list">
+                                <i class="fas fa-list-alt"></i>
+                                Module List
                             </a>
                         </li>
 
