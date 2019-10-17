@@ -168,7 +168,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Update manager status.
+     * Update company status.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response

@@ -139,6 +139,12 @@ Route::prefix('admin')->group(function(){
 		Route::post('/dashboard/module/list/datatables', 'Admin\ModuleController@datatable')->name('admin.dashboard.module.list.datatable');
 		/* Store module */
 		Route::post('/dashboard/module/store', 'Admin\ModuleController@store')->name('admin.dashboard.module.store');
+		/* Delete module */
+		Route::delete('/dashboard/module/delete/{id}', 'Admin\ModuleController@destroy')->name('admin.dashboard.module.delete');
+		/* Update module status */
+		Route::post('/dashboard/module/status/update', 'Admin\ModuleController@updateStatus')->name('admin.dashboard.module.status.update');
+		/* Update module */
+		Route::put('/dashboard/module/update', 'Admin\ModuleController@update')->name('admin.dashboard.module.update');
 		
 	});
 });

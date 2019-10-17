@@ -2934,7 +2934,7 @@ $(function() {
 		})
 		.fail(function(data) {
 			if (data.responseJSON.moduleStatus === "failure") {
-				$(".companyValidationAlert").html(
+				$(".moduleValidationAlert").html(
 					'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
 					data.responseJSON.message +
 					'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
@@ -2963,6 +2963,149 @@ $(function() {
 			.find("input[type=checkbox], input[type=radio]")
 			.prop("checked", "")
 			.end();
+	});
+
+	/* Edit module details */
+	$("#module_list tbody").on("click", "a.editModule", function(e) {
+		var moduleid = $(this).data("moduleid");
+
+		$(".updateModule_" + moduleid).on("click", function(e) {
+			e.preventDefault();
+
+			var module_name = $("#module_" + moduleid).val();
+
+			$.ajax({
+				url: "/admin/dashboard/module/update",
+				dataType: "JSON",
+				type: "PUT",
+				data: {
+					module: module_name,
+					moduleid: moduleid
+				}
+			})
+				.done(function(result) {
+					if (result.moduleStatusUpdate === "success") {
+						$("#editModuleModal_" + moduleid).modal("hide"); // It hides the modal
+
+						moduleList.ajax.reload(null, false); //Reload data on table
+
+						$(".responseModuleMessage").html(
+							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
+								result.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+
+						$(".responseModuleMessage")
+							.show()
+							.delay(5000)
+							.fadeOut();
+					}
+				})
+				.fail(function(data) {
+					if (data.responseJSON.moduleStatusUpdate === "failure") {
+						$(".moduleUpdateValidationAlert").html(
+							'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+								data.responseJSON.message +
+								'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+					}
+
+					if (data.status === 422) {
+						$.each(data.responseJSON.errors, function(key, val) {
+							$(".moduleUpdateValidationAlert").html(
+								"<p class='alert alert-danger'>" + val + "</p>"
+							);
+						});
+					}
+				});
+		});
+	});
+
+	/* module status changing functionality */
+	$("#module_list tbody").on("change", "input.buttonStatus", function(e) {
+		e.preventDefault();
+
+		var newStatus = "";
+
+		var moduleStatusId = $(this)
+			.parent()
+			.data("modulestatusid");
+
+		if ($(this).is(":checked") === true) {
+			newStatus = "yes";
+		} else {
+			newStatus = "no";
+		}
+
+		$.ajax({
+			url: "/admin/dashboard/module/status/update",
+			dataType: "JSON",
+			type: "POST",
+			data: { newStatus: newStatus, moduleStatusId: moduleStatusId }
+		})
+			.done(function(result) {
+				moduleList.ajax.reload(null, false);
+			})
+			.fail(function(data) {
+				moduleList.ajax.reload(null, false);
+
+				if (data.responseJSON.moduleStatusChange === "failure") {
+					$(".responseModuleMessage").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+							data.responseJSON.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+				}
+
+				$(".responseModuleMessage")
+					.show()
+					.delay(5000)
+					.fadeOut();
+			});
+	});
+
+	/* Delete module functionality */
+	$("#module_list tbody").on("click", "a.deleteModule", function(e) {
+		e.preventDefault();
+		var deletemoduleid = $(this).data("deletemoduleid");
+		var r = confirm("Are you sure you want to remove the module?");
+		if (r == true) {
+			$.ajax({
+				url: "/admin/dashboard/module/delete/" + deletemoduleid,
+				dataType: "JSON",
+				type: "DELETE"
+			})
+			.done(function(result) {
+				if (result.deletedModuleStatus === "success") {
+						$("#editModuleModal_" + deletemoduleid).modal("hide"); // It hides the modal
+
+						moduleList
+						.row($(this).parents("tr"))
+						.remove()
+						.draw();
+
+						$(".responseModuleMessage").html(
+							'<div class="alert alert-success alert-dismissible fade show" role="alert"><i class="icon fa fa-check-circle"></i> ' +
+							result.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+							);
+
+						$(".responseModuleMessage")
+						.show()
+						.delay(5000)
+						.fadeOut();
+					}
+			})
+			.fail(function(data) {
+				if (data.responseJSON.deletedModuleStatus === "failure") {
+					$(".moduleUpdateValidationAlert").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+						data.responseJSON.message +
+						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+						);
+				}
+			});
+		}
 	});
 
 
