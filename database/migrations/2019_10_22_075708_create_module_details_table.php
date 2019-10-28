@@ -13,11 +13,10 @@ class CreateModuleDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('module_details', function (Blueprint $table) {
+        Schema::create('module_settings', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('module_id');
             $table->unsignedBigInteger('product_id');
-            $table->unsignedBigInteger('company_id');
             $table->tinyInteger('status')->default(0); // Status to enable and disable module_details
             $table->integer('wait_mod_no')->nullable();// Wait with execution until the MOD pointer number is reached
             $table->integer('wait_mod_id')->nullable();// Wait until MOD has successfully completed with ID
@@ -32,9 +31,9 @@ class CreateModuleDetailsTable extends Migration
             $table->tinyInteger('order_shipped')->default(0); // Declare order as shipped
             $table->tinyInteger('status_mail')->default(0); // Email status
             $table->string('mail_from_name')->nullable();
-            $table->unsignedBigInteger('user_id'); // To get supplier name and email
-            $table->unsignedBigInteger('user_id'); // To get admin name and email
-            $table->string('mail_bcc')->nullable(); 
+            $table->unsignedBigInteger('user_supplier_id'); // To get supplier name and email
+            $table->unsignedBigInteger('user_admin_id'); // To get admin name and email
+            $table->string('mail_bcc')->nullable(); // Write bcc details manually
             $table->string('mail_bcc_name')->nullable();
             $table->string('mail_subject')->nullable();
             $table->text('mail_body')->nullable();
@@ -42,6 +41,18 @@ class CreateModuleDetailsTable extends Migration
             $table->tinyInteger('mail_attach_client')->default(0); // Activate customer data sending
             $table->tinyInteger('mail_attach_delivery')->default(0); // Enable delivery address data shipping
             $table->timestamps();
+
+            $table->foreign('product_id')
+            ->references('id')->on('products');
+
+            $table->foreign('module_id')
+            ->references('id')->on('modules');
+
+            $table->foreign('user_supplier_id')
+            ->references('id')->on('users');
+
+            $table->foreign('user_admin_id')
+            ->references('id')->on('users');
         });
     }
 

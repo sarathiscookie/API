@@ -209,7 +209,7 @@ class UserController extends Controller
             <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
-            <h5 class="modal-title" id="editUserModalLabel">Edit User Details</h5>
+            <h5 class="modal-title" id="editUserModalLabel">Edit Employee Details</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
             </button>
@@ -300,7 +300,7 @@ class UserController extends Controller
             </div>
             </div>
 
-            <button type="button" class="btn btn-primary btn-lg btn-block updateUser_'.$user->id.'"><i class="fas fa-user-edit"></i> Update User</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block updateUser_'.$user->id.'"><i class="fas fa-user-edit"></i> Update Employee</button>
 
             </div>
 

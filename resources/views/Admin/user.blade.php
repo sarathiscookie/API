@@ -8,18 +8,18 @@
       <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/admin/dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
-          <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-users"></i> User List</li>
+          <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-users"></i> Employee List</li>
         </ol>
       </nav>
 
       <div class="card border-primary">
         <div class="card-header bg-primary">
-          User List
+          Employee List
         </div>
 
         <div class="card-body">
           <div class="text-right">
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal"><i class="fas fa-user-plus"></i> Create User</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#createUserModal"><i class="fas fa-user-plus"></i> Create Employee</button>
             <hr>
           </div>
           
@@ -66,7 +66,7 @@
         <div class="modal-dialog" role="document">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="createUserModalLabel">Create User</h5>
+              <h5 class="modal-title" id="createUserModalLabel">Create Employee</h5>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
               </button>
@@ -153,7 +153,7 @@
                 </div>
               </div>
 
-              <button type="button" class="btn btn-primary btn-lg btn-block createUser"><i class="fas fa-user-plus"></i> Create User</button>
+              <button type="button" class="btn btn-primary btn-lg btn-block createUser"><i class="fas fa-user-plus"></i> Save</button>
             </div>
 
           </div>

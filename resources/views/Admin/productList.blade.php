@@ -92,7 +92,7 @@
                     <th>#</th>
                     <th>Product Name</th>
                     <th>Active</th>
-                    <th>Actions</th>
+                    <th>Settings</th>
                   </tr>
                 </thead>
 
