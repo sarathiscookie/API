@@ -6,12 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Traits\CompanyTrait;
 use App\Http\Traits\ShopnameTrait;
 use App\Http\Traits\ShopTrait;
+use App\Http\Traits\ModuleTrait;
 use App\Shop;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    use CompanyTrait, ShopnameTrait, ShopTrait;
+    use CompanyTrait, ShopnameTrait, ShopTrait, ModuleTrait;
     /**
      * Display a listing of the resource.
      *
@@ -161,7 +162,13 @@ class ProductController extends Controller
      */
     public function moduleSettingsHtml($productApiId)
     {
-       $html = '<a href="" style="color:black;" class="moduleSettings_'.$productApiId.'" data-toggle="modal" data-target="#moduleModal_'.$productApiId.'"><i class="fas fa-cog"></i></a>
+       $moduleOptions = '';
+
+       foreach($this->fetchModules() as $module) {
+         $moduleOptions .= '<option value="'.$module->id.'">'.$module->module.'</option>';
+       }
+
+       $html = '<a href="" style="color:black;" class="moduleSettings_'.$productApiId.' moduleAtag" data-productid="'.$productApiId.'" data-toggle="modal" data-target="#moduleModal_'.$productApiId.'"><i class="fas fa-cog"></i></a>
                 <div class="modal fade" id="moduleModal_'.$productApiId.'" tabindex="-1" role="dialog" aria-labelledby="moduleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
                 <div class="modal-content">
@@ -175,9 +182,7 @@ class ProductController extends Controller
                 <label for="module">Module:</label>
                 <select class="form-control" id="delivery_status">
                 <option>Choose Module</option>
-                <option value="0">Rakuten Lieferanten Email</option>
-                <option value="1">Rakuten Hardware Otto</option>
-                <option value="2">Rakuten Hardware Bork</option>
+                '.$moduleOptions.'
                 </select>
                 </div>
 

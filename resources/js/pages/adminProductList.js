@@ -393,4 +393,9 @@ $(function() {
 
 		return status;
 	}
+
+	$('.moduleAtag').on('click', function() {
+		alert('test');
+		console.log($(this).data("productid"));
+	});
 });
