@@ -49,6 +49,9 @@ class ProductController extends Controller
     {
         try {
             $params           = $request->all();
+            $data             = [];
+            $totalData        = 0;
+            $totalFiltered    = 0;
             $product_details  = '';
             $category_details = '';
             $search           = '';
@@ -86,21 +89,28 @@ class ProductController extends Controller
                 $urlShopCategories = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key='.$api_key->api_key.'&format=json';
             }
 
-            //Get product details
+            // Get product details
             if( !empty($urlGetProducts) ) {
                 $product_details  = $this->getUrlProducts($urlGetProducts);
             }
             
-            //Get shop categories
+            // Get shop categories
             if( !empty($urlShopCategories) ) {
                 $category_details = $this->getUrlShopCategories($urlShopCategories);
             }
 
+            // Checking product details is empty or not
+            if( !empty($product_details) ) {
+                $data = $product_details['data'];
+                $totalData = (int)$product_details['totalData'];
+                $totalFiltered = (int)$product_details['totalFiltered'];
+            }
+
             $json_data = array(
                 'draw'            => (int)$params['draw'],
-                'recordsTotal'    => (int)$product_details['totalData'],
-                'recordsFiltered' => (int)$product_details['totalFiltered'],
-                'data'            => $product_details['data'],
+                'recordsTotal'    => $totalData,
+                'recordsFiltered' => $totalFiltered,
+                'data'            => $data,
                 'categoryDetails' => $category_details
             );
 
@@ -119,9 +129,6 @@ class ProductController extends Controller
      */
     public function getUrlProducts($urlGetProducts)
     {
-        $data          = [];
-        $totalData     = '';
-        $totalFiltered = '';
         $columns       = [ 1 => 'name', 2 => 'active' ];
 
         //Fetching data from API
@@ -150,9 +157,8 @@ class ProductController extends Controller
                 $nestedData['actions']    = $this->moduleSettingsHtml($productList['product_id']);
                 $data[]                   = $nestedData;
             }
-
+            return compact('data', 'totalData', 'totalFiltered');
         }
-        return compact('data', 'totalData', 'totalFiltered');
     }
 
     /**
