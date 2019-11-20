@@ -132,6 +132,8 @@ Route::prefix('admin')->group(function(){
 		Route::get('/dashboard/product/list/{shopId}/{companyId}', 'Admin\ProductController@show')->name('admin.dashboard.product.list');
 		/* Listing supplier on datatable */
 		Route::post('/dashboard/product/list/datatables', 'Admin\ProductController@datatable')->name('admin.dashboard.product.list.datatable');
+		/* Store product */
+		Route::post('/dashboard/product/store', 'Admin\ProductController@store')->name('admin.dashboard.product.store');
 
 		/* Show module listing page */
 		Route::get('/dashboard/module/list', 'Admin\ModuleController@index')->name('admin.dashboard.module.list');

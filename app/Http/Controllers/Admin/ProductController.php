@@ -4,9 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Traits\CompanyTrait;
-use App\Http\Traits\ShopnameTrait;
-use App\Http\Traits\ShopTrait;
 use App\Http\Traits\ModuleTrait;
+use App\Http\Traits\ShopTrait;
+use App\Http\Traits\ShopnameTrait;
+use App\Product;
 use App\Shop;
 use Illuminate\Http\Request;
 
@@ -451,7 +452,17 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $product = Product::updateOrCreate(
+                ['api_product_id' => $request->productApiId],
+                ['shopname_id' => $request->productListShopId, 'company_id' => $request->productListCompanyId]
+            );
+            
+            return response()->json(['productStatus' => 'success', 'message' => 'Well done! Product saved successfully'], 201);
+        } 
+        catch(\Exception $e) {
+            return response()->json(['productStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
     }
 
     /**

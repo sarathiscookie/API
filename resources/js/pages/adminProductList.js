@@ -394,8 +394,30 @@ $(function() {
 		return status;
 	}
 
-	$('.moduleAtag').on('click', function() {
-		alert('test');
-		console.log($(this).data("productid"));
+    // If clicks on settings button then store api_product_id, shop name_id, company_id and module_status in to the products table.
+	$('#product_list tbody').on( 'click', 'a.moduleAtag', function(e){
+		e.preventDefault();
+
+		let productApiId = $(this).data("productid");
+		let productListShopId = $(".productListShopIdClass").val();
+		let productListCompanyId = $(".productListCompanyIdClass").val();
+
+		$.ajax({
+			url: "/admin/dashboard/product/store",
+			dataType: "JSON",
+			type: "POST",
+			data: {
+				productApiId: productApiId,
+				productListShopId: productListShopId,
+				productListCompanyId: productListCompanyId
+			}
+		})
+		.done(function(data) {
+			//
+		})
+		.fail(function(data) {
+			//
+		});
 	});
+
 });
