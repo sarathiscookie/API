@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateModuleDetailsTable extends Migration
+class CreateModuleSettingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -67,6 +67,6 @@ class CreateModuleDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('module_details');
+        Schema::dropIfExists('module_settings');
     }
 }
