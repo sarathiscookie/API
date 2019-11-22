@@ -114,6 +114,8 @@ $(function() {
 				.show()
 				.delay(5000)
 				.fadeOut();
+
+                location.reload();
 			}
 		})
 		.fail(function(data) {
@@ -245,6 +247,8 @@ $(function() {
 							.show()
 							.delay(5000)
 							.fadeOut();
+
+						location.reload();	
 					}
 				})
 				.fail(function(data) {
