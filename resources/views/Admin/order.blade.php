@@ -58,7 +58,7 @@
                   <th>#</th>
                   <th>Order Details</th>
                   <th>Status</th>
-                  <th>Actions</th>
+                  <th>Download</th>
                 </tr>
               </thead>
 

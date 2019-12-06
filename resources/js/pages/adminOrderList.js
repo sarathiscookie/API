@@ -32,7 +32,13 @@ $(function() {
 				type: "POST",
 				data: {
 					orderCompany: orderCompany, 
-					orderListDateRange: orderListDateRange
+					orderListDateRange: orderListDateRange,
+					pageActive: function() {
+						let orderListTableInfo = $("#order_list")
+							.DataTable()
+							.page.info();
+						return orderListTableInfo.page + 1;
+					}
 				}
 			},
 			deferRender: true,

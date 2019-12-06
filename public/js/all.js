@@ -2511,7 +2511,7 @@ $(function() {
 								'<option class="shop_categories_options" value="allCategories">All Categories</option>'
 								);
 						}
-						for (let i = 0;i < result.categoryDetails.length;i++) {
+						for (let i = 0; i < result.categoryDetails.length; i++) {
 							if (productCategoryId == result.categoryDetails[i].shop_category_id) {
 								selected = 'selected="selected"';
 							} 
@@ -3181,7 +3181,13 @@ $(function() {
 				type: "POST",
 				data: {
 					orderCompany: orderCompany, 
-					orderListDateRange: orderListDateRange
+					orderListDateRange: orderListDateRange,
+					pageActive: function() {
+						let orderListTableInfo = $("#order_list")
+							.DataTable()
+							.page.info();
+						return orderListTableInfo.page + 1;
+					}
 				}
 			},
 			deferRender: true,
