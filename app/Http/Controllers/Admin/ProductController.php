@@ -131,7 +131,7 @@ class ProductController extends Controller
      */
     public function getUrlProducts($urlGetProducts)
     {
-        $columns       = [ 1 => 'name', 2 => 'active' ];
+        $columns = [ 1 => 'name', 2 => 'active' ];
 
         //Fetching data from API
         $jsonDecodedResults = $this->curl($urlGetProducts);

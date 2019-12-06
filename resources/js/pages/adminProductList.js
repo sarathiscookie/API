@@ -83,7 +83,7 @@ $(function() {
 								'<option class="shop_categories_options" value="allCategories">All Categories</option>'
 								);
 						}
-						for (let i = 0;i < result.categoryDetails.length;i++) {
+						for (let i = 0; i < result.categoryDetails.length; i++) {
 							if (productCategoryId == result.categoryDetails[i].shop_category_id) {
 								selected = 'selected="selected"';
 							} 
