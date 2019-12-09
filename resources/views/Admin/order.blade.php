@@ -32,7 +32,7 @@
             </div>
 
             <div class="form-group col-md-4">
-              <input type="text" class="form-control" id="orderListDateRange" name="orderListDateRange" placeholder="daterange">
+              <input type="text" class="form-control" id="orderListDateRange" name="orderListDateRange" placeholder="daterange" autocomplete="off">
             </div>
 
             <div class="form-group col-md-4">

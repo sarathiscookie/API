@@ -39,25 +39,30 @@ class OrderController extends Controller
             $data          = [];
             $totalData     = 0;
             $totalFiltered = 0;
+            $search        = '';
 
             if( !empty($request->orderListDateRange) && !empty($request->orderCompany) ) {
+
                 $dateRange  = explode("-", $request->orderListDateRange);
-                $from       = $dateRange[0];
-                $to         = $dateRange[1];
+
+                // Search query for order number
+                if( !empty($request->input('search.value')) ) {
+                    $search = "&search=".urlencode($request->input('search.value'))."&search_field=order_no";
+                }
 
                 // Get api key from shops
                 // 1 = Rakuten: Other shops like Amazone and ebay send invoices automatically. For rakuten we need to send invoices. So invoice send module is only for rakuten.
                 $api_key    = $this->getApiKey(1, $request->orderCompany);
 
                 // Passing api and from to date in url and list orders.
-                $urlGetOrders = 'http://webservice.rakuten.de/merchants/orders/getOrders?key='.$api_key->api_key.'&format=json&page='.$request->pageActive;
+                $urlGetOrders = 'http://webservice.rakuten.de/merchants/orders/getOrders?key='.$api_key->api_key.'&format=json&page='.$request->pageActive.'&created_from='.$dateRange[0].'&created_to='.$dateRange[1].$search;
 
                 // Get order details
                 if( !empty($urlGetOrders) ) {
                     $orderDetails = $this->getUrlOrders($urlGetOrders);
                 }
 
-                // Checking product details is empty or not
+                // Checking order details is empty or not
                 if( !empty($orderDetails) ) {
                     $data = $orderDetails['data'];
                     $totalData = (int)$orderDetails['totalData'];
@@ -100,7 +105,7 @@ class OrderController extends Controller
             foreach($jsonDecodedResults['result']['orders']['order'] as $key => $orderList) {
 
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$orderList['order_no'].'" />';
-                $nestedData['name']       = '<h6>'.$orderList['order_no'].'</h6><div>Created on: <span class="badge badge-info badge-pill">'.date("d.m.y H:i:s", strtotime($orderList['created'])).'</span></div>';
+                $nestedData['name']       = '<h6>'.$orderList['order_no'].'</h6><div>Created on: <span class="badge badge-info badge-pill">'.date("d.m.y H:i:s", strtotime($orderList['created'])).'</span></div><div>Created on: <span class="badge badge-info badge-pill">'.$orderList['invoice_no'].'</span></div>';
                 $nestedData['active']     = ucwords($orderList['status']);
                 $nestedData['actions']    = '<i class="fas fa-download"></i>';
                 $data[]                   = $nestedData;
