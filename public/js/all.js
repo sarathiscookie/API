@@ -3164,6 +3164,10 @@ $(function() {
 	let orderList = '';
 	let orderCompany = '';
     let orderListDateRange = '';
+    let downloadAllInvoiceDiv = $( ".downloadAllInvoiceDiv" );
+
+    // When page loads download button hide by default 
+    downloadAllInvoiceDiv.hide();
 
 	// On page load this function works
 	orderDatatableFunc(orderCompany, orderListDateRange);
@@ -3190,6 +3194,15 @@ $(function() {
 						return orderListTableInfo.page + 1;
 					}
 				}
+			},
+			drawCallback: function(data) { 
+			// If total records greater than zero then download all invoice button shows.
+				if(data._iRecordsTotal > 0) {
+					downloadAllInvoiceDiv.show();
+				}
+				else {
+					downloadAllInvoiceDiv.hide();
+				}  
 			},
 			deferRender: true,
 			columns: [
@@ -3290,31 +3303,39 @@ $(function() {
         }
     });
 
-    /* Download each order invoice */
-    /*$('#order_list tbody').on( 'click', 'button.download', function(e) {
-        e.preventDefault();
+    /* Download and zip */
+    $( "#downloadAllInvoice" ).on( "click", function(e) {
+    	e.preventDefault();
 
-        let orderNo = $(this).data('orderno');
-        let companyId = $(this).data('companyid');
+    	let companyId = $( "#orderCompany" ).val();
+    	let dateRange = $( "#orderListDateRange" ).val();
 
-        $.ajax({
-			url: "/admin/dashboard/order/list/download"+companyId+"/"+orderNo,
-			dataType: "json",
-			type: "GET",
-			data: {
-				orderNo: orderNo,
-				companyId: companyId,
-			}
-		})
-		.done(function(result) {
-			//orderList.ajax.reload(null, false); // Reload data on table
-			if (result.downloadStatus === "success") {
-				orderList.ajax.reload(null, false); // Reload data on table
-			}
-		})
-		.fail(function(data) {
-			//
-		});
-    });*/
+    	if(companyId !== '' && dateRange !== '') {
+    		// Array of order numbers
+    		let orderNoArray = $(".orderNoInput").map(function() {
+    			return this.value;
+    		}).get();
+
+    		$.ajax({
+    			url: "/admin/dashboard/order/list/download/all/invoices",
+    			dataType: "json",
+    			type: "POST",
+    			data: {
+    				companyId: companyId,
+    				orderNoArray: orderNoArray,
+    			}
+    		})
+    		.done(function(result) {
+    			console.log(result);
+    		})
+    		.fail(function(data) {
+    			console.log(data);
+    		});
+    	}
+    	else {
+            $('.alertMsg').html('<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> Leere Felder bitte ausfüllen</div>');
+        }
+    });
+
 
 });	

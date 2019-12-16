@@ -41,13 +41,14 @@
 
             <div class="alertMsg"></div>
           </div>
+
           <hr>
 
-          <div class="text-right">
-            <button type="button" class="btn btn-primary"><i class="fas fa-download"></i> Download All Invoices</button>
+          <div class="text-right downloadAllInvoiceDiv">
+            <button type="button" class="btn btn-primary" id="downloadAllInvoice"><i class="fas fa-download"></i> Download All Invoices</button>
             <hr>
           </div>
-          
+
           <div class="table-responsive">
 
             <div class="orderResponseKeyMessage"></div>

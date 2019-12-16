@@ -116,7 +116,7 @@ class OrderController extends Controller
 
             foreach($jsonDecodedResults['result']['orders']['order'] as $key => $orderList) {
 
-                $nestedData['hash']    = '<input class="checked" type="checkbox" name="id[]" value="'.$orderList['order_no'].'" />';
+                $nestedData['hash']    = '<input class="checked orderNoInput" type="checkbox" name="id[]" value="'.$orderList['order_no'].'" />';
                 $nestedData['order']   = '<h6>'.$orderList['order_no'].'</h6><div>Invoice no: <span class="badge badge-secondary badge-pill">'.$orderList['invoice_no'].'</span></div><div>Created on: <span class="badge badge-secondary badge-pill">'.date("d.m.y H:i:s", strtotime($orderList['created'])).'</span></div>';
                 $nestedData['status']  = $this->orderLabels($orderList['status'], null, null, null);
                 $nestedData['actions'] = $this->orderLabels($orderList['status'], 'downloads', $companyId, $orderList['order_no']);
@@ -131,7 +131,8 @@ class OrderController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $companyId
+     * @param  string  $orderNo
      * @return \Illuminate\Http\Response
      */
     public function download($companyId, $orderNo)
@@ -192,6 +193,18 @@ class OrderController extends Controller
         }
  
     } 
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function downloadAllInvoices(Request $request)
+    {
+        dd($request->all());
+    }
+
 
     /**
      * Show the form for creating a new resource.
