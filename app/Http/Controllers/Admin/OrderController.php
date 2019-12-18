@@ -184,9 +184,7 @@ class OrderController extends Controller
 
                 return Storage::download($pathToFile, $fileName, $headers);
             }
-            else {
-                abort(404);
-            }
+            
         }
         catch(\Exception $e) {
             return response()->json(['orderListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
@@ -202,7 +200,66 @@ class OrderController extends Controller
      */
     public function downloadAllInvoices(Request $request)
     {
-        dd($request->all());
+        /*try {
+            //
+        }
+        catch(\Exception $e) {
+            return response()->json(['orderListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }*/
+        $companyId = $request->companyId;
+
+        // Get api key from shops
+        // 1 = Rakuten: Other shops like Amazone and ebay send invoices automatically. For rakuten we need to send invoices. So invoice send module is only for rakuten.
+        $api_key = $this->getApiKey(1, $companyId);
+
+        // Path of directory
+        $pathToDirectory = 'invoice/'.$companyId.'/zip';
+
+        // Passing api and from to date in url and list orders.
+        foreach($request->orderNoArray as $orderNo) {
+            
+            $getOrderInvoice = 'http://webservice.rakuten.de/merchants/orders/getOrderInvoice?key='.$api_key->api_key.'&format=json&order_no='.$orderNo;
+
+            // Fetching data from API
+            $jsonDecodedResults = $this->curl($getOrderInvoice);
+
+            // If directory doesn't exists create a new one.
+            if( !Storage::exists($pathToDirectory) ) {
+                $createDirectory = Storage::makeDirectory($pathToDirectory, 0775);
+            }
+
+            if( $jsonDecodedResults['result']['success'] === '1' ) {
+
+                // URL src from API response
+                // URL src doesn't have trasfer protocol. So added trasfer protocol in environment file manually.
+                $fileSource = env('API_URL_TRANSFER_PROTOCOL').$jsonDecodedResults['result']['invoice']['src'];
+                $fileName = $jsonDecodedResults['result']['invoice']['filename']; // Filename from API response
+                $headers = ['Content-Type: application/pdf'];
+
+                $file_get_contents = file_get_contents($fileSource);
+
+                // Path of file
+                $pathToFile = $pathToDirectory.'/'.$fileName;
+
+                // Checking data already exist or not
+                if( Storage::exists($pathToFile) ) {
+
+                    Storage::delete($pathToFile); // Delete files from directory
+
+                    file_put_contents( storage_path('app/'.$pathToFile), $file_get_contents ); // Store content in to a file
+                }
+                else {
+
+                    file_put_contents( storage_path('app/'.$pathToFile), $file_get_contents ); // Store content in to a file
+                }
+
+                // Zip folder and download
+                return Storage::download($pathToFile, $fileName, $headers);
+
+            }
+
+        }
+        
     }
 
 
