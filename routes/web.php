@@ -155,7 +155,7 @@ Route::prefix('admin')->group(function(){
 		/* Download each order invoice */
 		Route::get('/dashboard/order/list/download/{companyId}/{orderNo}', 'Admin\OrderController@download')->name('admin.dashboard.order.list.download.companyId.orderNo');
 		/* Download all order invoices */
-		Route::post('/dashboard/order/list/download/all/invoices', 'Admin\OrderController@downloadAllInvoices')->name('admin.dashboard.order.list.download.all.invoices');
+		Route::get('/dashboard/order/list/download/all/invoices/{orderNoArr}/{companyID}', 'Admin\OrderController@downloadAllInvoices')->name('admin.dashboard.order.list.download.all.invoices.orderNoArr.companyID');
 		
 	});
 });

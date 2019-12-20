@@ -45,7 +45,7 @@
           <hr>
 
           <div class="text-right downloadAllInvoiceDiv">
-            <button type="button" class="btn btn-primary" id="downloadAllInvoice"><i class="fas fa-download"></i> Download All Invoices</button>
+            <a href="" class="btn btn-primary" id="downloadAllInvoice"><i class="fas fa-download"></i> Download All Invoices</a>
             <hr>
           </div>
 

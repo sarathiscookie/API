@@ -3198,7 +3198,17 @@ $(function() {
 			drawCallback: function(data) { 
 			// If total records greater than zero then download all invoice button shows.
 				if(data._iRecordsTotal > 0) {
+
+					// Array of order numbers
+					let orderNoArr = $(".orderNoInput").map(function() {
+						return this.value;
+					}).get();
+
+					let companyID = $( "#orderCompany" ).val();
+
 					downloadAllInvoiceDiv.show();
+
+					$("#downloadAllInvoice").attr("href", "/admin/dashboard/order/list/download/all/invoices/"+orderNoArr+'/'+companyID)
 				}
 				else {
 					downloadAllInvoiceDiv.hide();
@@ -3302,40 +3312,5 @@ $(function() {
             $('.alertMsg').html('<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> Leere Felder bitte ausfüllen</div>');
         }
     });
-
-    /* Download and zip */
-    $( "#downloadAllInvoice" ).on( "click", function(e) {
-    	e.preventDefault();
-
-    	let companyId = $( "#orderCompany" ).val();
-    	let dateRange = $( "#orderListDateRange" ).val();
-
-    	if(companyId !== '' && dateRange !== '') {
-    		// Array of order numbers
-    		let orderNoArray = $(".orderNoInput").map(function() {
-    			return this.value;
-    		}).get();
-
-    		$.ajax({
-    			url: "/admin/dashboard/order/list/download/all/invoices",
-    			dataType: "json",
-    			type: "POST",
-    			data: {
-    				companyId: companyId,
-    				orderNoArray: orderNoArray,
-    			}
-    		})
-    		.done(function(result) {
-    			console.log(result);
-    		})
-    		.fail(function(data) {
-    			console.log(data);
-    		});
-    	}
-    	else {
-            $('.alertMsg').html('<div class="alert alert-warning alert-dismissible" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button> Leere Felder bitte ausfüllen</div>');
-        }
-    });
-
 
 });	

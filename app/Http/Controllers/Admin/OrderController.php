@@ -13,6 +13,7 @@ use Carbon\Carbon;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use ZipArchive;
 
 class OrderController extends Controller
 {
@@ -205,70 +206,71 @@ class OrderController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function downloadAllInvoices(Request $request)
+    public function downloadAllInvoices($orderArr, $companyId)
     {
-        /*try {
-            //
-        }
-        catch(\Exception $e) {
-            return response()->json(['orderListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        }*/
-        $companyId = $request->companyId;
+        try {
+            $orderNoArray = explode(',', $orderArr);
 
-        // Get api key from shops
-        // 1 = Rakuten: Other shops like Amazone and ebay send invoices automatically. For rakuten we need to send invoices. So invoice send module is only for rakuten.
-        $api_key = $this->getApiKey(1, $companyId);
+            // Get api key from shops
+            // 1 = Rakuten: Other shops like Amazone and ebay send invoices automatically. For rakuten we need to send invoices. So invoice send module is only for rakuten.
+            $api_key = $this->getApiKey(1, $companyId);
 
-        // Path of directory
-        $pathToDirectory = 'invoice/'.$companyId.'/zip';
+            // create new zip object
+            $zip = new ZipArchive;
 
-        // Passing api and from to date in url and list orders.
-        foreach($request->orderNoArray as $orderNo) {
+            // Define the file name. Give it a unique name to avoid overriding.
+            $zipFileName = 'invoices'.date("d.m.yH:i:s").'.zip';
 
-            $getOrderInvoice = 'http://webservice.rakuten.de/merchants/orders/getOrderInvoice?key='.$api_key->api_key.'&format=json&order_no='.$orderNo;
-
-            // Fetching data from API
-            $jsonDecodedResults = $this->curl($getOrderInvoice);
+            // Path of directory and file
+            $pathToDirectory   = 'invoice/'.$companyId;
 
             // If directory doesn't exists create a new one.
             if( !Storage::exists($pathToDirectory) ) {
                 $createDirectory = Storage::makeDirectory($pathToDirectory, 0775);
             }
 
-            if( $jsonDecodedResults['result']['success'] === '1' ) {
+            // Create the ZIP file directly inside the desired folder. No need for a temporary file.
+            $zip->open(storage_path('app/invoice/'.$companyId.'/'.$zipFileName), ZipArchive::CREATE);
 
-                // URL src from API response
-                // URL src doesn't have trasfer protocol. So added trasfer protocol in environment file manually.
-                $fileSource = env('API_URL_TRANSFER_PROTOCOL').$jsonDecodedResults['result']['invoice']['src'];
-                $fileName = $jsonDecodedResults['result']['invoice']['filename']; // Filename from API response
-                $headers = ['Content-Type: application/pdf'];
+            // Passing api and from to date in url and list orders.
+            foreach($orderNoArray as $orderNo) {
 
-                $file_get_contents = file_get_contents($fileSource);
+                $getOrderInvoice = 'http://webservice.rakuten.de/merchants/orders/getOrderInvoice?key='.$api_key->api_key.'&format=json&order_no='.$orderNo;
 
-                // Path of file
-                $pathToFile = $pathToDirectory.'/'.$fileName;
+                // Fetching data from API
+                $jsonDecodedResults = $this->curl($getOrderInvoice);
 
-                // Checking data already exist or not
-                if( Storage::exists($pathToFile) ) {
+                if( $jsonDecodedResults['result']['success'] === '1' ) {
+                    // URL src from API response
+                    // URL src doesn't have trasfer protocol. So added trasfer protocol in environment file manually.
+                    $fileSource = env('API_URL_TRANSFER_PROTOCOL').$jsonDecodedResults['result']['invoice']['src'];
+                    $fileName = $jsonDecodedResults['result']['invoice']['filename']; // Filename from API response
+                    $file_get_contents = file_get_contents($fileSource);
 
-                    Storage::delete($pathToFile); // Delete files from directory
-
-                    file_put_contents( storage_path('app/'.$pathToFile), $file_get_contents ); // Store content in to a file
+                    // Add it to the zip
+                    $zip->addFromString($zipFileName.'/'.$fileName, $file_get_contents);
                 }
-                else {
-
-                    file_put_contents( storage_path('app/'.$pathToFile), $file_get_contents ); // Store content in to a file
-                }
-
-                // Zip folder and download
-                return Storage::download($pathToFile, $fileName, $headers);
-
             }
 
-        }
-        
-    }
+            // Close zip
+            $zip->close();
 
+            $filePath = 'invoice/'.$companyId.'/'.$zipFileName;
+
+            $headers = [
+                'Content-Type: application/octet-stream',
+                'Content-Disposition: attachment; filename='.$zipFileName,
+                'Content-length: '.filesize(storage_path('app/invoice/'.$companyId.'/'.$zipFileName)),
+                'Pragma: no-cache',
+                'Expires: 0'
+            ];
+
+            return Storage::download($filePath, $zipFileName, $headers);
+        }
+        catch(\Exception $e) {
+            return response()->json(['orderListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
+    }
 
     /**
      * Show the form for creating a new resource.
