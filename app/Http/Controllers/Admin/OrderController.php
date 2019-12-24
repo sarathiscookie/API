@@ -219,7 +219,7 @@ class OrderController extends Controller
             $zip = new ZipArchive;
 
             // Define the file name. Give it a unique name to avoid overriding.
-            $zipFileName = 'invoices'.date("d.m.yH:i:s").'.zip';
+            $zipFileName = 'invoices_'.date("dmyHis").'.zip';
 
             // Path of directory and file
             $pathToDirectory   = 'invoice/'.$companyId;
