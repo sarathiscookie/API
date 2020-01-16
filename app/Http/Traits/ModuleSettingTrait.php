@@ -24,11 +24,16 @@ trait ModuleSettingTrait
                 ->joinActive()
                 ->where('products.api_product_id', $productApiId)
                 ->get();
-                
-            foreach($moduleSettings as $moduleSetting) {
-                $moduleName .= '<span class="badge badge-info badge-pill">' . $moduleSetting->moduleName . '</span>';
-            }
 
+            if($moduleSettings->count() > 0) {
+                foreach($moduleSettings as $moduleSetting) {
+                    $moduleName .= '<a href=""><span class="badge badge-info badge-pill">' . ucwords($moduleSetting->moduleName) . '&nbsp<i class="fas fa-trash-alt" style="color:#9e004f;"></i></span></a>&nbsp';
+                }
+            }
+            else {
+                $moduleName = '<span class="badge badge-secondary badge-pill"> No Modules </span>';
+            }   
+                
             return $moduleName; 
         } 
         catch (\Exception $e) {
