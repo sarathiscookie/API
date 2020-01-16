@@ -2877,8 +2877,6 @@ $(function() {
 					$("#moduleModal_"+product_id).modal('hide');
 					$('.modal-backdrop').remove();
 				}, 2000);
-
-				//TODO: A problem found here sometimes raw not refreshing modalnot opening. It happens in old project also.
 			}
 		})
 		.fail(function(data) {

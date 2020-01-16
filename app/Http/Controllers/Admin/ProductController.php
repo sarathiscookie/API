@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Shop;
 use App\Product;
 use App\ModuleSetting;
+use App\Module;
 use Illuminate\Http\Request;
 use App\Http\Traits\CurlTrait;
 use App\Http\Traits\ShopTrait;
@@ -12,11 +13,12 @@ use App\Http\Traits\ModuleTrait;
 use App\Http\Traits\CompanyTrait;
 use App\Http\Traits\ShopnameTrait;
 use App\Http\Traits\ProductTrait;
+use App\Http\Traits\ModuleSettingTrait;
 use App\Http\Controllers\Controller;
 
 class ProductController extends Controller
 {
-    use CompanyTrait, ShopnameTrait, ShopTrait, ModuleTrait, CurlTrait, ProductTrait;
+    use CompanyTrait, ShopnameTrait, ShopTrait, ModuleTrait, CurlTrait, ProductTrait, ModuleSettingTrait;
     /**
      * Display a listing of the resource.
      *
@@ -134,10 +136,10 @@ class ProductController extends Controller
     {
         $columns = [1 => 'name', 2 => 'active'];
 
-        //Fetching data from API
+        // Fetching data from API
         $jsonDecodedResults = $this->curl($urlGetProducts);
 
-        //If json status is success then value is '1' error value is '-1'
+        // If json status is success then value is '1' error value is '-1'
         if (($jsonDecodedResults['result']['success'] === '1') && ($jsonDecodedResults['result']['products']['paging'][0]['total'] != '0')) {
 
             $totalData       = $jsonDecodedResults['result']['products']['paging'][0]['total'];
@@ -146,15 +148,16 @@ class ProductController extends Controller
             foreach ($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
                 $visibleStatus            = ($productList['visible'] === '1') ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
 
-                //Some products doesn't have available status in product array. Eg:1918778210,1918779405,1918780015
+                // Some products doesn't have available status in product array. Eg:1918778210,1918779405,1918780015
                 if ($productList['has_variants'] === '1' && empty($productList['available'])) {
                     $availableStatus      = '<i class="fas fa-thumbs-down"></i>';
-                } else {
+                } 
+                else {
                     $availableStatus      = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
                 }
 
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="' . $productList['product_id'] . '" />';
-                $nestedData['name']       = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div>';
+                $nestedData['name']       = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div><div>Modules: '.$this->moduleName($productList['product_id']).'</div>';
                 $nestedData['active']     = $this->productStatusHtml($productList['product_id']);
                 $nestedData['actions']    = $this->moduleSettingsHtml($productList['product_id']);
                 $data[]                   = $nestedData;
