@@ -95,7 +95,7 @@ class Company extends Model
     */
     public function shops()
     {
-        return $this->hasMany(Shops::class);
+        return $this->hasMany(Shop::class);
     }
 
     /**

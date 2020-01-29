@@ -156,8 +156,24 @@ class ProductController extends Controller
                     $availableStatus      = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
                 }
 
+                // Getting module name matching with module settings
+                $moduleName[$key] = '';
+                $moduleSettings = $this->moduleName($productList['product_id']);
+
+                if($moduleSettings->count() > 0) { // Checking count
+                    foreach($moduleSettings as $moduleSetting) {
+                        $productModuleSettingsModal = view('admin.productModuleSettingsModal', ['moduleSettingsId' => $moduleSetting->moduleSettingsId]);
+
+                        $moduleName[$key] .= '<span class="badge badge-info badge-pill">' . ucwords($moduleSetting->moduleName) . '&nbsp<i class="fas fa-cog module_settings_update" data-modulesettingsupdateid='.$moduleSetting->moduleSettingsId.' data-toggle="modal" data-target="#moduleSettingsModal_'.$moduleSetting->moduleSettingsId.'" style="cursor:pointer;"></i>&nbsp<i class="fas fa-trash-alt module_settings" data-modulesettingsid='.$moduleSetting->moduleSettingsId.' style="color:#9e004f; cursor:pointer;"></i></span></<span>&nbsp<span class="module_settings_spinner_'.$moduleSetting->moduleSettingsId.'"></span>'.$productModuleSettingsModal;
+                    }
+                }
+                else {
+                    $moduleName[$key] = '<span class="badge badge-secondary badge-pill"> No Modules </span>';
+                }
+
+                // Datatable filling
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="' . $productList['product_id'] . '" />';
-                $nestedData['name']       = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div><div>Modules: '.$this->moduleName($productList['product_id']).'</div>';
+                $nestedData['name']       = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div><div>Modules: '.$moduleName[$key].'</div>';
                 $nestedData['active']     = $this->productStatusHtml($productList['product_id']);
                 $nestedData['actions']    = $this->moduleSettingsHtml($productList['product_id']);
                 $data[]                   = $nestedData;
@@ -179,32 +195,9 @@ class ProductController extends Controller
             $moduleOptions .= '<option value="' . $module->id . '">' . $module->module . '</option>';
         }
 
-        $html = '<a href="" style="color:black;" class="btn btn-secondary btn-sm moduleSettings_' . $productApiId . ' moduleAtag" data-productid="' . $productApiId . '" data-target="#moduleModal_' . $productApiId . '" title="Add Module"><i class="fas fa-plus"></i></a>
-                <a href="" class="btn btn-secondary btn-sm" style="color:black;" title="Manage Module"><i class="fas fa-cog"></i></a>
-                <div class="modal fade" id="moduleModal_' . $productApiId . '" tabindex="-1" role="dialog" aria-labelledby="moduleModalLabel" aria-hidden="true">
-                <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                <h5 class="modal-title">Add Module</h5><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <div class="modal-body">
+        $productModuleAddModal = view('admin.productModuleAddModal', ['productApiId' => $productApiId, 'moduleOptions' => $moduleOptions]);
 
-                <div class="addModuleSettingsStatus_' . $productApiId . '"></div>
-                <form>
-                <div class="form-group">
-                <label for="module">Module:</label>
-                <select class="form-control" id="module_id_' . $productApiId . '">
-                <option>Choose Module</option>
-                ' . $moduleOptions . '
-                </select>
-                </div>
-                </form>
-
-                </div>
-                <div class="modal-footer"><button type="button" class="btn btn-primary saveModuleDetails" data-addmoduleproductid="' . $productApiId . '">Add</button></div>
-                </div>
-                </div>
-                </div>';
+        $html = '<a href="" style="color:black;" class="btn btn-secondary btn-sm moduleSettings_' . $productApiId . ' moduleAtag" data-productid="' . $productApiId . '" data-target="#moduleModal_' . $productApiId . '" title="Add Module"><i class="fas fa-plus"></i></a>'.$productModuleAddModal;
 
         return $html;
     }
