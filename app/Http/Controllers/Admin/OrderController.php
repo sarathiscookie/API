@@ -69,7 +69,7 @@ class OrderController extends Controller
                 $api_key    = $this->getApiKey(1, $request->orderCompany);
 
                 // Passing api and from to date in url and list orders.
-                $urlGetOrders = 'http://webservice.rakuten.de/merchants/orders/getOrders?key='.$api_key->api_key.'&format=json&page='.$request->pageActive.'&created_from='.$dateRange[0].'&created_to='.$dateRange[1].$search.$status;
+                $urlGetOrders = 'http://webservice.rakuten.de/merchants/orders/getOrders?key='.$api_key->api_key.'&format=json&page='.$request->pageActive.'&per_page='.$request->length.'&created_from='.$dateRange[0].'&created_to='.$dateRange[1].$search.$status;
 
                 // Get order details
                 if( !empty($urlGetOrders) ) {

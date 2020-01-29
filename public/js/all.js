@@ -3241,11 +3241,10 @@ $(function() {
 	/* Datatable script */
 	function orderDatatableFunc(orderCompany, orderListDateRange) {
 		orderList = $( "#order_list" ).DataTable({
-			pageLength: 20,
+			lengthMenu: [20, 50, 100],
 			order: [1, "desc"],
 			processing: true,
 			serverSide: true,
-			lengthChange: false,
 			ajax: {
 				url: "/admin/dashboard/order/list/datatables",
 				dataType: "json",
