@@ -11,33 +11,36 @@ use App\User;
 use App\UserCompany;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class ManagerController extends Controller
 {
     use CompanyTrait, CountryTrait;
     /**
-     * Display a listing of the resource.
+     * Show the manager view page. Passing all active countries and companies into the manager view page.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // Company trait to fetch the companies.
         $companies = $this->company();
 
+        // Country trait to fetch the countries.
         $countries = $this->country();
 
         return view('admin.manager', ['companies' => $companies, 'countries' => $countries]);
     }
 
     /**
-     * Display a listing of the resource
+     * Show the managers data in to view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
+        // Getting all the http request.
         $params = $request->all();
 
         $columns = array(
@@ -45,34 +48,41 @@ class ManagerController extends Controller
             2 => 'active',
         );
 
+        // Getting count of users.
         $totalData = User::select('id', 'name', 'active')
-        ->manager()
-        ->count();
+            ->manager()
+            ->count();
 
+        // Query to select users where role is manager.
         $q         = User::select('id', 'name', 'active')
-        ->manager();
+            ->manager();
 
         $totalFiltered = $totalData;
-        $limit         = (int)$request->input('length');
-        $start         = (int)$request->input('start');
+
+        $limit         = (int) $request->input('length');
+
+        $start         = (int) $request->input('start');
+
         $order         = $columns[$params['order'][0]['column']]; //contains column index
+
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // Search query for name
-        if(!empty($request->input('search.value'))) {
+        // If the request has a search value (name), the query to search managers will execute.
+        if (!empty($request->input('search.value'))) {
             $this->searchUserName($q, $request->input('search.value'));
         }
 
-        // tfoot search query for name
-        if( !empty($params['columns'][1]['search']['value']) ) {
+        // If the table has footer column value (name), the query to search managers will execute.
+        if (!empty($params['columns'][1]['search']['value'])) {
             $this->tfootUserName($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for user status
-        if( !empty($params['columns'][2]['search']['value']) ) {
+        // If the table has footer column value (status), the query to search managers will execute.
+        if (!empty($params['columns'][2]['search']['value'])) {
             $this->tfootUserStatus($q, $params['columns'][2]['search']['value']);
         }
 
+        // Query scripts ends here.
         $managerLists = $q->skip($start)
             ->take($limit)
             ->orderBy($order, $dir)
@@ -80,9 +90,10 @@ class ManagerController extends Controller
 
         $data = [];
 
-        if(!empty($managerLists)) {
-            foreach ($managerLists as $key=> $managerList) {
-                $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$managerList->id.'" />';
+        if (!empty($managerLists)) {
+
+            foreach ($managerLists as $key => $managerList) {
+                $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="' . $managerList->id . '" />';
                 $nestedData['name']       = $managerList->name;
                 $nestedData['active']     = $this->userStatusHtml($managerList->id, $managerList->active);
                 $nestedData['actions']    = $this->editMangerModel($managerList->id);
@@ -90,10 +101,11 @@ class ManagerController extends Controller
             }
         }
 
+        // Preparing array to send the response in JSON format to draw the data in datatable.
         $json_data = array(
-            'draw'            => (int)$params['draw'],
-            'recordsTotal'    => (int)$totalData,
-            'recordsFiltered' => (int)$totalFiltered,
+            'draw'            => (int) $params['draw'],
+            'recordsTotal'    => (int) $totalData,
+            'recordsFiltered' => (int) $totalFiltered,
             'data'            => $data
         );
 
@@ -101,67 +113,70 @@ class ManagerController extends Controller
     }
 
     /**
-     * Search query for user name
+     * Function to search managers based on the name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
     public function searchUserName($q, $searchData)
     {
-        $q->where(function($query) use ($searchData) {
+        $q->where(function ($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
+        // Total filtered count.
+        $totalFiltered = $q->where(function ($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         })
-        ->count();
+            ->count();
 
-        return $this;    
+        return $this;
     }
 
     /**
-     * tfoot search query for user name
+     * Function to filter managers based on the name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
     public function tfootUserName($q, $searchData)
     {
-        $q->where(function($query) use ($searchData) {
+        $q->where(function ($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
+        // Total filtered count.
+        $totalFiltered = $q->where(function ($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         })
-        ->count();
+            ->count();
 
-        return $this;    
+        return $this;
     }
 
     /**
-     * tfoot search query for user status
+     * Function to filter managers based on the status.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
     public function tfootUserStatus($q, $searchData)
     {
-        $q->where(function($query) use ($searchData) {
+        $q->where(function ($query) use ($searchData) {
             $query->where('active', "{$searchData}");
         });
 
-        $totalFiltered = $q->where(function($query) use ($searchData) {
+        // Total filtered count.
+        $totalFiltered = $q->where(function ($query) use ($searchData) {
             $query->where('active', "{$searchData}");
         })
-        ->count();
+            ->count();
 
-        return $this;    
+        return $this;
     }
 
     /**
-     * html group button to change manager status 
+     * HTML group button to change manager status 
      * @param  int $id
      * @param  string $oldStatus  
      * @return \Illuminate\Http\Response
@@ -169,10 +184,10 @@ class ManagerController extends Controller
     public function userStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
-        $html    = '<label class="switch" data-userid="'.$id.'">
-        <input type="checkbox" class="buttonStatus" '.$checked.'>
-        <span class="slider round"></span>
-        </label>';
+        $html    = '<label class="switch" data-userid="' . $id . '">
+            <input type="checkbox" class="buttonStatus" ' . $checked . '>
+            <span class="slider round"></span>
+            </label>';
 
         return $html;
     }
@@ -187,6 +202,7 @@ class ManagerController extends Controller
     {
         try {
 
+            // Fetching manager details based on requested manager id.
             $user         = User::findOrFail($request->userId);
 
             $user->active = $request->newStatus;
@@ -195,7 +211,7 @@ class ManagerController extends Controller
 
             return response()->json(['managerStatusChange' => 'success', 'message' => 'User status updated successfully'], 201);
         } 
-        catch(\Exception $e){
+        catch (\Exception $e) {
             return response()->json(['managerStatusChange' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
@@ -208,30 +224,32 @@ class ManagerController extends Controller
     public function editMangerModel($mangerId)
     {
         try {
+            // Fetching manager details based on manager id.
             $user           = $this->edit($mangerId);
 
             //Getting countries and selecting matcing countries
             $countryOptions = '';
-            foreach($this->country() as $country) {
+            foreach ($this->country() as $country) {
                 $countrySelected = ($user->country->id === $country->id) ? 'selected' : '';
-                $countryOptions .= '<option value="'.$country->id.'" '.$countrySelected.'>'.$country->name.'</option>';
+                $countryOptions .= '<option value="' . $country->id . '" ' . $countrySelected . '>' . $country->name . '</option>';
             }
 
             //Getting companies and selecting matching companies
             $managerCompanyId = [];
-            foreach($user->userCompanies as $managerCompany) {
+            foreach ($user->userCompanies as $managerCompany) {
                 $managerCompanyId[] = $managerCompany->company_id;
             }
 
             $companyOptions = '';
-            foreach($this->company() as $company) {
+            foreach ($this->company() as $company) {
                 $companySelected = (in_array($company->id, $managerCompanyId)) ? 'selected' : '';
-                $companyOptions .= '<option value="'.$company->id.'" '.$companySelected.'>'.$company->company.'</option>';
+                $companyOptions .= '<option value="' . $company->id . '" ' . $companySelected . '>' . $company->company . '</option>';
             }
 
             $country  = ($user->country === 'de') ? 'selected' : '';
-            $html     = '<a class="btn btn-secondary btn-sm editManager cursor" data-managerid="'.$user->id.'" data-toggle="modal" data-target="#editManagerModal_'.$user->id.'"><i class="fas fa-cog"></i></a>
-            <div class="modal fade" id="editManagerModal_'.$user->id.'" tabindex="-1" role="dialog" aria-labelledby="editManagerModalLabel" aria-hidden="true">
+
+            $html     = '<a class="btn btn-secondary btn-sm editManager cursor" data-managerid="' . $user->id . '" data-toggle="modal" data-target="#editManagerModal_' . $user->id . '"><i class="fas fa-cog"></i></a>
+            <div class="modal fade" id="editManagerModal_' . $user->id . '" tabindex="-1" role="dialog" aria-labelledby="editManagerModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
             <div class="modal-content">
             <div class="modal-header">
@@ -244,7 +262,7 @@ class ManagerController extends Controller
             <div class="modal-body">
             <div class="managerUpdateValidationAlert"></div>
             <div class="text-right">
-            <a href="" class="btn btn-danger btn-sm deleteEvent" data-id="'.$user->id.'"><i class="fas fa-trash-alt"></i> Delete</a>
+            <a href="" class="btn btn-danger btn-sm deleteEvent" data-id="' . $user->id . '"><i class="fas fa-trash-alt"></i> Delete</a>
             <hr>
             </div>
 
@@ -253,7 +271,7 @@ class ManagerController extends Controller
 
             <label for="email">Email:</label>
             <div class="badge badge-secondary text-wrap" style="width: 6rem;">
-            '.$user->email.'
+            ' . $user->email . '
             </div>
             
 
@@ -262,7 +280,7 @@ class ManagerController extends Controller
 
             <label for="createdon">Created On:</label>
             <div class="badge badge-secondary" style="width: 6rem;">
-            '.date('d.m.y', strtotime($user->created_at)).'
+            ' . date('d.m.y', strtotime($user->created_at)) . '
             </div>
             
 
@@ -273,13 +291,13 @@ class ManagerController extends Controller
             <div class="form-group col-md-6">
 
             <label for="name">Name <span class="required">*</span></label>
-            <input id="name_'.$user->id.'" type="text" class="form-control" name="name" value="'.$user->name.'" autocomplete="name" maxlength="255">
+            <input id="name_' . $user->id . '" type="text" class="form-control" name="name" value="' . $user->name . '" autocomplete="name" maxlength="255">
 
             </div>
             <div class="form-group col-md-6">
 
             <label for="phone">Phone <span class="required">*</span></label>
-            <input id="phone_'.$user->id.'" type="text" class="form-control" name="phone" value="'.$user->phone.'" maxlength="20" autocomplete="phone">
+            <input id="phone_' . $user->id . '" type="text" class="form-control" name="phone" value="' . $user->phone . '" maxlength="20" autocomplete="phone">
 
             </div>
             </div>
@@ -288,15 +306,15 @@ class ManagerController extends Controller
             <div class="form-group col-md-6">
 
             <label for="manger_company">Company <span class="required">*</span></label>
-            <select id="manger_company_'.$user->id.'" class="form-control" name="manger_company[]" multiple="multiple">
-            '.$companyOptions.'
+            <select id="manger_company_' . $user->id . '" class="form-control" name="manger_company[]" multiple="multiple">
+            ' . $companyOptions . '
             </select>
 
             </div>
             <div class="form-group col-md-6">
 
             <label for="street">Street <span class="required">*</span></label>
-            <input id="street_'.$user->id.'" type="text" class="form-control" name="street" value="'.$user->street.'" maxlength="255" autocomplete="street">
+            <input id="street_' . $user->id . '" type="text" class="form-control" name="street" value="' . $user->street . '" maxlength="255" autocomplete="street">
 
             </div>
             </div>
@@ -305,27 +323,27 @@ class ManagerController extends Controller
             <div class="form-group col-md-6">
 
             <label for="city">City <span class="required">*</span></label>
-            <input id="city_'.$user->id.'" type="text" class="form-control" name="city" value="'.$user->city.'" maxlength="255" autocomplete="city">
+            <input id="city_' . $user->id . '" type="text" class="form-control" name="city" value="' . $user->city . '" maxlength="255" autocomplete="city">
 
             </div>
             <div class="form-group col-md-4">
 
             <label for="country">Country <span class="required">*</span></label>
-            <select id="country_'.$user->id.'" class="form-control" name="country">
+            <select id="country_' . $user->id . '" class="form-control" name="country">
             <option value="">Choose Country</option>
-            '.$countryOptions.'
+            ' . $countryOptions . '
             </select>
 
             </div>
             <div class="form-group col-md-2">
 
             <label for="zip">Zip <span class="required">*</span></label>
-            <input id="zip_'.$user->id.'" type="text" class="form-control" name="zip" value="'.$user->postal.'" maxlength="20" autocomplete="zip">
+            <input id="zip_' . $user->id . '" type="text" class="form-control" name="zip" value="' . $user->postal . '" maxlength="20" autocomplete="zip">
 
             </div>
             </div>
 
-            <button type="button" class="btn btn-primary btn-lg btn-block updateManager_'.$user->id.'"><i class="fas fa-user-edit"></i> Update Manager</button>
+            <button type="button" class="btn btn-primary btn-lg btn-block updateManager_' . $user->id . '"><i class="fas fa-user-edit"></i> Update Manager</button>
 
             </div>
 
@@ -334,9 +352,8 @@ class ManagerController extends Controller
             </div>';
 
             return $html;
-            
         } 
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             abort(404);
         }
     }
@@ -352,7 +369,7 @@ class ManagerController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created manager into storage.
      *
      * @param  \App\Http\Requests\Admin\ManagerRequest  $request
      * @return \Illuminate\Http\Response
@@ -374,7 +391,8 @@ class ManagerController extends Controller
             $user->role         = 'manager';
             $user->save();
 
-            foreach($request->manager_company as $company) {
+            // Storing user manager and company relation in to user_companies storage.
+            foreach ($request->manager_company as $company) {
                 $userCompany             = new UserCompany;
                 $userCompany->user_id    = $user->id;
                 $userCompany->company_id = $company;
@@ -382,8 +400,7 @@ class ManagerController extends Controller
             }
 
             return response()->json(['managerStatus' => 'success', 'message' => 'Well done! User created successfully'], 201);
-        } 
-        catch(\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['managerStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
@@ -400,14 +417,16 @@ class ManagerController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Get the manager for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
+        // Fetching manager details based on manager id.
         $user = User::manager()->findOrFail($id);
+        
         return $user;
     }
 
@@ -423,7 +442,7 @@ class ManagerController extends Controller
         try {
             //Delete and store company id in user companies table
             UserCompany::where('user_id', $request->managerid)->delete();
-            
+
             $manager             = User::manager()->find($request->managerid);
             $manager->name       = $request->name;
             $manager->phone      = $request->phone;
@@ -433,7 +452,7 @@ class ManagerController extends Controller
             $manager->postal     = $request->zip;
             $manager->save();
 
-            foreach($request->manager_company as $company) {
+            foreach ($request->manager_company as $company) {
                 $userCompany             = new UserCompany;
                 $userCompany->user_id    = $manager->id;
                 $userCompany->company_id = $company;
@@ -442,11 +461,10 @@ class ManagerController extends Controller
 
             DB::commit();
             return response()->json(['managerStatusUpdate' => 'success', 'message' => 'Well done! User details updated successfully'], 201);
-        } 
-        catch(\Exception $e){
+        } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['managerStatusUpdate' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        } 
+        }
     }
 
     /**
@@ -459,16 +477,21 @@ class ManagerController extends Controller
     {
         DB::beginTransaction();
         try {
+            // Remove manager data from user_companies storage.
             $managerCompany = UserCompany::where('user_id', $id)->delete();
+
+            // Remove manager data from user storage.
             $user           = User::destroy($id);
 
             DB::commit();
+
             return response()->json(['deletedManagerStatus' => 'success', 'message' => 'Manager details deleted successfully'], 201);
-        }   
-        catch(\Exception $e) {
+        } 
+        catch (\Exception $e) {
+            
             DB::rollBack();
+
             return response()->json(['deletedManagerStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
-
 }

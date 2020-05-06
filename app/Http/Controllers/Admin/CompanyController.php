@@ -11,25 +11,29 @@ use Illuminate\Http\Request;
 class CompanyController extends Controller
 {
     use CountryTrait;
+
     /**
-     * Display a listing of the resource.
+     * Show the company view page. Passing all active countries into the company view page.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
+        // Country trait to fetch the countries.
         $countries = $this->country();
+
         return view('admin.company', ['countries' => $countries]);
     }
 
     /**
-     * Display a listing of the resource
+     * Show the companies data in to view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
+        // Getting all the http request.
         $params = $request->all();
 
         $columns = array(
@@ -37,40 +41,44 @@ class CompanyController extends Controller
             2 => 'active',
         );
 
+        // Getting count of companies.
         $totalData = Company::select('id', 'company', 'active')
         ->count();
 
+        // Query to select companies.
         $q         = Company::select('id', 'company', 'active');
 
         $totalFiltered = $totalData;
         $limit         = (int)$request->input('length');
         $start         = (int)$request->input('start');
-        $order         = $columns[$params['order'][0]['column']]; //contains column index
-        $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
+        $order         = $columns[$params['order'][0]['column']]; // contains column index.
+        $dir           = $params['order'][0]['dir']; // contains order such as asc/desc.
 
-        // Search query for company name
+        // If the request has a search value (company name), the query to search companies will execute.
         if(!empty($request->input('search.value'))) {
             $this->searchCompany($q, $request->input('search.value'));
         }
 
-        // tfoot search query for company name
+        // If the table has footer column value (company name), the query to search companies based on the company name will execute.
         if( !empty($params['columns'][1]['search']['value']) ) {
             $this->tfootCompany($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for company status
+        // If the table has footer column value (company status), the query to search companies based on the company status will execute.
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootCompanyStatus($q, $params['columns'][2]['search']['value']);
         }
 
+        // Query scripts ends here.
         $companiesLists = $q->skip($start)
-        ->take($limit)
-        ->orderBy($order, $dir)
-        ->get();
+            ->take($limit)
+            ->orderBy($order, $dir)
+            ->get();
 
         $data = [];
 
         if(!empty($companiesLists)) {
+
             foreach ($companiesLists as $key=> $companiesList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$companiesList->id.'" />';
                 $nestedData['company']    = $companiesList->company;
@@ -78,8 +86,10 @@ class CompanyController extends Controller
                 $nestedData['actions']    = $this->editCompanyModel($companiesList->id);
                 $data[]                   = $nestedData;
             }
+
         }
 
+        // Preparing array to send the response in JSON format to draw the data in datatable.
         $json_data = array(
             'draw'            => (int)$params['draw'],
             'recordsTotal'    => (int)$totalData,
@@ -91,7 +101,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Search query for company name
+     * Function to search companies based on the company name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -102,6 +112,7 @@ class CompanyController extends Controller
             $query->where('company', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('company', 'like', "%{$searchData}%");
         })
@@ -111,7 +122,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * tfoot search query for company name
+     * Function to filter companies based on the company name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -122,6 +133,7 @@ class CompanyController extends Controller
             $query->where('company', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('company', 'like', "%{$searchData}%");
         })
@@ -131,7 +143,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * tfoot search query for company status
+     * Function to filter companies based on the company status.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -142,6 +154,7 @@ class CompanyController extends Controller
             $query->where('active', "{$searchData}");
         });
 
+        // Total filtered count
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('active', "{$searchData}");
         })
@@ -151,7 +164,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * html group button to change company status 
+     * HTML group button to change company status (Active or Disable).
      * @param  int $id
      * @param  string $oldStatus
      * @return \Illuminate\Http\Response
@@ -159,10 +172,11 @@ class CompanyController extends Controller
     public function companyStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
+
         $html    = '<label class="switch" data-companystatusid="'.$id.'">
-        <input type="checkbox" class="buttonStatus" '.$checked.'>
-        <span class="slider round"></span>
-        </label>';
+            <input type="checkbox" class="buttonStatus" '.$checked.'>
+            <span class="slider round"></span>
+            </label>';
 
         return $html;
     }
@@ -176,7 +190,7 @@ class CompanyController extends Controller
     public function updateStatus(Request $request)
     {
         try {
-
+            // Fetching company details based on requested company id.
             $company         = Company::findOrFail($request->companyStatusId);
 
             $company->active = $request->newStatus;
@@ -198,6 +212,7 @@ class CompanyController extends Controller
     public function editCompanyModel($companyId)
     {
         try {
+            // Fetching company details based on company id
             $company            = $this->edit($companyId);
             
             $countryOptions     = '';
@@ -313,7 +328,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store companies into companies table.
      *
      * @param  \App\Http\Requests\Admin\CompanyRequest  $request
      * @return \Illuminate\Http\Response
@@ -350,19 +365,21 @@ class CompanyController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Get the company for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
+        // Fetching company details based on company id.
         $company = Company::findOrFail($id);
+
         return $company;
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the company in storage.
      *
      * @param  \App\Http\Requests\Admin\CompanyRequest  $request
      * @return \Illuminate\Http\Response
@@ -370,6 +387,7 @@ class CompanyController extends Controller
     public function update(CompanyRequest $request)
     {
         try {
+            // Fetching company details based on company id.
             $company             = Company::find($request->companyid);
             $company->company    = $request->company; 
             $company->phone      = $request->phone;
@@ -387,7 +405,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the company from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

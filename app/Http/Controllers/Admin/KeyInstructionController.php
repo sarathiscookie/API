@@ -14,13 +14,15 @@ class KeyInstructionController extends Controller
 {
     use CountryTrait;
     /**
-     * Display a listing of the resource.
+     * Show the key instruction view page. Passing all active countries the key instruction view page.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // Countries trait to fetch the active countries.
         $countries = $this->country();
+
         return view('admin.keyinstruction', ['countries' => $countries]);
     }
 
@@ -35,7 +37,7 @@ class KeyInstructionController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly key instruction into storage.
      *
      * @param  \App\Http\Requests\Admin\KeyInstructionRequest  $request
      * @return \Illuminate\Http\Response
@@ -43,43 +45,49 @@ class KeyInstructionController extends Controller
     public function store(KeyInstructionRequest $request)
     {
         try {
-            if( !empty($request->key_instruction_container_id) && !empty($request->key_instruction_language) ) {
+            if (!empty($request->key_instruction_container_id) && !empty($request->key_instruction_language)) {
+
+                // Fetching country code matching with key instruction lang.
                 $countryCode         = Country::select('code')->find($request->key_instruction_language);
 
                 // Path of directory.
-                $path_of_directory   = 'key_instruction/'.(int)$request->key_instruction_container_id.'/'.$countryCode->code;
+                $path_of_directory   = 'key_instruction/' . (int) $request->key_instruction_container_id . '/' . $countryCode->code;
 
                 // If directory doesn't exists create a new one.
-                if( !Storage::exists($path_of_directory) ) {
+                if (!Storage::exists($path_of_directory)) {
                     $createDirectory = Storage::makeDirectory($path_of_directory, 0775);
                 }
 
-                // Checking data already exist or not
+                // Checking data already exist or not.
                 $findKeyInstruction = KeyInstruction::where('key_container_id', $request->key_instruction_container_id)
-                ->where('country_id', $request->key_instruction_language)
-                ->first();
+                    ->where('country_id', $request->key_instruction_language)
+                    ->first();
 
-                if( !empty($findKeyInstruction) && Storage::exists($findKeyInstruction->instruction_url) ) {
-                    
-                    Storage::delete($findKeyInstruction->instruction_url);// Delete files from directory
-                    KeyInstruction::destroy($findKeyInstruction->id);// Delete data from directory
+                if (!empty($findKeyInstruction) && Storage::exists($findKeyInstruction->instruction_url)) {
+
+                    // Delete files from directory.
+                    Storage::delete($findKeyInstruction->instruction_url); 
+
+                    // Delete data from directory.
+                    KeyInstruction::destroy($findKeyInstruction->id); 
 
                     // Storing new file in to folder.
                     $path_of_file = $request->file('key_instruction_file')->store($path_of_directory);
 
-                    // Storing data in to database
-                    $keyInstruction                   = New KeyInstruction;
+                    // Storing key instructions in to storage.
+                    $keyInstruction                   = new KeyInstruction;
                     $keyInstruction->key_container_id = $request->key_instruction_container_id;
                     $keyInstruction->country_id       = $request->key_instruction_language;
                     $keyInstruction->instruction_url  = $path_of_file;
                     $keyInstruction->save();
-                }
+
+                } 
                 else {
                     // Storing new file in to folder.
                     $path_of_file = $request->file('key_instruction_file')->store($path_of_directory);
 
-                    // Storing data in to database
-                    $keyInstruction                   = New KeyInstruction;
+                    // Storing key instructions in to storage.
+                    $keyInstruction                   = new KeyInstruction;
                     $keyInstruction->key_container_id = $request->key_instruction_container_id;
                     $keyInstruction->country_id       = $request->key_instruction_language;
                     $keyInstruction->instruction_url  = $path_of_file;
@@ -87,19 +95,18 @@ class KeyInstructionController extends Controller
                 }
 
                 return response()->json(['keyInstructionStatus' => 'success', 'message' => 'Well done! Key instruction created successfully'], 201);
-            }
+            } 
             else {
                 return response()->json(['keyInstructionStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
             }
         } 
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             return response()->json(['keyInstructionStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
-        
     }
 
     /**
-     * Display the specified resource.
+     * Key insturctions download scripts.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -107,21 +114,24 @@ class KeyInstructionController extends Controller
     public function download($id)
     {
         try {
+            // Find key instructions based on the key instruction id.
             $keyInstruction  = KeyInstruction::find($id);
-            if( !empty($keyInstruction) && Storage::exists($keyInstruction->instruction_url)) {
+
+            if (!empty($keyInstruction) && Storage::exists($keyInstruction->instruction_url)) {
+
                 $explodeFilename = explode('/', $keyInstruction->instruction_url); //Exploding file name from file path
                 $filename        = end($explodeFilename);
-                $headers         = ['Content-Disposition: attachment; filename='.$filename];
+                $headers         = ['Content-Disposition: attachment; filename=' . $filename];
+
                 return Storage::download($keyInstruction->instruction_url, $filename, $headers);
-            }
+            } 
             else {
                 abort(404);
             }
         } 
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             abort(404);
         }
-        
     }
 
     /**
@@ -167,18 +177,22 @@ class KeyInstructionController extends Controller
     public function destroy($keydeleteinstructionid)
     {
         try {
+            // Find key instructions based on the key instruction id.
             $keyInstruction = KeyInstruction::find($keydeleteinstructionid);
 
-            if( !empty($keyInstruction) && Storage::exists($keyInstruction->instruction_url) ) {
-                Storage::delete($keyInstruction->instruction_url); // Delete files from storage
-                KeyInstruction::destroy($keydeleteinstructionid); // Delete data from database
+            // Checking the key instruction data and files are already exists.
+            if (!empty($keyInstruction) && Storage::exists($keyInstruction->instruction_url)) {
+                // Delete files from storage.
+                Storage::delete($keyInstruction->instruction_url); 
+
+                // Delete data from database.
+                KeyInstruction::destroy($keydeleteinstructionid); 
             }
 
             return response()->json(['keyInstructionDeleteStatus' => 'success', 'message' => 'Key instruction deleted successfully'], 201);
         } 
-        catch(\Exception $e) {
+        catch (\Exception $e) {
             return response()->json(['keyInstructionDeleteStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
-
     }
 }
