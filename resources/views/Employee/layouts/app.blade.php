@@ -23,6 +23,10 @@
     <link href="{{ asset('css/all.css') }}" rel="stylesheet">
 </head>
 <body>
+    <noscript>
+        You need to enable JavaScript to run this app.
+    </noscript>
+    
     <div id="app" class="site-wrapper">
     <nav class="navbar navbar-expand-lg navbar-dark fixed-top bg-dark navbar-right">
         <a class="" href="#">{{ config('app.name') }}</a>
