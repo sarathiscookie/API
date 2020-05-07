@@ -9,33 +9,36 @@ use App\Http\Traits\CountryTrait;
 use App\User;
 use App\UserCompany;
 use Illuminate\Http\Request;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller
 {
     use CompanyTrait, CountryTrait;
     /**
-     * Display a listing of the resource.
+     * Show the suppliers view page. Passing all active companies and countries into the supplier view page.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
+        // Country trait to fetch the companies.
         $companies = $this->company();
 
+        // Country trait to fetch the countries.
         $countries = $this->country();
 
         return view('admin.supplier', ['companies' => $companies, 'countries' => $countries]);
     }
 
     /**
-     * Display a listing of the resource
+     * Show the suppliers data into the view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
+        // Getting all the http request.
         $params = $request->all();
 
         $columns = array(
@@ -43,10 +46,12 @@ class SupplierController extends Controller
             2 => 'active',
         );
 
+        // Getting count of suppliers.
         $totalData = User::select('id', 'name', 'active')
         ->supplier()
         ->count();
 
+        // Query to select suppliers.
         $q         = User::select('id', 'name', 'active')
         ->supplier();
 
@@ -56,21 +61,22 @@ class SupplierController extends Controller
         $order         = $columns[$params['order'][0]['column']]; //contains column index
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // Search query for supplier name
+        // If the request has a search value (supplier name), this query will execute and fetch the results.
         if( !empty($request->input('search.value')) ) {
             $this->searchSupplierName($q, $request->input('search.value'));
         }
 
-        // tfoot search query for supplier name
+        // If the table has footer column value (supplier name), this query will execute and fetch the results based on the supplier name.
         if( !empty($params['columns'][1]['search']['value']) ) {
             $this->tfootSupplierName($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for user status
+        // If the table has footer column value (supplier status), this query will execute and fetch the results based on the supplier status.
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootSupplierStatus($q, $params['columns'][2]['search']['value']);
         }
 
+        // Query scripts ends here.
         $supplierLists = $q->skip($start)
             ->take($limit)
             ->orderBy($order, $dir)
@@ -79,6 +85,7 @@ class SupplierController extends Controller
         $data = [];
 
         if(!empty($supplierLists)) {
+
             foreach ($supplierLists as $key=> $supplierList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$supplierList->id.'" />';
                 $nestedData['name']       = $supplierList->name;
@@ -86,8 +93,10 @@ class SupplierController extends Controller
                 $nestedData['actions']    = $this->editSupplierModel($supplierList->id);
                 $data[]                   = $nestedData;
             }
+
         }
 
+        // Preparing array to send the response in JSON format to draw the data on datatable.
         $json_data = array(
             'draw'            => (int)$params['draw'],
             'recordsTotal'    => (int)$totalData,
@@ -99,7 +108,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * Search query for user name
+     * Function to search suppliers based on the supplier name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -110,6 +119,7 @@ class SupplierController extends Controller
             $query->where('name', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count.
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         })
@@ -119,7 +129,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * tfoot search query for user name
+     * Function to filter suppliers based on the supplier name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -130,6 +140,7 @@ class SupplierController extends Controller
             $query->where('name', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count.
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         })
@@ -139,7 +150,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * tfoot search query for user status
+     * Function to filter suppliers based on the supplier status.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -150,6 +161,7 @@ class SupplierController extends Controller
             $query->where('active', "{$searchData}");
         });
 
+        // Total filtered count.
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('active', "{$searchData}");
         })
@@ -159,7 +171,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * html group button to change supplier status 
+     * HTML group button to change supplier status 
      * @param  int $id
      * @param  string $oldStatus  
      * @return \Illuminate\Http\Response
@@ -167,10 +179,11 @@ class SupplierController extends Controller
     public function supplierStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
+
         $html    = '<label class="switch" data-supplierstatusid="'.$id.'">
-        <input type="checkbox" class="buttonStatus" '.$checked.'>
-        <span class="slider round"></span>
-        </label>';
+            <input type="checkbox" class="buttonStatus" '.$checked.'>
+            <span class="slider round"></span>
+            </label>';
 
         return $html;
     }
@@ -184,7 +197,7 @@ class SupplierController extends Controller
     public function updateStatus(Request $request)
     {
         try {
-
+            // Fetching supplier details based on requested supplier id.
             $supplier         = User::findOrFail($request->supplierStatusId);
 
             $supplier->active = $request->newStatus;
@@ -206,16 +219,17 @@ class SupplierController extends Controller
     public function editSupplierModel($supplierId)
     {
         try {
+            // Fetching supplier details based on the supplier id.
             $supplier           = $this->edit($supplierId);
 
-            //Getting countries and selecting matcing countries
+            // Getting countries and selecting matcing countries
             $countryOptions = '';
             foreach($this->country() as $country) {
                 $countrySelected = ($supplier->country->id === $country->id) ? 'selected' : '';
                 $countryOptions .= '<option value="'.$country->id.'" '.$countrySelected.'>'.$country->name.'</option>';
             }
 
-            //Getting companies and selecting matching companies
+            // Getting companies and selecting matching companies
             $supplierCompanyId = [];
             foreach($supplier->userCompanies as $supplierCompany) {
                 $supplierCompanyId[] = $supplierCompany->company_id;
@@ -228,6 +242,7 @@ class SupplierController extends Controller
             }
 
             $country  = ($supplier->country === 'de') ? 'selected' : '';
+
             $html     = '<a class="btn btn-secondary btn-sm editSupplier cursor" data-supplierid="'.$supplier->id.'" data-toggle="modal" data-target="#editSupplierModal_'.$supplier->id.'"><i class="fas fa-cog"></i></a>
             <div class="modal fade" id="editSupplierModal_'.$supplier->id.'" tabindex="-1" role="dialog" aria-labelledby="editSupplierModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -350,7 +365,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created supplier into storage.
      *
      * @param  \App\Http\Requests\Admin\SupplierRequest  $request
      * @return \Illuminate\Http\Response
@@ -358,7 +373,8 @@ class SupplierController extends Controller
     public function store(SupplierRequest $request)
     {
         try {
-            $explodeEmail           = explode("@", $request->email); // Generate username for supplier. Reason is, username field is unique. 
+            // Create username for supplier. Reason is, username field is mandatory and unique. 
+            $explodeEmail           = explode("@", $request->email);
 
             $supplier               = new User;
             $supplier->name         = $request->supplier_name;
@@ -399,19 +415,21 @@ class SupplierController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Show the form for editing the sipplier resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
+        // Fetching supplier details based on the requested supplier id.
         $supplier = User::supplier()->findOrFail($id);
+
         return $supplier;
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified supplier in storage.
      *
      * @param  \App\Http\Requests\Admin\SupplierRequest  $request
      * @return \Illuminate\Http\Response
@@ -420,7 +438,7 @@ class SupplierController extends Controller
     {
         DB::beginTransaction();
         try {
-            //Delete and store company id in user companies table
+            // Delete and store company id in user_companies table.
             UserCompany::where('user_id', $request->supplierid)->delete();
             
             $supplier             = User::supplier()->find($request->supplierid);
@@ -449,7 +467,7 @@ class SupplierController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified supplier from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
@@ -459,6 +477,7 @@ class SupplierController extends Controller
         DB::beginTransaction();
         try {
             $supplierCompany = UserCompany::where('user_id', $id)->delete();
+            
             $supplier        = User::destroy($id);
 
             DB::commit();

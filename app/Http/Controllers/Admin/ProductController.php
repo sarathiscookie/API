@@ -20,9 +20,9 @@ class ProductController extends Controller
 {
     use CompanyTrait, ShopnameTrait, ShopTrait, ModuleTrait, CurlTrait, ProductTrait, ModuleSettingTrait;
     /**
-     * Display a listing of the resource.
+     * Show the products view page. Passing all active companies and shops into the products view page.
      *
-     * @return \Illuminate\Http\Response
+     *  @return \Illuminate\View\View
      */
     public function index()
     {
@@ -34,11 +34,11 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Show the product lists view page. Passing shop id and companhy id into the product lists view page.
      *
      * @param  int  $shopId
      * @param  int  $companyId
-     * @return \Illuminate\Http\Response
+     *  @return \Illuminate\View\View
      */
     public function show($shopId, $companyId)
     {
@@ -46,7 +46,7 @@ class ProductController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     *  Show the products into the view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -54,7 +54,9 @@ class ProductController extends Controller
     public function datatable(Request $request)
     {
         try {
+            // Getting all the http request.
             $params           = $request->all();
+            
             $data             = [];
             $totalData        = 0;
             $totalFiltered    = 0;
@@ -64,30 +66,30 @@ class ProductController extends Controller
             $visible          = '';
             $available        = '';
 
-            // Search query for product name
+            // If the request has a search value (product name), this query will execute and fetch the results.
             if (!empty($request->input('search.value'))) {
                 $search = "&search=" . urlencode($request->input('search.value')) . "&search_field=name";
             }
 
-            //If shop is rakuten then below code will execute.
-            if ($request->productListShopID === '1') {
+            // If shop is Rakuten then this will execute.
+            if ( $request->productListShopID === '1' ) {
 
-                // Search query for category
+                // Checking http request has product categories
                 if (($request->productCategoryId !== 'allCategories') && ($request->productCategoryId !== null)) {
                     $search = "&search=" . urlencode($request->productCategoryId) . "&search_field=shop_category_id";
                 }
 
-                //Filter visible: 1 = Visible & 0 = Not visible
+                // Checking http request has filter visible status. Filter visible: 1 = Visible & 0 = Not visible.
                 if ($request->visible !== null) {
                     $visible = "&visible=" . $request->visible;
                 }
 
-                //Filter available: 1 = Available & 0 = Not available
+                // Checking http request has filter available status. Filter available: 1 = Available & 0 = Not available.
                 if ($request->available !== null) {
                     $available = "&available=" . $request->available;
                 }
 
-                //get company api key from shops
+                // Get company API key from shops.
                 $api_key           = $this->getApiKey($request->productListShopID, $request->productListCompanyId);
 
                 $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key=' . $api_key->api_key . '&format=json&page=' . $request->pageActive . $visible . $available . $search;
@@ -112,6 +114,7 @@ class ProductController extends Controller
                 $totalFiltered = (int) $product_details['totalFiltered'];
             }
 
+            // Preparing array to send the response in JSON format to draw the data on datatable.
             $json_data = array(
                 'draw'            => (int) $params['draw'],
                 'recordsTotal'    => $totalData,
@@ -160,12 +163,14 @@ class ProductController extends Controller
                 $moduleName[$key] = '';
                 $moduleSettings = $this->moduleName($productList['product_id']);
 
-                if($moduleSettings->count() > 0) { // Checking count
+                if($moduleSettings->count() > 0) {
+
                     foreach($moduleSettings as $moduleSetting) {
                         $productModuleSettingsModal = view('admin.productModuleSettingsModal', ['moduleSettingsId' => $moduleSetting->moduleSettingsId]);
 
                         $moduleName[$key] .= '<span class="badge badge-info badge-pill">' . ucwords($moduleSetting->moduleName) . '&nbsp<i class="fas fa-cog module_settings_update" data-modulesettingsupdateid='.$moduleSetting->moduleSettingsId.' data-toggle="modal" data-target="#moduleSettingsModal_'.$moduleSetting->moduleSettingsId.'" style="cursor:pointer;"></i>&nbsp<i class="fas fa-trash-alt module_settings" data-modulesettingsid='.$moduleSetting->moduleSettingsId.' style="color:#9e004f; cursor:pointer;"></i></span></<span>&nbsp<span class="module_settings_spinner_'.$moduleSetting->moduleSettingsId.'"></span>'.$productModuleSettingsModal;
                     }
+
                 }
                 else {
                     $moduleName[$key] = '<span class="badge badge-secondary badge-pill"> No Modules </span>';
@@ -183,7 +188,7 @@ class ProductController extends Controller
     }
 
     /**
-     * html for module settings 
+     * HTML for module settings 
      * @param  string $productApiId
      * @return \Illuminate\Http\Response
      */
@@ -203,7 +208,7 @@ class ProductController extends Controller
     }
 
     /**
-     * html group button to change product status 
+     * HTML group button to change product status 
      * @param  string $id
      * @return \Illuminate\Http\Response
      */

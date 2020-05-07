@@ -15,27 +15,30 @@ class ShopController extends Controller
     use CompanyTrait, ShopnameTrait;
 
     /**
-     * Display a listing of the resource.
+     * Show the shops view page. Passing all active companies and shop names into the shops view page.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // Companies trait to fetch the active companies.
         $companies = $this->company();
 
+        // Shop names trait to fetch the active shop names.
         $shopNames = $this->shopNames();
 
         return view('admin.shop', ['companies' => $companies, 'shopNames' => $shopNames]);
     }
 
     /**
-     * Display a listing of the resource
+     * Show the shops data into the view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
+        // Getting all the http request.
         $params = $request->all();
 
         $columns = array(
@@ -43,11 +46,13 @@ class ShopController extends Controller
             2 => 'active',
         );
 
+         // Getting count of shops.
         $totalData      = Shop::join('shopnames AS sn', 'shops.shopname_id', '=', 'sn.id')
             ->join('companies AS cm', 'shops.company_id', '=', 'cm.id')
             ->select('shops.id', 'sn.name AS shop', 'shops.active', 'cm.company')
             ->count();
 
+        // Query to select shops.
         $q              = Shop::join('shopnames AS sn', 'shops.shopname_id', '=', 'sn.id')
             ->join('companies AS cm', 'shops.company_id', '=', 'cm.id')
             ->select('shops.id', 'sn.name AS shop', 'shops.active', 'cm.company');
@@ -58,29 +63,31 @@ class ShopController extends Controller
         $order         = $columns[$params['order'][0]['column']]; //contains column index
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // Search query for shop name
+        // If the request has a search value (shop name), this query will execute and fetch the results.
         if(!empty($request->input('search.value'))) {
             $this->searchShop($q, $request->input('search.value'));
         }
 
-        // tfoot search query for shop name
+        // If the table has footer column value (shop name), this query will execute and fetch the results based on the shop name.
         if( !empty($params['columns'][1]['search']['value']) ) {
             $this->tfootShop($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for shop status
+        // If the table has footer column value (shop status), this query will execute and fetch the results based on the shop status.
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootShopStatus($q, $params['columns'][2]['search']['value']);
         }
 
+        // Query scripts ends here.
         $shopLists = $q->skip($start)
-        ->take($limit)
-        ->orderBy($order, $dir)
-        ->get();
+            ->take($limit)
+            ->orderBy($order, $dir)
+            ->get();
 
         $data = [];
 
         if(!empty($shopLists)) {
+
             foreach ($shopLists as $key=> $shopList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$shopList->id.'" />';
                 $nestedData['shop']       = ucwords($shopList->company).' <span class="badge badge-secondary text-capitalize">'.$shopList->shop.'</span>';
@@ -88,8 +95,10 @@ class ShopController extends Controller
                 $nestedData['actions']    = $this->editShopModel($shopList->id);
                 $data[]                   = $nestedData;
             }
+
         }
 
+        // Preparing array to send the response in JSON format to draw the data on datatable.
         $json_data = array(
             'draw'            => (int)$params['draw'],
             'recordsTotal'    => (int)$totalData,
@@ -101,7 +110,7 @@ class ShopController extends Controller
     }
 
     /**
-     * Search query for shop name
+     * Function to search shops based on the shop name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -113,13 +122,14 @@ class ShopController extends Controller
             ->orWhere('cm.company', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count
         $totalFiltered = $q->count();
 
         return $this;    
     }
 
     /**
-     * tfoot search query for shop name
+     * Function to filter shops based on the shop name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -131,13 +141,14 @@ class ShopController extends Controller
             ->orWhere('cm.company', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count
         $totalFiltered = $q->count();
 
         return $this;    
     }
 
     /**
-     * tfoot search query for shop status
+     * Function to filter shops based on the shop status.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -148,13 +159,14 @@ class ShopController extends Controller
             $query->where('shops.active', "{$searchData}");
         });
 
+        // Total filtered count
         $totalFiltered = $q->count();
 
         return $this;    
     }
 
     /**
-     * html group button to change shop status 
+     * HTML group button to change shop status 
      * @param  int $id
      * @param  string $oldStatus   
      * @return \Illuminate\Http\Response
@@ -162,10 +174,11 @@ class ShopController extends Controller
     public function shopStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
+
         $html    = '<label class="switch" data-shopstatusid="'.$id.'">
-        <input type="checkbox" class="buttonStatus" '.$checked.'>
-        <span class="slider round"></span>
-        </label>';
+            <input type="checkbox" class="buttonStatus" '.$checked.'>
+            <span class="slider round"></span>
+            </label>';
 
         return $html;
     }
@@ -179,7 +192,7 @@ class ShopController extends Controller
     public function updateStatus(Request $request)
     {
         try {
-
+            // Fetching shops details based on requested shop id.
             $shop         = Shop::findOrFail($request->shopStatusId);
 
             $shop->active = $request->newStatus;
@@ -201,23 +214,24 @@ class ShopController extends Controller
     public function editShopModel($shopId)
     {
         try {
+            // Fetching shops details based on shop id.
             $shop               = $this->edit($shopId);
 
-            //Company select box
+            // Company select box
             $companyOptions     = '';
             foreach($this->company() as $company) {
                 $companySelected = ($shop->company_id === $company->id) ? 'selected' : '';
                 $companyOptions .= '<option value="'.$company->id.'" '.$companySelected.'>'.$company->company.'</option>';
             }
 
-            //Shop name select box
+            // Shop name select box
             $shopNameOptions    = '';
             foreach($this->shopNames() as $shopName) {
                 $shopNameSelected = ($shop->shopname_id === $shopName->id) ? 'selected' : '';
                 $shopNameOptions .= '<option value="'.$shopName->id.'" '.$shopNameSelected.'>'.$shopName->name.'</option>';
             }
 
-            //Getting shop token
+            // Getting shop token
             $shopToken = ( ($shop->shopname->name === env('SHOP_NAME_AMAZONE')) || ($shop->shopname->name === env('SHOP_NAME_EBAY')) ) ? $shop->token : '';
 
             $html               = '<a class="btn btn-secondary btn-sm editShop cursor" data-shoptoken="'.$shopToken.'" data-shopid="'.$shop->id.'" data-toggle="modal" data-target="#editShopModal_'.$shop->id.'"><i class="fas fa-cog"></i></a>
@@ -368,7 +382,7 @@ class ShopController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created shops in storage.
      *
      * @param  \App\Http\Requests\Admin\ShopRequest  $request
      * @return \Illuminate\Http\Response
@@ -420,12 +434,14 @@ class ShopController extends Controller
      */
     public function edit($id)
     {
+        // Fetching shops details based on shop id.
         $shop = Shop::with('shopname:id,name')->findOrFail($id);
+
         return $shop;
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified ships in storage.
      *
      * @param  \App\Http\Requests\Admin\ShopRequest  $request
      * @return \Illuminate\Http\Response
@@ -433,6 +449,7 @@ class ShopController extends Controller
     public function update(ShopRequest $request)
     {
         try {
+            // Fetching shops details based on requested shop id.
             $shop                    = Shop::find($request->shopid);
             $shop->shopname_id       = $request->shop_name;
             $shop->company_id        = $request->shop_company;
@@ -458,7 +475,7 @@ class ShopController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified shops from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response

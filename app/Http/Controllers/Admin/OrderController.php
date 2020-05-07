@@ -99,7 +99,7 @@ class OrderController extends Controller
                 }
             }
 
-            // Preparing array to send the response in JSON format to draw the data in datatable.
+            // Preparing array to send the response in JSON format to draw the data on datatable.
             $json_data = [
                 'draw'            => (int) $params['draw'],
                 'recordsTotal'    => $totalData,

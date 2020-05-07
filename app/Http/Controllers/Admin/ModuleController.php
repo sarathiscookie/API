@@ -87,7 +87,7 @@ class ModuleController extends Controller
 
         }
 
-        // Preparing array to send the response in JSON format to draw the data in datatable.
+        // Preparing array to send the response in JSON format to draw the data on datatable.
         $json_data = array(
             'draw'            => (int)$params['draw'],
             'recordsTotal'    => (int)$totalData,

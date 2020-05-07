@@ -15,26 +15,30 @@ class UserController extends Controller
 {
     use CompanyTrait, CountryTrait;
     /**
-     * Display a listing of the resource.
+     * Show the users view page. Passing all active countries and companies into the users view page.
      *
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
+        // Company trait to fetch the companies.
         $companies = $this->company();
+
+        // Country trait to fetch the countries.
         $countries = $this->country();
 
         return view('admin.user', ['companies' => $companies, 'countries' => $countries]);
     }
 
     /**
-     * Display a listing of the resource
+     * Show the users data into the view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
+        // Getting all the http request.
         $params = $request->all();
 
         $columns = array(
@@ -42,10 +46,12 @@ class UserController extends Controller
             2 => 'active',
         );
 
+        // Getting count of users.
         $totalData = User::select('id', 'name', 'active')
         ->employee()
         ->count();
 
+        // Query to select users.
         $q         = User::select('id', 'name', 'active')
         ->employee();
 
@@ -55,21 +61,22 @@ class UserController extends Controller
         $order         = $columns[$params['order'][0]['column']]; //contains column index
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // Search query for name
+        // If the request has a search value (users name), this query will execute and fetch the results.
         if(!empty($request->input('search.value'))) {
             $this->searchUserName($q, $request->input('search.value'));
         }
 
-        // tfoot search query for name
+        // If the table has footer column value (users name), this query will execute and fetch the results based on the users name.
         if( !empty($params['columns'][1]['search']['value']) ) {
             $this->tfootUserName($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for user status
+        // If the table has footer column value (users status), this query will execute and fetch the results based on the user status.
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootUserStatus($q, $params['columns'][2]['search']['value']);
         }
 
+        // Query scripts ends here.
         $userLists = $q->skip($start)
             ->take($limit)
             ->orderBy($order, $dir)
@@ -78,6 +85,7 @@ class UserController extends Controller
         $data = [];
 
         if(!empty($userLists)) {
+
             foreach ($userLists as $key=> $userList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$userList->id.'" />';
                 $nestedData['name']       = $userList->name;
@@ -85,8 +93,10 @@ class UserController extends Controller
                 $nestedData['actions']    = $this->editMangerModel($userList->id);
                 $data[]                   = $nestedData;
             }
+
         }
 
+        // Preparing array to send the response in JSON format to draw the data on datatable.
         $json_data = array(
             'draw'            => (int)$params['draw'],
             'recordsTotal'    => (int)$totalData,
@@ -98,7 +108,7 @@ class UserController extends Controller
     }
 
     /**
-     * Search query for user name
+     * Function to search users based on the user name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -109,6 +119,7 @@ class UserController extends Controller
             $query->where('name', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         })
@@ -118,7 +129,7 @@ class UserController extends Controller
     }
 
     /**
-     * tfoot search query for user name
+     * Function to filter users based on the user name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -129,6 +140,7 @@ class UserController extends Controller
             $query->where('name', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('name', 'like', "%{$searchData}%");
         })
@@ -138,7 +150,7 @@ class UserController extends Controller
     }
 
     /**
-     * tfoot search query for user status
+     * Function to filter users based on the user status.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -149,6 +161,7 @@ class UserController extends Controller
             $query->where('active', "{$searchData}");
         });
 
+        // Total filtered count
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('active', "{$searchData}");
         })
@@ -158,7 +171,7 @@ class UserController extends Controller
     }
 
     /**
-     * html group button to change user status 
+     * HTML group button to change user status 
      * @param  int $id
      * @param  string $oldStatus  
      * @return \Illuminate\Http\Response
@@ -182,6 +195,7 @@ class UserController extends Controller
     public function editMangerModel($userId)
     {
         try {
+            // Fetching user details based on user id.
             $user                = $this->edit($userId);
 
             $countryOptions      = '';
@@ -190,7 +204,7 @@ class UserController extends Controller
                 $countryOptions .= '<option value="'.$country->id.'" '.$countrySelected.'>'.$country->name.'</option>';
             }
 
-            //Getting companies and selecting matching companies
+            // Getting companies and selecting matching companies
             
             $userCompanyId = [];
             foreach($user->userCompanies as $userCompany) {
@@ -204,6 +218,7 @@ class UserController extends Controller
             }
 
             $country  = ($user->country === 'de') ? 'selected' : '';
+
             $html     = '<a class="btn btn-secondary btn-sm editUser cursor" data-userid="'.$user->id.'" data-toggle="modal" data-target="#editUserModal_'.$user->id.'"><i class="fas fa-cog"></i></a>
             <div class="modal fade" id="editUserModal_'.$user->id.'" tabindex="-1" role="dialog" aria-labelledby="editUserModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -325,7 +340,7 @@ class UserController extends Controller
     public function updateStatus(Request $request)
     {
         try {
-
+            // Fetching user details based on requested user id.
             $user         = User::findOrFail($request->userId);
 
             $user->active = $request->newStatus;
@@ -403,7 +418,9 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+         // Fetching user details based on user id.
         $user = User::employee()->findOrFail($id);
+
         return $user;
     }
 
@@ -416,7 +433,7 @@ class UserController extends Controller
     public function update(UserRequest $request)
     {
         try {
-            //Delete ansd store company id in user companies table
+            // Delete ansd store company id in user_companies table
             UserCompany::where('user_id', $request->userid)->delete();
             
             $user             = User::find($request->userid);
@@ -450,6 +467,7 @@ class UserController extends Controller
     {
         try {
             $userCompany = UserCompany::where('user_id', $id)->delete();
+            
             $user        = User::destroy($id);
 
             return response()->json(['deletedUserStatus' => 'success', 'message' => 'User details deleted successfully'], 201);
