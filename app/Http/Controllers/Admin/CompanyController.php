@@ -26,7 +26,7 @@ class CompanyController extends Controller
     }
 
     /**
-     * Show the companies data in to view page.
+     * Show the companies data into the view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -54,17 +54,17 @@ class CompanyController extends Controller
         $order         = $columns[$params['order'][0]['column']]; // contains column index.
         $dir           = $params['order'][0]['dir']; // contains order such as asc/desc.
 
-        // If the request has a search value (company name), the query to search companies will execute.
+        // If the request has a search value (company name), this query will execute and fetch the results.
         if(!empty($request->input('search.value'))) {
             $this->searchCompany($q, $request->input('search.value'));
         }
 
-        // If the table has footer column value (company name), the query to search companies based on the company name will execute.
+        // If the table has footer column value (company name), this query will execute and fetch the results based on the company name.
         if( !empty($params['columns'][1]['search']['value']) ) {
             $this->tfootCompany($q, $params['columns'][1]['search']['value']);
         }
 
-        // If the table has footer column value (company status), the query to search companies based on the company status will execute.
+        // If the table has footer column value (company status), this query will execute and fetch results based on the company status.
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootCompanyStatus($q, $params['columns'][2]['search']['value']);
         }
@@ -387,7 +387,7 @@ class CompanyController extends Controller
     public function update(CompanyRequest $request)
     {
         try {
-            // Fetching company details based on company id.
+            // Fetching company details based on requested company id.
             $company             = Company::find($request->companyid);
             $company->company    = $request->company; 
             $company->phone      = $request->phone;

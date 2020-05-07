@@ -19,7 +19,7 @@ class ManagerController extends Controller
     /**
      * Show the manager view page. Passing all active countries and companies into the manager view page.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -67,17 +67,17 @@ class ManagerController extends Controller
 
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // If the request has a search value (name), the query to search managers will execute.
+        // If the request has a search value (name), this query will execute and fetch the results.
         if (!empty($request->input('search.value'))) {
             $this->searchUserName($q, $request->input('search.value'));
         }
 
-        // If the table has footer column value (name), the query to search managers will execute.
+        // If the table has footer column value (name), this query will execute and fetch the results based on name.
         if (!empty($params['columns'][1]['search']['value'])) {
             $this->tfootUserName($q, $params['columns'][1]['search']['value']);
         }
 
-        // If the table has footer column value (status), the query to search managers will execute.
+        // If the table has footer column value (status), this query will execute and fetch the results based on status.
         if (!empty($params['columns'][2]['search']['value'])) {
             $this->tfootUserStatus($q, $params['columns'][2]['search']['value']);
         }

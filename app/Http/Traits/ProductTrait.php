@@ -7,7 +7,7 @@ use App\Product;
 trait ProductTrait
 {
 
-    /**
+    /** 
      * Get product
      * 
      * @param  int  $id

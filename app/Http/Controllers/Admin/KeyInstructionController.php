@@ -16,7 +16,7 @@ class KeyInstructionController extends Controller
     /**
      * Show the key instruction view page. Passing all active countries the key instruction view page.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {

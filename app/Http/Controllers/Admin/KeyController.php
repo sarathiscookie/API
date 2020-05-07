@@ -23,7 +23,7 @@ class KeyController extends Controller
     /**
      * Show the key view page. Passing all active key types and companies into the key view page.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -91,17 +91,17 @@ class KeyController extends Controller
 
         $dir           = $params['order'][0]['dir']; // Contains order such as asc/desc
 
-        // // If the request has a search value (key), the query to search the keys will execute.
+        // // If the request has a search value (key), this query will execute and fetch the results.
         if (!empty($request->input('search.value'))) {
             $this->searchKey($q, $request->input('search.value'));
         }
 
-        // If the table has footer column value (key), the query to search keys based on the key will execute.
+        // If the table has footer column value (key), this query will execute and fetch the results based key.
         if (!empty($params['columns'][1]['search']['value'])) {
             $this->tfootKey($q, $params['columns'][1]['search']['value']);
         }
 
-        // If the table has footer column value (key status), the query to search keys based on the key will execute.
+        // If the table has footer column value (key status), this query will execute and fetch the results based on the status.
         if (!empty($params['columns'][2]['search']['value'])) {
             $this->tfootKeyStatus($q, $params['columns'][2]['search']['value']);
         }

@@ -10,9 +10,9 @@ use Illuminate\Http\Request;
 class ModuleController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Show the module view page.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\View\View
      */
     public function index()
     {
@@ -20,13 +20,14 @@ class ModuleController extends Controller
     }
 
     /**
-     * Display a listing of the resource
+     * Show the modules data in to view page.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function datatable(Request $request)
     {
+        // Getting all the http request.
         $params = $request->all();
 
         $columns = array(
@@ -34,32 +35,39 @@ class ModuleController extends Controller
             2 => 'active',
         );
 
+        // Getting count of modules.
         $totalData     = Module::select('id', 'module', 'active')
         ->count();
 
+        // Query to select modules.
         $q             = Module::select('id', 'module', 'active');
 
         $totalFiltered = $totalData;
+
         $limit         = (int)$request->input('length');
+
         $start         = (int)$request->input('start');
+
         $order         = $columns[$params['order'][0]['column']]; //contains column index
+
         $dir           = $params['order'][0]['dir']; //contains order such as asc/desc
 
-        // Search query for module name
+        // If the request has a search value (module name), this query will execute and fetch the results.
         if(!empty($request->input('search.value'))) {
             $this->searchModule($q, $request->input('search.value'));
         }
 
-        // tfoot search query for module name
+        // If the table has footer column value (module name), this query will execute and fetch the results based on module name.
         if( !empty($params['columns'][1]['search']['value']) ) {
             $this->tfootModule($q, $params['columns'][1]['search']['value']);
         }
 
-        // tfoot search query for module status
+        // If the table has footer column value (module status), this query will execute and fetch the results based on module status.
         if( !empty($params['columns'][2]['search']['value']) ) {
             $this->tfootModuleStatus($q, $params['columns'][2]['search']['value']);
         }
 
+        // Query scripts ends here.
         $moduleLists = $q->skip($start)
         ->take($limit)
         ->orderBy($order, $dir)
@@ -68,6 +76,7 @@ class ModuleController extends Controller
         $data = [];
 
         if(!empty($moduleLists)) {
+
             foreach ($moduleLists as $key=> $moduleList) {
                 $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$moduleList->id.'" />';
                 $nestedData['module']     = $moduleList->module;
@@ -75,8 +84,10 @@ class ModuleController extends Controller
                 $nestedData['actions']    = $this->editModuleModel($moduleList->id);
                 $data[]                   = $nestedData;
             }
+
         }
 
+        // Preparing array to send the response in JSON format to draw the data in datatable.
         $json_data = array(
             'draw'            => (int)$params['draw'],
             'recordsTotal'    => (int)$totalData,
@@ -88,7 +99,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Search query for module name
+     * Function to search modules based on the module name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -99,6 +110,7 @@ class ModuleController extends Controller
             $query->where('module', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count.
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('module', 'like', "%{$searchData}%");
         })
@@ -108,7 +120,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * tfoot search query for module name
+     * Function to filter modules based on the module name.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -119,6 +131,7 @@ class ModuleController extends Controller
             $query->where('module', 'like', "%{$searchData}%");
         });
 
+        // Total filtered count.
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('module', 'like', "%{$searchData}%");
         })
@@ -128,7 +141,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * tfoot search query for module status
+     * Function to filter modules based on the module status.
      * @param  string $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
@@ -139,6 +152,7 @@ class ModuleController extends Controller
             $query->where('active', "{$searchData}");
         });
 
+        // Total filtered count.
         $totalFiltered = $q->where(function($query) use ($searchData) {
             $query->where('active', "{$searchData}");
         })
@@ -148,7 +162,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * html group button to change module status 
+     * HTML group button to change module status 
      * @param  int $id
      * @param  string $oldStatus
      * @return \Illuminate\Http\Response
@@ -156,10 +170,11 @@ class ModuleController extends Controller
     public function moduleStatusHtml($id, $oldStatus)
     {
         $checked = ($oldStatus === 'yes') ? 'checked' : "";
+
         $html    = '<label class="switch" data-modulestatusid="'.$id.'">
-        <input type="checkbox" class="buttonStatus" '.$checked.'>
-        <span class="slider round"></span>
-        </label>';
+            <input type="checkbox" class="buttonStatus" '.$checked.'>
+            <span class="slider round"></span>
+            </label>';
 
         return $html;
     }
@@ -174,6 +189,7 @@ class ModuleController extends Controller
     {
         try {
 
+            // Fetching module details based on requested module id.
             $module         = Module::findOrFail($request->moduleStatusId);
 
             $module->active = $request->newStatus;
@@ -181,6 +197,7 @@ class ModuleController extends Controller
             $module->save();
 
             return response()->json(['moduleStatusChange' => 'success', 'message' => 'Module status updated successfully'], 201);
+
         } 
         catch(\Exception $e){
             return response()->json(['moduleStatusChange' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
@@ -195,6 +212,7 @@ class ModuleController extends Controller
     public function editModuleModel($moduleId)
     {
         try {
+            // Fetching module details based on module id.
             $module            = $this->edit($moduleId);
 
             $html              = '<a class="btn btn-secondary btn-sm editModule cursor" data-moduleid="'.$module->id.'" data-toggle="modal" data-target="#editModuleModal_'.$module->id.'"><i class="fas fa-cog"></i></a>
@@ -261,7 +279,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created module in storage.
      *
      * @param  \App\Http\Requests\Admin\ModuleRequest  $request
      * @return \Illuminate\Http\Response
@@ -293,19 +311,21 @@ class ModuleController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * Get the module for editing the specified resource.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
     {
+        // Fetching module details based on module id.
         $module = Module::findOrFail($id);
+
         return $module;
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified module in storage.
      *
      * @param  \App\Http\Requests\Admin\ModuleRequest  $request
      * @return \Illuminate\Http\Response
@@ -313,8 +333,11 @@ class ModuleController extends Controller
     public function update(ModuleRequest $request)
     {
         try {
+            // Fetching module details based on requested module id.
             $module            = Module::find($request->moduleid);
+
             $module->module    = $request->module; 
+
             $module->save();
 
             return response()->json(['moduleStatusUpdate' => 'success', 'message' => 'Well done! Module details updated successfully'], 201);
@@ -325,7 +348,7 @@ class ModuleController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified module from storage.
      *
      * @param  int $id
      * @return \Illuminate\Http\Response
