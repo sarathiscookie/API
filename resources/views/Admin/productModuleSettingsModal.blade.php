@@ -1,4 +1,4 @@
-<!-- Add module -->
+<!-- Add module settings -->
 <div class="modal fade" id="moduleSettingsModal_{{ $moduleSettingsId }}" tabindex="-1" role="dialog" aria-labelledby="moduleModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
 <div class="modal-content">
