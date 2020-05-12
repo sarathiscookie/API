@@ -19,6 +19,7 @@ use App\Http\Controllers\Controller;
 class ProductController extends Controller
 {
     use CompanyTrait, ShopnameTrait, ShopTrait, ModuleTrait, CurlTrait, ProductTrait, ModuleSettingTrait;
+
     /**
      * Show the products view page. Passing all active companies and shops into the products view page.
      *
@@ -26,11 +27,13 @@ class ProductController extends Controller
      */
     public function index()
     {
+        // Fetching companies from company trait
         $companies = $this->company();
 
+        // Fetching shopnames from shopname trait
         $shopNames = $this->shopNames();
 
-        return view('admin.productGet', ['companies' => $companies, 'shopNames' => $shopNames]);
+        return view('admin.productGet', [ 'companies' => $companies, 'shopNames' => $shopNames ]);
     }
 
     /**
@@ -55,16 +58,16 @@ class ProductController extends Controller
     {
         try {
             // Getting all the http request.
-            $params           = $request->all();
+            $params = $request->all();
             
-            $data             = [];
-            $totalData        = 0;
-            $totalFiltered    = 0;
-            $product_details  = '';
+            $data = [];
+            $totalData = 0;
+            $totalFiltered = 0;
+            $product_details = '';
             $category_details = '';
-            $search           = '';
-            $visible          = '';
-            $available        = '';
+            $search = '';
+            $visible = '';
+            $available = '';
 
             // If the request has a search value (product name), this query will execute and fetch the results.
             if (!empty($request->input('search.value'))) {
@@ -75,53 +78,53 @@ class ProductController extends Controller
             if ( $request->productListShopID === '1' ) {
 
                 // Checking http request has product categories
-                if (($request->productCategoryId !== 'allCategories') && ($request->productCategoryId !== null)) {
+                if ( ($request->productCategoryId !== 'allCategories') && ($request->productCategoryId !== null) ) {
                     $search = "&search=" . urlencode($request->productCategoryId) . "&search_field=shop_category_id";
                 }
 
                 // Checking http request has filter visible status. Filter visible: 1 = Visible & 0 = Not visible.
-                if ($request->visible !== null) {
+                if ( $request->visible !== null ) {
                     $visible = "&visible=" . $request->visible;
                 }
 
                 // Checking http request has filter available status. Filter available: 1 = Available & 0 = Not available.
-                if ($request->available !== null) {
+                if ( $request->available !== null ) {
                     $available = "&available=" . $request->available;
                 }
 
                 // Get company API key from shops.
-                $api_key           = $this->getApiKey($request->productListShopID, $request->productListCompanyId);
+                $api_key = $this->getApiKey($request->productListShopID, $request->productListCompanyId);
 
-                $urlGetProducts    = 'http://webservice.rakuten.de/merchants/products/getProducts?key=' . $api_key->api_key . '&format=json&page=' . $request->pageActive . $visible . $available . $search;
+                $urlGetProducts = 'http://webservice.rakuten.de/merchants/products/getProducts?key=' . $api_key->api_key . '&format=json&page=' . $request->pageActive . $visible . $available . $search;
 
                 $urlShopCategories = 'http://webservice.rakuten.de/merchants/categories/getShopCategories?key=' . $api_key->api_key . '&format=json';
             }
 
             // Get product details
-            if (!empty($urlGetProducts)) {
+            if ( !empty($urlGetProducts) ) {
                 $product_details  = $this->getUrlProducts($urlGetProducts);
             }
 
             // Get shop categories
-            if (!empty($urlShopCategories)) {
+            if ( !empty($urlShopCategories) ) {
                 $category_details = $this->getUrlShopCategories($urlShopCategories);
             }
 
             // Checking product details is empty or not
-            if (!empty($product_details)) {
+            if ( !empty($product_details) ) {
                 $data = $product_details['data'];
                 $totalData = (int) $product_details['totalData'];
                 $totalFiltered = (int) $product_details['totalFiltered'];
             }
 
             // Preparing array to send the response in JSON format to draw the data on datatable.
-            $json_data = array(
-                'draw'            => (int) $params['draw'],
-                'recordsTotal'    => $totalData,
+            $json_data = [
+                'draw' => (int) $params['draw'],
+                'recordsTotal' => $totalData,
                 'recordsFiltered' => $totalFiltered,
-                'data'            => $data,
+                'data' => $data,
                 'categoryDetails' => $category_details
-            );
+            ];
 
             return response()->json($json_data);
         } catch (\Exception $e) {
@@ -137,7 +140,10 @@ class ProductController extends Controller
      */
     public function getUrlProducts($urlGetProducts)
     {
-        $columns = [1 => 'name', 2 => 'active'];
+        $columns = [
+            1 => 'name', 
+            2 => 'active'
+        ];
 
         // Fetching data from API
         $jsonDecodedResults = $this->curl($urlGetProducts);
@@ -145,18 +151,18 @@ class ProductController extends Controller
         // If json status is success then value is '1' error value is '-1'
         if (($jsonDecodedResults['result']['success'] === '1') && ($jsonDecodedResults['result']['products']['paging'][0]['total'] != '0')) {
 
-            $totalData       = $jsonDecodedResults['result']['products']['paging'][0]['total'];
-            $totalFiltered   = $totalData;
+            $totalData = $jsonDecodedResults['result']['products']['paging'][0]['total'];
+            $totalFiltered = $totalData;
 
             foreach ($jsonDecodedResults['result']['products']['product'] as $key => $productList) {
-                $visibleStatus            = ($productList['visible'] === '1') ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+                $visibleStatus = ($productList['visible'] === '1') ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
 
                 // Some products doesn't have available status in product array. Eg:1918778210,1918779405,1918780015
                 if ($productList['has_variants'] === '1' && empty($productList['available'])) {
-                    $availableStatus      = '<i class="fas fa-thumbs-down"></i>';
+                    $availableStatus = '<i class="fas fa-thumbs-down"></i>';
                 } 
                 else {
-                    $availableStatus      = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
+                    $availableStatus = ($productList['available'] === '1') ? '<i class="fas fa-thumbs-up"></i>' : '<i class="fas fa-thumbs-down"></i>';
                 }
 
                 // Getting module name matching with module settings
@@ -177,11 +183,11 @@ class ProductController extends Controller
                 }
 
                 // Datatable filling
-                $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="' . $productList['product_id'] . '" />';
-                $nestedData['name']       = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div><div>Modules: '.$moduleName[$key].'</div>';
-                $nestedData['active']     = $this->productStatusHtml($productList['product_id']);
-                $nestedData['actions']    = $this->moduleSettingsHtml($productList['product_id']);
-                $data[]                   = $nestedData;
+                $nestedData['hash'] = '<input class="checked" type="checkbox" name="id[]" value="' . $productList['product_id'] . '" />';
+                $nestedData['name'] = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div><div>Modules: '.$moduleName[$key].'</div>';
+                $nestedData['active'] = $this->productStatusHtml($productList['product_id']);
+                $nestedData['actions'] = $this->moduleSettingsHtml($productList['product_id']);
+                $data[] = $nestedData;
             }
             return compact('data', 'totalData', 'totalFiltered');
         }
@@ -216,7 +222,7 @@ class ProductController extends Controller
     {
         //------------ Write query to check default status
         $checked = 'checked';
-        $html    = '<label class="switch" data-productstatusid="' . $id . '">
+        $html = '<label class="switch" data-productstatusid="' . $id . '">
         <input type="checkbox" class="buttonStatus" ' . $checked . '>
         <span class="slider round"></span>
         </label>';
@@ -233,17 +239,17 @@ class ProductController extends Controller
      */
     public function getUrlShopCategories($urlShopCategories)
     {
-        $category_details        = [];
+        $category_details = [];
         $category_details_offset = [];
 
-        //Fetching data from API
+        // Fetching data from API
         $jsonDecodedResults = $this->curl($urlShopCategories);
 
         //If json status is success then value is '1' error value is '-1'
         if ($jsonDecodedResults['result']['success'] === '1') {
             if ($jsonDecodedResults['result']['categories']['paging'][0]['total'] != 0) {
-                $category_details[]        = $jsonDecodedResults['result']['categories']['category'];
-                $category_details_offset   = $category_details[0];
+                $category_details[] = $jsonDecodedResults['result']['categories']['category'];
+                $category_details_offset = $category_details[0];
             }
         }
 
@@ -298,7 +304,8 @@ class ProductController extends Controller
                 ->where('product_id', $productExist->id)
                 ->first();
 
-            if (empty($moduleSettings)) {
+            if ( empty($moduleSettings)  ) {
+
                 $createModuleSetting = new ModuleSetting;
                 $createModuleSetting->module_id = $request->module_id;
                 $createModuleSetting->product_id = $productExist->id;
