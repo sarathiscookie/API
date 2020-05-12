@@ -14,12 +14,25 @@ class ShopnamesSeeder extends Seeder
      */
     public function run()
     {
-        $data = [
-        	['name' => 'Rakuten', 'created_at' => Carbon::now()],
-        	['name' => 'Amazone', 'created_at' => Carbon::now()],
-        	['name' => 'Ebay', 'created_at' => Carbon::now()]
-        ];
+        Shopname::updateOrCreate(
+            ['id' => 1],
+            [
+                'name' => 'Rakuten',
+            ]
+        );
 
-        Shopname::insert($data);
+        Shopname::updateOrCreate(
+            ['id' => 2],
+            [
+                'name' => 'Amazone',
+            ]
+        );
+
+        Shopname::updateOrCreate(
+            ['id' => 3],
+            [
+                'name' => 'Ebay',
+            ]
+        );
     }
 }

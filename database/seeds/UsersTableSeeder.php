@@ -14,25 +14,28 @@ class UsersTableSeeder extends Seeder
      */
     public function run()
     {
-        $data = [[
-        	'name' => 'admin',
-        	'email' => 'admin@gmail.com',
-            'username' => 'admin',
-            'password' => Hash::make('11111111'),
-            'created_at' => Carbon::now(),
-            'role' => 'admin',
-            'active' => 'yes',
-        ],
-        [
-            'name' => 'marko',
-            'email' => 'marko@herm.de',
-            'username' => 'marko',
-            'password' => Hash::make('www.herm.de'),
-            'created_at' => Carbon::now(),
-            'role' => 'admin',
-            'active' => 'yes',
-        ]];
+        User::updateOrCreate(
+            ['id' => 1],
+            [
+                'name' => 'admin',
+                'email' => 'admin@gmail.com',
+                'username' => 'admin',
+                'password' => Hash::make('11111111'),
+                'role' => 'admin',
+                'active' => 'yes',
+            ]
+        );
 
-        User::insert($data);
+        User::updateOrCreate(
+            ['id' => 2],
+            [
+                'name' => 'marko',
+                'email' => 'marko@herm.de',
+                'username' => 'marko',
+                'password' => Hash::make('www.herm.de'),
+                'role' => 'admin',
+                'active' => 'yes',
+            ]
+        );
     }
 }
