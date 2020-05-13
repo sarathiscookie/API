@@ -164,4 +164,13 @@ class User extends Authenticatable
         return $this->belongsTo(Country::class);
     }
 
+    /**
+     * Get the module settings that owns the user.
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function moduleSettings()
+    {
+        return $this->hasMany('App\ModuleSetting', 'module_setting_id');
+    }
+
 }

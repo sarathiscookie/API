@@ -23,4 +23,22 @@ class ModuleSetting extends Model
     {
         return $query->where('modules.active', 'yes');
     }
+
+    /**
+     * Get the crons that owns the module settings.
+     * @return \Illuminate\Database\Eloquent\Relations\hasMany
+     */
+    public function crons()
+    {
+        return $this->hasMany('App\Cron', 'module_setting_id');
+    }
+
+    /**
+     * Get the supplier record associated with the module setting.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function supplier()
+    {
+        return $this->belongsTo('App\User', 'user_supplier_id');
+    }
 }
