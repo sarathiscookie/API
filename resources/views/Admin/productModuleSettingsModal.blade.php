@@ -5,29 +5,33 @@
         <div class="modal-dialog modal-lg modal-dialog-scrollable" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Module Settings {{ $moduleSettingsId }}</h5><button type="button" class="close" data-dismiss="modal"
+                    <h5 class="modal-title">Module Settings</h5><button type="button" class="close" data-dismiss="modal"
                         aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
 
                     <div class="productModuleSettingsStatus_{{ $moduleSettingsId }}"></div>
 
-                    <form>
+                    <form action="POST" method="/admin/dashboard/module/settings/store">
+
+                        @csrf
+
                         <div class="card mt-3">
+
                             <div class="card-header">
                                 Email Settings
                             </div>
+
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
                                         <label for="supplier">Supplier Name <span class="required">*</span></label>
                                         <select class="form-control" id="supplier" name="supplier">
+                                            <option value="">Choose Suppliers</option>
                                             @isset($suppliers)
-                                                @forelse($suppliers as $supplier)
+                                                @foreach($suppliers as $supplier)
                                                     <option value="{{ $supplier->supplierId }}">{{ ucwords($supplier->supplierName) }} ( {{$supplier->supplierEmail}} )</option>
-                                                @empty
-                                                    <option>No suppliers</option>
-                                                @endforelse
+                                                @endforeach
                                             @endisset
                                         </select>
                                     </div>
@@ -35,11 +39,11 @@
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label for="bcc_name">Bcc Name <span class="required">*</span></label>
+                                        <label for="bcc_name">Bcc Name</label>
                                         <input type="text" name="bcc_name" class="form-control" id="bcc_name" maxlength="150">
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="bcc_email">Bcc Email <span class="required">*</span></label>
+                                        <label for="bcc_email">Bcc Email</label>
                                         <input type="email" name="bcc_email" class="form-control" id="bcc_email">
                                     </div>
                                 </div>
@@ -57,7 +61,7 @@
                                 <div class="form-group">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox"
-                                            id="activate_delivery_note_shipping">
+                                            id="activate_delivery_note_shipping" name="activate_delivery_note_shipping">
                                         <label class="form-check-label" for="activate_delivery_note_shipping">
                                             Activate delivery note shipping
                                         </label>
@@ -67,7 +71,7 @@
                                 <div class="form-group">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox"
-                                            id="activate_customer_data_sending">
+                                            id="activate_customer_data_sending" name="activate_customer_data_sending">
                                         <label class="form-check-label" for="activate_customer_data_sending">
                                             Activate customer data sending
                                         </label>
@@ -77,52 +81,56 @@
                                 <div class="form-group">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox"
-                                            id="enable_delivery_address_data_shipping">
+                                            id="enable_delivery_address_data_shipping" name="enable_delivery_address_data_shipping">
                                         <label class="form-check-label" for="enable_delivery_address_data_shipping">
                                             Enable delivery address data shipping
                                         </label>
                                     </div>
                                 </div>
-
                             </div>
+
                         </div>
 
                         <div class="card mt-3">
+
                             <div class="card-header">
                                 Cron Settings
                             </div>
-                            <div class="card-body">
 
+                            <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="max_error">Setting maximum error limit <span class="required">*</span></label>
-                                        <input type="number" class="form-control" id="max_error" maxlength="3">
+                                        <label for="max_error">Setting maximum error limit</label>
+                                        <input type="number" class="form-control" id="max_error" name="max_error">
                                     </div>
                                 </div>
-
                             </div>
+
                         </div>
 
                         <div class="card mt-3">
+
                             <div class="card-header">
                                 Order & Delivery Settings
                             </div>
-                            <div class="card-body">
 
+                            <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
-                                        <label for="delivery_status">Delivery status <span class="required">*</span></label>
-                                        <select class="form-control" id="delivery_status">
-                                            <option>Choose Status</option>
-                                            <option value="0">Not Active</option>
-                                            <option value="1">Active</option>
-                                            <option value="2">Waiting</option>
+                                        <label for="delivery_status">Delivery Status</label>
+                                        <select class="form-control" id="delivery_status" name="delivery_status">
+                                            <option value="">Choose Status</option>
+                                            @isset($deliveryStatus)
+                                                @foreach($deliveryStatus as $key => $status)
+                                                    <option value="{{ $key }}">{{ $status }}</option>
+                                                @endforeach
+                                            @endisset
                                         </select>
                                     </div>
 
                                     <div class="form-group col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="order_in_logistics">
+                                            <input class="form-check-input" type="checkbox" id="order_in_logistics" name="order_in_logistics">
                                             <label class="form-check-label" for="order_in_logistics">
                                                 Place order as set order in logistics
                                             </label>
@@ -131,40 +139,45 @@
 
                                     <div class="form-group col-md-4">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="checkbox" id="order_shipped">
+                                            <input class="form-check-input" type="checkbox" id="order_shipped" name="order_shipped">
                                             <label class="form-check-label" for="order_shipped">
                                                 Declare order as shipped
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
+
                         </div>
 
                         <div class="card mt-3">
+                            
                             <div class="card-header">
                                 MOD Settings
                             </div>
+
                             <div class="card-body">
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label for="wait_mod_no">Wait until the MOD pointer number is reached <span class="required">*</span></label>
-                                        <input type="number" class="form-control" id="wait_mod_no">
+                                        <label for="wait_mod_no">Wait until the MOD pointer number is reached</label>
+                                        <input type="number" class="form-control" id="wait_mod_no" name="wait_mod_no">
                                     </div>
                                     <div class="form-group col-md-6">
                                         <label for="wait_mod_id">Wait until MOD has successfully completed with
-                                            ID <span class="required">*</span></label>
-                                        <input type="number" class="form-control" id="wait_mod_id">
+                                            ID</label>
+                                        <input type="number" class="form-control" id="wait_mod_id" name="wait_mod_id">
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    </form>
 
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary">Save Settings</button>
+                        </div>
+                        
+                    </form>
                 </div>
-                <div class="modal-footer"><button type="button" class="btn btn-primary saveModuleDetails"
-                        data-addmodulesettingsid="{{ $moduleSettingsId }}">Update</button></div>
             </div>
         </div>
     </div>

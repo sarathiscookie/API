@@ -4,6 +4,7 @@ namespace App\Http\Controllers\admin;
 
 use App\ModuleSetting;
 use Illuminate\Http\Request;
+use App\Http\Requests\Admin\ModuleSettingsRequest;
 use App\Http\Controllers\Controller;
 
 class ModuleSettingsController extends Controller
@@ -34,9 +35,9 @@ class ModuleSettingsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ModuleSettingsRequest $request)
     {
-        //
+        //dd($request->all());
     }
 
     /**

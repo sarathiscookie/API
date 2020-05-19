@@ -138,6 +138,8 @@ Route::prefix('admin')->group(function(){
 		Route::post('/dashboard/product/add/module', 'Admin\ProductController@addProductModule')->name('admin.dashboard.product.add.module');
 		/* Delete product module */
 		Route::delete('/dashboard/product/delete/module/{id}', 'Admin\ProductController@deleteProductModule')->name('admin.dashboard.product.delete.module');
+		/* Store module settings */
+		Route::post('/dashboard/module/settings/store', 'Admin\ModuleSettingsController@store')->name('admin.dashboard.module.settings.store');
 
 		/* Show module listing page */
 		Route::get('/dashboard/module/list', 'Admin\ModuleController@index')->name('admin.dashboard.module.list');

@@ -6,6 +6,20 @@ use App\ModuleSetting;
 
 trait ModuleSettingTrait
 {
+    /**
+     * Get module name
+     * 
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deliveryStatus()
+    {
+        return [
+            1 => 'Not Active',
+            2 => 'Active',
+            3 => 'Waiting',
+        ];
+    }
 
     /**
      * Get module name
