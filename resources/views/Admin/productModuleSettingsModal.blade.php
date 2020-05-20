@@ -14,6 +14,8 @@
 
                     <div class="productModuleSettingsStatus_{{ $moduleSettingsId }}"></div>
 
+                    <div class="moduleSettingsValidationAlert_{{ $moduleSettingsId }}"></div>
+
                     <form>
 
                         @csrf
@@ -41,11 +43,11 @@
 
                                 <div class="form-row">
                                     <div class="form-group col-md-6">
-                                        <label for="bcc_name">Bcc Name</label>
+                                        <label for="bcc_name">Bcc Name <span class="required">*</span></label>
                                         <input type="text" name="bcc_name" class="form-control" id="bcc_name_{{ $moduleSettingsId }}" maxlength="150">
                                     </div>
                                     <div class="form-group col-md-6">
-                                        <label for="bcc_email">Bcc Email</label>
+                                        <label for="bcc_email">Bcc Email <span class="required">*</span></label>
                                         <input type="email" name="bcc_email" class="form-control" id="bcc_email_{{ $moduleSettingsId }}">
                                     </div>
                                 </div>

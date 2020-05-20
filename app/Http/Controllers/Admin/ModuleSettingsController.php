@@ -32,12 +32,15 @@ class ModuleSettingsController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\Admin\ModuleSettingsRequest
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ModuleSettingsRequest $request)
     {
         dd($request->all());
+        // Store data
+        // Convert check box values in to 1 and o
+        // Send email functionality
     }
 
     /**

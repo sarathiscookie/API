@@ -547,12 +547,30 @@ $(function () {
                 $btn.button('reset');
                 booking_data.ajax.reload(null, false); */
             })
-            .fail(function() {
+            .fail(function(data) {
                 /* $('.responseMessage').html('<div class="alert alert-warning alert-dismissible response" role="alert"><button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button><strong>OOPS! </strong>Hat leider nicht geklappt. Bitte versuchen Sie es erneut</div>');
-                booking_data.ajax.reload(null, false); */
+				booking_data.ajax.reload(null, false); */
+				if (data.status === 422) {
+					$.each(data.responseJSON.errors, function(key, val) {
+						$( ".moduleSettingsValidationAlert_"+module_settings_id ).html(
+							"<p class='alert alert-danger'>" + val + "</p>"
+						);
+					});
+				}
             });
-	
+	});
 
+	/* Clearing data of module settings modal fields */
+	$("#product_list tbody").on("click", "i.module_settings_update", function (e) {
+		// On model close, it will hide alert messages. Reason is, it shows default when model opens.
+		$( "p .alert, .alert-danger" ).hide();
+		$(this)
+			.find("input,textarea,select")
+			.val("")
+			.end()
+			.find("input[type=checkbox], input[type=radio]")
+			.prop("checked", "")
+			.end();
 	});
 
 });

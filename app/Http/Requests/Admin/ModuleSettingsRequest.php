@@ -27,22 +27,22 @@ class ModuleSettingsRequest extends FormRequest
             case 'POST':
             {
                 return [
-                    'supplier' => ['required', 'not_in:0'],
-                    'bcc_name' => ['string', 'max:255'],
-                    'bcc_email' => ['string', 'email', 'max:255'],
-                    'email_subject' => ['required', 'string', 'max:255'],
-                    'email_body' => ['required', 'string'],
-                    'max_error' => ['number'],
-                    'wait_mod_no' => ['number'],
-                    'wait_mod_id' => ['number'],
+                    'wait_mod_id' => 'numeric',
+                    'wait_mod_no' => 'numeric',
+                    'max_error' => 'numeric',
+                    'email_body' => 'required|string',
+                    'email_subject' => 'required|string|max:255',
+                    'bcc_email' => 'required|string|email|max:255',
+                    'bcc_name' => 'required|string|max:255',
+                    'supplier' => 'required|not_in:0',
                 ];
             }
             case 'PUT':
             {
                 return [
-                    'max_error' => ['number'],
-                    'wait_mod_no' => ['number'],
-                    'wait_mod_id' => ['number'],
+                    'wait_mod_id' => 'numeric',
+                    'wait_mod_no' => 'numeric',
+                    'max_error' => 'numeric',
                 ];
             }
             default:break;
