@@ -103,7 +103,7 @@
                                 <div class="form-row">
                                     <div class="form-group col-md-4">
                                         <label for="max_error">Setting maximum error limit</label>
-                                        <input type="number" class="form-control" id="max_error" name="max_error">
+                                        <input type="number" class="form-control" id="max_error_{{ $moduleSettingsId }}" name="max_error">
                                     </div>
                                 </div>
                             </div>

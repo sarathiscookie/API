@@ -19,29 +19,29 @@ class CreateModuleSettingsTable extends Migration
             $table->unsignedBigInteger('product_id');
             
             // Email settings
-            $table->unsignedBigInteger('user_supplier_id')->nullable(); // To get supplier name and email. Email send to supplier then cc to admin.
+            $table->unsignedBigInteger('user_supplier_id'); // To get supplier name and email. Email send to supplier then cc to admin.
             $table->string('mail_bcc')->nullable(); // Write bcc details manually.
             $table->string('mail_bcc_name', 150)->nullable();
-            $table->string('mail_subject', 200)->nullable();
-            $table->text('mail_body')->nullable();
-            $table->tinyInteger('mail_attach')->default(0); // Activate delivery note shipping
-            $table->tinyInteger('mail_attach_client')->default(0); // Activate customer data sending
-            $table->tinyInteger('mail_attach_delivery')->default(0); // Enable delivery address data shipping
-            $table->tinyInteger('status_mail')->default(0); // Email status
+            $table->string('mail_subject', 200);
+            $table->text('mail_body');
+            $table->tinyInteger('mail_attach')->nullable(); // Activate delivery note shipping. 0 = checked, 1 = not checked.
+            $table->tinyInteger('mail_attach_client')->nullable(); // Activate customer data sending. 0 = checked, 1 = not checked.
+            $table->tinyInteger('mail_attach_delivery')->nullable(); // Enable delivery address data shipping. 0 = checked, 1 = not checked.
+            $table->tinyInteger('status_mail'); // Email status. 0 = Not sent, 1 = Sent.
 
             // Cron settings
             $table->integer('max_error')->nullable(); // It is for setting maximum error limit.
 
             // Orders & Delivery settings
-            $table->tinyInteger('order_in_logistics')->default(0); // Place order as set order in logistics
-            $table->tinyInteger('order_shipped')->default(0); // Declare order as shipped
-            $table->integer('delivery_status')->default(0); // 0 not active, 1 active, 2 wait
+            $table->tinyInteger('order_in_logistics')->nullable(); // Place order as set order in logistics. 0 = checked, 1 = not checked.
+            $table->tinyInteger('order_shipped')->nullable(); // Declare order as shipped. 0 = checked, 1 = not checked.
+            $table->integer('delivery_status')->nullable(); // 1 not active, 2 active, 3 wait.
 
             // MOD Settings
             $table->integer('wait_mod_no')->nullable(); // Wait with execution until the MOD pointer number is reached.
             $table->integer('wait_mod_id')->nullable(); // Wait until MOD has successfully completed with ID.
 
-            $table->tinyInteger('status')->default(0); // Status to enable and disable module_details
+            $table->tinyInteger('status')->default(0); // Status to enable and disable module_details.
             $table->timestamps();
 
             $table->foreign('product_id')

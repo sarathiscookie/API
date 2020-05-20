@@ -32,7 +32,7 @@ class ModuleSettingsRequest extends FormRequest
                     'bcc_email' => ['string', 'email', 'max:255'],
                     'email_subject' => ['required', 'string', 'max:255'],
                     'email_body' => ['required', 'string'],
-                    'delivery_status' => ['not_in:0'],
+                    'max_error' => ['number'],
                     'wait_mod_no' => ['number'],
                     'wait_mod_id' => ['number'],
                 ];
@@ -40,7 +40,7 @@ class ModuleSettingsRequest extends FormRequest
             case 'PUT':
             {
                 return [
-                    'delivery_status' => ['not_in:0'],
+                    'max_error' => ['number'],
                     'wait_mod_no' => ['number'],
                     'wait_mod_id' => ['number'],
                 ];

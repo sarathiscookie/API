@@ -184,9 +184,9 @@ class ProductController extends Controller
                             'deliveryStatus' => $deliveryStatus
                         ]);
 
-                        $productModuleSettingsViewModal = view('admin.productModuleSettingsViewModal', [
+                        /* $productModuleSettingsViewModal = view('admin.productModuleSettingsViewModal', [
                             'moduleSettingsId' => $moduleSetting->moduleSettingsId
-                        ]);
+                        ]); */
 
                         $moduleName[$key] .= '
                         <span class="badge badge-info badge-pill">' . ucwords($moduleSetting->moduleName) . 
@@ -198,7 +198,7 @@ class ProductController extends Controller
                         <i class="far fa-trash-alt fa-lg module_settings" data-modulesettingsid='.$moduleSetting->moduleSettingsId.' style="color:#9e004f; cursor:pointer;"></i>
                         </span>
                         &nbsp
-                        <span class="module_settings_spinner_'.$moduleSetting->moduleSettingsId.'"></span>'.$productModuleSettingsModal.$productModuleSettingsViewModal;
+                        <span class="module_settings_spinner_'.$moduleSetting->moduleSettingsId.'"></span>'.$productModuleSettingsModal/* .$productModuleSettingsViewModal */;
                     }
 
                 }

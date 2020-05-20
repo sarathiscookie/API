@@ -89,8 +89,8 @@
 
                             <div class="form-row">
                                 <div class="form-group col-md-4">
-                                    <label for="max_error">Setting maximum error limit:</label>
-                                    <input type="number" class="form-control" id="max_error_{{ $moduleSettingsId }}" maxlength="3">
+                                    <label for="cron_max_error">Setting maximum error limit:</label>
+                                    <input type="number" class="form-control" id="cron_max_error_{{ $moduleSettingsId }}" maxlength="3">
                                 </div>
                                 <div class="form-group col-md-4">
                                     <label for="call_count">How many times cron job called:</label>
