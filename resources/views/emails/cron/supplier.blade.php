@@ -1,16 +1,12 @@
 @component('mail::message')
-# Introduction
+    # Introduction
 
-The body of supplier message.
+    The body of supplier message.
 
-@component('mail::table')
-| Name       | Email         | Contact  |
-| ------------- |:-------------:| --------:|
-@foreach($user as $userList)
-| {{ $userList['name'] }} | {{ $userList['email'] }} | {{ $userList['phone'] }} |
-@endforeach
-@endcomponent
+    @isset($supplier)
+        | {{ $supplier['name'] }} | {{ $supplier['email'] }} | {{ $supplier['phone'] }} |
+    @endisset
 
-Thanks,<br>
-{{ config('app.name') }}
+    Thanks,<br>
+    {{ config('app.name') }}
 @endcomponent

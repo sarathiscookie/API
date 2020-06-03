@@ -173,4 +173,15 @@ class User extends Authenticatable
         return $this->hasMany('App\ModuleSetting', 'module_setting_id');
     }
 
+    /**
+     * Scope a query to only include active users.
+     *
+     * @param  \Illuminate\Database\Eloquent\Builder  $query
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
+    public function scopeActive($query)
+    {
+        return $query->where('active', 'yes');
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\User;
 use Illuminate\Console\Command;
 use App\Mail\SendEmailToSupplier;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class CronEmailToSupplier extends Command
@@ -40,8 +41,16 @@ class CronEmailToSupplier extends Command
      */
     public function handle()
     {
-        $user = User::find(11);
+        // Fetching supplier details 
+        $suppliers = User::supplier()->active()->get();
 
-        Mail::to($user->email)->send(new SendEmailToSupplier($user));
+        if( !empty($suppliers) ) {
+
+            foreach($suppliers as $supplier) {
+                Mail::send(new SendEmailToSupplier($supplier));
+            }
+
+        }
+    
     }
 }
