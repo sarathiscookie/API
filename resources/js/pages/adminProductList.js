@@ -115,7 +115,7 @@ $(function () {
 			columns: [
 				{ data: "hash" },
 				{ data: "name" },
-				{ data: "active" },
+				{ data: "status" },
 				{ data: "actions" }
 			],
 			columnDefs: [
@@ -583,6 +583,54 @@ $(function () {
 			.find("input[type=checkbox], input[type=radio]")
 			.prop("checked", "")
 			.end();
+	});
+
+	/* Product status changing functionality */
+	$("#product_list tbody").on("change", "input.buttonStatus", function(e) {
+		e.preventDefault();
+
+		let newStatus = "";
+
+		let productStatusId = $(this)
+			.parent()
+			.data("productstatusid");
+
+		if ($(this).is(":checked") === true) {
+			newStatus = 1;
+		} else {
+			newStatus = 0;
+		}
+
+		$.ajax({
+			url: "/admin/dashboard/product/status/update",
+			dataType: "JSON",
+			type: "POST",
+			data: { 
+				newStatus: newStatus, 
+				productStatusId: productStatusId,
+				prodShopId: $(".productListShopIdClass").val(),
+				prodCompanyId: $(".productListCompanyIdClass").val() 
+			}
+		})
+			.done(function(result) {
+				productList.ajax.reload(null, false);
+			})
+			.fail(function(data) {
+				productList.ajax.reload(null, false);
+
+				if (data.responseJSON.productStatusChange === "failure") {
+					$(".responseProductListMessage").html(
+						'<div class="alert alert-danger alert-dismissible fade show" role="alert"><i class="fas fa-times-circle"></i> ' +
+							data.responseJSON.message +
+							'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+					);
+				}
+
+				$(".responseProductListMessage")
+					.show()
+					.delay(5000)
+					.fadeOut();
+			});
 	});
 
 });

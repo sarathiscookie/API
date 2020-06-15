@@ -80,11 +80,11 @@ class CompanyController extends Controller
         if(!empty($companiesLists)) {
 
             foreach ($companiesLists as $key=> $companiesList) {
-                $nestedData['hash']       = '<input class="checked" type="checkbox" name="id[]" value="'.$companiesList->id.'" />';
-                $nestedData['company']    = $companiesList->company;
-                $nestedData['active']     = $this->companyStatusHtml($companiesList->id, $companiesList->active);
-                $nestedData['actions']    = $this->editCompanyModel($companiesList->id);
-                $data[]                   = $nestedData;
+                $nestedData['hash'] = '<input class="checked" type="checkbox" name="id[]" value="'.$companiesList->id.'" />';
+                $nestedData['company'] = $companiesList->company;
+                $nestedData['active'] = $this->companyStatusHtml($companiesList->id, $companiesList->active);
+                $nestedData['actions'] = $this->editCompanyModel($companiesList->id);
+                $data[] = $nestedData;
             }
 
         }
@@ -102,7 +102,7 @@ class CompanyController extends Controller
 
     /**
      * Function to search companies based on the company name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -123,7 +123,7 @@ class CompanyController extends Controller
 
     /**
      * Function to filter companies based on the company name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -144,7 +144,7 @@ class CompanyController extends Controller
 
     /**
      * Function to filter companies based on the company status.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */

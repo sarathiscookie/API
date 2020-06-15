@@ -43,7 +43,7 @@ class CreateProductsTable extends Migration
             $table->string('inci', 50)->nullable();
             $table->string('comment')->nullable();
             $table->string('cross_selling_title', 100)->nullable();
-            $table->tinyInteger('module_status')->default(0); // Status to enable and disable product_module_details
+            $table->tinyInteger('status')->default(1); // 1 => Active, & 0 => Deactive.
             $table->timestamps();
 
             $table->foreign('shopname_id')

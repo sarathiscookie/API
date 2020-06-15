@@ -114,7 +114,7 @@ class ManagerController extends Controller
 
     /**
      * Function to search managers based on the name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -135,7 +135,7 @@ class ManagerController extends Controller
 
     /**
      * Function to filter managers based on the name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -156,7 +156,7 @@ class ManagerController extends Controller
 
     /**
      * Function to filter managers based on the status.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */

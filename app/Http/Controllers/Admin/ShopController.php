@@ -111,7 +111,7 @@ class ShopController extends Controller
 
     /**
      * Function to search shops based on the shop name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -130,7 +130,7 @@ class ShopController extends Controller
 
     /**
      * Function to filter shops based on the shop name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -149,7 +149,7 @@ class ShopController extends Controller
 
     /**
      * Function to filter shops based on the shop status.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */

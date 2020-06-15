@@ -82,7 +82,7 @@ class Company extends Model
     /**
     * Scope for company status.
     *
-    * @param  string  $query
+    * @param  object  $query
     * @return string
     */
     public function scopeActive($query)
@@ -109,7 +109,7 @@ class Company extends Model
     /**
     * Scope for shop status and company status.
     *
-    * @param  string  $query
+    * @param  object  $query
     * @return string
     */
     public function scopeJoinActive($query)

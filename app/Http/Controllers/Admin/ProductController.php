@@ -56,7 +56,7 @@ class ProductController extends Controller
      */
     public function datatable(Request $request)
     {
-        try {
+        //try {
             // Getting all the http request.
             $params = $request->all();
             
@@ -127,9 +127,9 @@ class ProductController extends Controller
             ];
 
             return response()->json($json_data);
-        } catch (\Exception $e) {
+        /* } catch (\Exception $e) {
             return response()->json(['productListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        }
+        } */
     }
 
     /**
@@ -142,7 +142,7 @@ class ProductController extends Controller
     {
         $columns = [
             1 => 'name', 
-            2 => 'active'
+            2 => 'status'
         ];
 
         // Fetching data from API
@@ -209,7 +209,7 @@ class ProductController extends Controller
                 // Datatable filling
                 $nestedData['hash'] = '<input class="checked" type="checkbox" name="id[]" value="' . $productList['product_id'] . '" />';
                 $nestedData['name'] = '<h6>' . $productList['name'] . '</h6> <hr><div>Product Id: <span class="badge badge-info badge-pill">' . $productList['product_id'] . '</span></div> <div>Producer: <span class="badge badge-info badge-pill text-capitalize">' . $productList['producer'] . '</span></div> <div>Art No: <span class="badge badge-info badge-pill text-capitalize">' . $productList['product_art_no'] . '</span></div> <div>Visible: ' . $visibleStatus . '</div> <div>Available: ' . $availableStatus . '</div><div>Modules: '.$moduleName[$key].'</div>';
-                $nestedData['active'] = $this->productStatusHtml($productList['product_id']);
+                $nestedData['status'] = $this->productStatusHtml($productList['product_id']);
                 $nestedData['actions'] = $this->moduleSettingsHtml($productList['product_id']);
                 $data[] = $nestedData;
             }
@@ -239,13 +239,21 @@ class ProductController extends Controller
 
     /**
      * HTML group button to change product status 
-     * @param  string $id
+     * @param  integer $id
      * @return \Illuminate\Http\Response
      */
     public function productStatusHtml($id)
     {
-        //------------ Write query to check default status
         $checked = 'checked';
+
+        $product = Product::select('status')->ofWhereApiProductId($id)->first();
+
+        if( !empty($product) ) {
+            if( !empty($product) ) {
+                $checked = ($product->status === 1) ? 'checked' : '';
+            }
+        }
+
         $html = '<label class="switch" data-productstatusid="' . $id . '">
         <input type="checkbox" class="buttonStatus" ' . $checked . '>
         <span class="slider round"></span>
@@ -362,6 +370,31 @@ class ProductController extends Controller
         }
         catch(\Exception $e) {
             return response()->json(['deletedModuleSettingStatus' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
+        }
+    }
+
+    /**
+     * Update product status.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateStatus(Product $product, Request $request)
+    {
+        try {
+            $product->updateOrCreate(
+                ['api_product_id' => $request->productStatusId],
+                [
+                    'status' => $request->newStatus,
+                    'shopname_id' => $request->prodShopId, 
+                    'company_id' => $request->prodCompanyId
+                ]
+            );
+
+            return response()->json(['productStatusChange' => 'success', 'message' => 'Product status updated successfully'], 201);
+        } 
+        catch(\Exception $e){
+            return response()->json(['productStatusChange' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
         }
     }
 

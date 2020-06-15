@@ -41,4 +41,13 @@ class ModuleSetting extends Model
     {
         return $this->belongsTo('App\User', 'user_supplier_id');
     }
+
+    /**
+     * Get the products record associated with the mosule setting.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function product()
+    {
+        return $this->belongsTo('App\Product', 'product_id');
+    }
 }

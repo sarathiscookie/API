@@ -158,7 +158,7 @@ class KeyController extends Controller
 
     /**
      * Function to search keys based on the key name, shops and country.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -178,7 +178,7 @@ class KeyController extends Controller
 
     /**
      * Function to filter keys based on the key name, shops and country.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -198,7 +198,7 @@ class KeyController extends Controller
 
     /**
      * Function to filter keys based on the key status.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */

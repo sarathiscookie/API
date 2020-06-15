@@ -109,7 +109,7 @@ class UserController extends Controller
 
     /**
      * Function to search users based on the user name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -130,7 +130,7 @@ class UserController extends Controller
 
     /**
      * Function to filter users based on the user name.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
@@ -151,7 +151,7 @@ class UserController extends Controller
 
     /**
      * Function to filter users based on the user status.
-     * @param  string $q
+     * @param  object $q
      * @param  string $searchData
      * @return \Illuminate\Http\Response
      */
