@@ -60,7 +60,7 @@ class Shop extends Model
     /**
     * Scope for shop status.
     *
-    * @param  string  $query
+    * @param  object  $query
     * @return string
     */
     public function scopeActive($query)
@@ -71,7 +71,7 @@ class Shop extends Model
     /**
     * Scope for shop status.
     *
-    * @param  string  $query
+    * @param  object  $query
     * @return string
     */
     public function scopeJoinActive($query)

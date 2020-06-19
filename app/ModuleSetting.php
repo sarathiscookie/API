@@ -14,14 +14,14 @@ class ModuleSetting extends Model
     protected $guarded = ['id'];
 
     /**
-    * Scope for shop status and company status.
+    * Scope for module setting status.
     *
-    * @param  string  $query
+    * @param  object  $query
     * @return string
     */
-    public function scopeJoinActive($query)
+    public function scopeActive($query)
     {
-        return $query->where('modules.active', 'yes');
+        return $query->where('status', 1);
     }
 
     /**
