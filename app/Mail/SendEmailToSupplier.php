@@ -15,18 +15,22 @@ class SendEmailToSupplier extends Mailable implements ShouldQueue
 
     public $supplier;
 
-    protected $shops;
+    public $orderList;
 
-    public $order;
+    public $item;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct(User $supplier)
+    public function __construct(User $supplier, $orderList, $item)
     {
         $this->supplier = $supplier;
+
+        $this->orderList = $orderList;
+
+        $this->item = $item;
     }
 
     /**
@@ -36,13 +40,15 @@ class SendEmailToSupplier extends Mailable implements ShouldQueue
      */
     public function build()
     {
-        // TODO: Update cron table.
+        // TODO: Update module settings cron status.
         
         return $this->markdown('emails.cron.supplier')
             ->to($this->supplier->email)
             ->subject('Order emails to suppliers')
             ->with([
-                'supplier' => $this->supplier
+                'supplier' => $this->supplier,
+                'orderList' => $this->orderList,
+                'item' => $this->item
             ]);
     }
 }

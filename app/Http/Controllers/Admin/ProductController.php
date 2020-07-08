@@ -56,7 +56,7 @@ class ProductController extends Controller
      */
     public function datatable(Request $request)
     {
-        //try {
+        try {
             // Getting all the http request.
             $params = $request->all();
             
@@ -71,7 +71,7 @@ class ProductController extends Controller
 
             // If the request has a search value (product name), this query will execute and fetch the results.
             if (!empty($request->input('search.value'))) {
-                $search = "&search=" . urlencode($request->input('search.value')) . "&search_field=name";
+                $search = "&search=" . urlencode($request->input('search.value')) . "&search_field=product_id";
             }
 
             // If shop is Rakuten then this will execute.
@@ -127,9 +127,9 @@ class ProductController extends Controller
             ];
 
             return response()->json($json_data);
-        /* } catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['productListStatusMsg' => 'failure', 'message' => 'Whoops! Something went wrong'], 404);
-        } */
+        }
     }
 
     /**

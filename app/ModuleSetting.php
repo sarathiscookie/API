@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class ModuleSetting extends Model
 {
+    // Defining module id.
+    CONST MODULE_ID = 1;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -49,6 +52,19 @@ class ModuleSetting extends Model
     public function product()
     {
         return $this->belongsTo('App\Product', 'product_id');
+    }
+
+    /**
+     * Condition to fetch module settings matching with product id (from api) and module is 1.
+     *
+     * @param  integer  $productId
+     * @return string
+     */
+    public static function byProductId(int $productId): ? ModuleSetting
+    {
+        return self::where("product_id", $productId)
+                    ->where('module_id', self::MODULE_ID)
+                    ->first();
     }
     
 }

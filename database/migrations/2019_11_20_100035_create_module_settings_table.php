@@ -30,6 +30,7 @@ class CreateModuleSettingsTable extends Migration
 
             // Cron settings
             $table->integer('max_error')->nullable(); // It is for setting maximum error limit.
+            $table->tinyInteger('cron_status')->default(0); // Cron job status. 0 = Cron job not executed, 1 = Cron job already executed.
 
             // Orders & Delivery settings
             $table->tinyInteger('order_in_logistics')->nullable(); // Place order as set order in logistics. 1 = checked, 0 = not checked.
