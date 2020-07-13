@@ -20,7 +20,7 @@ Auth::routes([
 	'reset' => false //Disable Reset Password
 ]);
 
-Route::get('/download/get/order/delivery/note/{api_key}/{order_no}', 'DownloadController@download')->name('download.get.order.delivery.note');
+Route::get('/download/get/order/delivery/note/{api_key}/{order_no}', 'GlobalController@download')->name('download.get.order.delivery.note');
 
 /*
 |--------------------------------------------------------------------------

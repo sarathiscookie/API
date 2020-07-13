@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Traits\CurlTrait;
 use Illuminate\Support\Facades\Storage;
 
-class DownloadController extends Controller
+class GlobalController extends Controller
 {
     use CurlTrait;
     /**
