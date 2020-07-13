@@ -1,8 +1,10 @@
 @component('mail::message')
-{{ $moduleSetting->mail_body }}
+Hello {{ $supplier['name'] }}, {{ $moduleSetting->mail_body }}
 
 @component('mail::panel')
-# Order Details: {{ $orderList['order_no'] }}
+# Order Details
+* Order No: {{ $orderList['order_no'] }}
+* Product Id: {{ $item['product_id'] }}
 @component('mail::table')
 
 | Name               | Qty                | Price              | Price Sum              |
@@ -19,7 +21,7 @@
 
 | Client Id                              | Client Email                           |
 | -------------------------------------- | --------------------------------------:|
-| {{ $orderList['client']['client_id'] }}| {{ $orderList['client']['email'] }}|
+| {{ $orderList['client']['client_id'] }}|{{ $orderList['client']['email'] }}     |
 
 @endcomponent
 @endcomponent

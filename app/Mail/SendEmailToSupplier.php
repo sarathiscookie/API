@@ -58,7 +58,7 @@ class SendEmailToSupplier extends Mailable implements ShouldQueue
         
         return $this->markdown('emails.cron.supplier')
             ->to($this->supplier->email)
-            ->subject('Order emails to suppliers')
+            ->subject($this->moduleSetting->mail_subject)
             ->with([
                 'supplier' => $this->supplier,
                 'orderList' => $this->orderList,
