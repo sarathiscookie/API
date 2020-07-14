@@ -74,6 +74,7 @@ trait ModuleSettingTrait
         // Definition from API: This method gives out the delivery note to an order.
         if($moduleSetting->getOrderDeliveryNote === 1) {
             $apiUrlForMail[2] = env('APP_URL').'/download/get/order/delivery/note/'.$api_key.'/'.$order_no;
+            $apiUrlForMail['APIOrderDeliveryNote'] = 'http://webservice.rakuten.de/merchants/orders/getOrderDeliveryNote?key=' . $api_key . '&format=json&order_no=' . $order_no;
         }
 
         return $apiUrlForMail;

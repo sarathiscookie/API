@@ -104,7 +104,7 @@ class CronEmailToSupplier extends Command
 
                                 $apiUrlForEmails = $this->apiUrlForEmail($shop->api_key, $orderList['order_no'], $moduleSetting);
 
-                                Log::info('URLS');
+                                Log::info('URLS & DeliveryNoteAPIURL');
                                 Log::info($apiUrlForEmails);
                                 
                                 // Send email to supplier
