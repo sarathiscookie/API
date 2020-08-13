@@ -24,7 +24,7 @@ class ShopnamesSeeder extends Seeder
         Shopname::updateOrCreate(
             ['id' => 2],
             [
-                'name' => 'Amazone',
+                'name' => 'Amazon',
             ]
         );
 

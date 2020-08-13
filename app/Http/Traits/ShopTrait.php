@@ -107,6 +107,28 @@ trait ShopTrait {
         return $configuration;
     }
 
+    /**
+     * Generating password.
+     * @param string $password
+     * @return \Illuminate\Http\Response
+     */
+    public function passwordGenerate($password)
+    {
+        return random_int(111111, 999999).'%_%'.$password.'%_%'.uniqid();
+    }
+
+    /**
+     * Extracting password.
+     * @param string $password
+     * @return \Illuminate\Http\Response
+     */
+    public function passwordExtract($password)
+    {
+        $extract = explode('%_%', $password);
+        
+        return $extract[1];
+    }
+
 }
 
 ?>
